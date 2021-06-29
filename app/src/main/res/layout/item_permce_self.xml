@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp"
+    android:background="?android:attr/selectableItemBackground"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/hashtagitem"
+        android:orientation="horizontal">
+
+        <TextView
+
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_weight="1"
+            android:fontFamily="@font/sarabun_bold"
+            android:singleLine="true"
+            android:text="@string/name"
+            android:textColor="@color/loctitle"
+            android:textSize="18sp"
+            android:visibility="invisible" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_weight="1"
+            android:fontFamily="@font/sarabun_bold"
+            android:gravity="center_horizontal"
+            android:singleLine="true"
+            android:text="@string/name"
+            android:textColor="@color/loctitle"
+            android:textSize="15sp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_weight="1"
+            android:fontFamily="@font/sarabun_bold"
+            android:singleLine="true"
+            android:text="@string/name"
+            android:textColor="@color/loctitle"
+            android:textSize="18sp"
+            android:visibility="invisible" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_weight="1"
+            android:fontFamily="@font/sarabun_bold"
+            android:gravity="center_horizontal"
+            android:singleLine="true"
+            android:text="@string/count"
+            android:textColor="@color/loctitle"
+            android:textSize="15sp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_weight="1"
+            android:fontFamily="@font/sarabun_bold"
+            android:gravity="center_horizontal"
+            android:singleLine="true"
+            android:text="@string/score"
+            android:textColor="@color/loctitle"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="5">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_weight="1.2"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_marginTop="0dp"
+                android:id="@+id/img_perf_self"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+android:layout_gravity="center_vertical|center_horizontal"
+                android:src="@drawable/searchimage" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/sarabun_bold"
+                    android:singleLine="true"
+                    android:text="Ramesh Kumar"
+                    android:textColor="@color/loctitle"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/sarabun_regular"
+                    android:singleLine="true"
+                    android:text="@string/profileid"
+                    android:textColor="@color/locsubtitle"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <TextView
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.8"
+            android:fontFamily="@font/sarabun_bold"
+            android:gravity="center_horizontal"
+            android:singleLine="true"
+            android:text="7"
+            android:textColor="@color/loctitle"
+            android:textSize="18sp" />
+
+        <RelativeLayout
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/sarabun_bold"
+                    android:gravity="center_horizontal"
+                    android:singleLine="true"
+                    android:text="47"
+                    android:textColor="@color/loctitle"
+                    android:textSize="18sp" />
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:layout_marginLeft="5dp"
+                    android:background="@drawable/per_selfdot" />
+            </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>
