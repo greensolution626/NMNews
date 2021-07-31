@@ -5,35 +5,49 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.android.nmnewsagency.R;
-import com.android.nmnewsagency.adapter.CovrageQualityAdapter;
 import com.android.nmnewsagency.adapter.FollowersAdapter;
 import com.android.nmnewsagency.listner.RecyclerTouchListener;
+import com.android.nmnewsagency.modelclass.AddUserDocumentModel;
+import com.android.nmnewsagency.modelclass.GetDocumentModel;
+import com.android.nmnewsagency.modelclass.GetFollowersModel;
+import com.android.nmnewsagency.rest.Rest;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FollowersActivituy extends AppCompatActivity {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class FollowersActivituy extends AppCompatActivity implements
+        Callback<Object> {
     RecyclerView recyclerView;
     FollowersAdapter locationAdapter;
     //  List<LocationModel> arrayList;
-    List<String> arrayList;
-    List<Integer> img_List;
+    List<GetFollowersModel.DataBean> arrayList;
     ImageView iamge_back_folowers;
+    Rest rest;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         overridePendingTransition(R.anim.enter, R.anim.exit);
         setContentView(R.layout.activity_followers_activituy);
+        rest=new Rest(this,this);
+        inIt();
+        callserviceFollowers();
+    }
+
+    private void inIt() {
         recyclerView = (RecyclerView) findViewById(R.id.recy_folowers);
         iamge_back_folowers = (ImageView) findViewById(R.id.iamge_back_folowers);
-        arrayList = new ArrayList<>();
-        img_List = new ArrayList<>();
-        inItItemRecycle();
         iamge_back_folowers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -41,18 +55,13 @@ public class FollowersActivituy extends AppCompatActivity {
             }
         });
     }
-    private void inItItemRecycle() {
-        img_List.add(R.drawable.searchimage);
-        img_List.add(R.drawable.search5);
-        img_List.add(R.drawable.search4);
-        img_List.add(R.drawable.search3);
-        img_List.add(R.drawable.search2);
-        img_List.add(R.drawable.search1);
-        img_List.add(R.drawable.searchimage);
-        img_List.add(R.drawable.search4);
-        img_List.add(R.drawable.search3);
 
-        locationAdapter = new FollowersAdapter(arrayList,FollowersActivituy.this,img_List);
+    private void callserviceFollowers() {
+        rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
+        rest.getFOloowers();
+    }
+    private void inItItemRecycle() {
+        locationAdapter = new FollowersAdapter(arrayList,FollowersActivituy.this);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -62,7 +71,7 @@ public class FollowersActivituy extends AppCompatActivity {
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(this, recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                // Movie movie = movieList.get(position);
+
             }
 
             @Override
@@ -70,5 +79,28 @@ public class FollowersActivituy extends AppCompatActivity {
 
             }
         }));
+    }
+
+    @Override
+    public void onResponse(Call<Object> call, Response<Object> response) {
+        rest.dismissProgressdialog();
+        if (response.isSuccessful()) {
+            Object obj = response.body();
+            Log.e("nmnnn", String.valueOf(obj));
+            if (obj instanceof GetFollowersModel) {
+                GetFollowersModel loginModel = (GetFollowersModel) obj;
+                if (loginModel.isStatus()) {
+                    arrayList=loginModel.getData();
+                    inItItemRecycle();
+                }
+            }
+
+
+        }
+    }
+
+    @Override
+    public void onFailure(Call<Object> call, Throwable t) {
+
     }
 }

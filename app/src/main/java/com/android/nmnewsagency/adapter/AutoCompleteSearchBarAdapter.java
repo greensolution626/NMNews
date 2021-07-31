@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.nmnewsagency.R;
+import com.android.nmnewsagency.modelclass.NewVideoHashtagModelClass;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 
@@ -17,17 +18,15 @@ import java.util.List;
 
 public class AutoCompleteSearchBarAdapter extends RecyclerView.Adapter<AutoCompleteSearchBarAdapter.MyViewHolder> {
     // private List<LocationModel> moviesList;
-    private List<String> moviesList;
-    private List<Integer> imgList;
+    private List<NewVideoHashtagModelClass.DataBean.PagedRecordBean> moviesList;
     private Context context;
 
     /*public LocationAdapter(List<LocationModel> moviesList) {
         this.moviesList = moviesList;
     }*/
 
-    public AutoCompleteSearchBarAdapter(Context context, List<String> moviesList, List<Integer> imgList) {
+    public AutoCompleteSearchBarAdapter(Context context, List<NewVideoHashtagModelClass.DataBean.PagedRecordBean> moviesList) {
         this.moviesList = moviesList;
-        this.imgList = imgList;
         this.context = context;
     }
 
@@ -37,7 +36,7 @@ public class AutoCompleteSearchBarAdapter extends RecyclerView.Adapter<AutoCompl
 
         public MyViewHolder(View view) {
             super(view);
-            // title = (TextView) view.findViewById(R.id.loc_name);
+             title = (TextView) view.findViewById(R.id.user_name);
             image_profile_hashtag = (ImageView) view.findViewById(R.id.image_profile_hashtag);
         }
     }
@@ -52,19 +51,18 @@ public class AutoCompleteSearchBarAdapter extends RecyclerView.Adapter<AutoCompl
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        /*LocationModel movie = moviesList.get(position);
-        holder.title.setText(movie.getmName());*/
-        // holder.title.setText(moviesList.get(position));
-        Glide.with(context)
+        NewVideoHashtagModelClass.DataBean.PagedRecordBean movie = moviesList.get(position);
+         holder.title.setText(movie.getTitle());
+        /*Glide.with(context)
                 .load(imgList.get(position))
                 .placeholder(R.color.adbag)
                 .centerCrop()
                 .transition(DrawableTransitionOptions.withCrossFade(500))
-                .into(holder.image_profile_hashtag);
+                .into(holder.image_profile_hashtag);*/
     }
 
     @Override
     public int getItemCount() {
-        return imgList.size();
+        return moviesList.size();
     }
 }

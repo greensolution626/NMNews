@@ -19,11 +19,16 @@ public class ParaName {
     public static final String KEY_USER_ID = "id";
     public static final String KEY_LATTITUDE = "latitude";
     public static final String KEY_LONGITUDE = "longitude";
-    public static final String KEY_USERID = "user_id";
+    public static final String KEY_USERID = "UserId";
     public static final String KEY_DATE = "date";
     public static final String KEY_USER_DOCUMENT_ID = "user_document_id";
     public static final String KEY_IS_VISIBLE = "is_visible";
     public static final String KEY_IMAGE = "profile_picture";
+    public static final String KEY_FILE = "file";
+    public static final String KEY_FIRSTNAME = "FirstName";
+    public static final String KEY_LASTNAME = "LastName";
+    public static final String KEY_AVTAR = "Avatar";
+    public static final String KEY_ABOUTME = "AboutMe";
     public static final String KEY_NEW_PASSWORD = "new_password";
     public static final String KEY_DRIVER_ID = "driver_id";
     public static final String KEY_BOOKING_STATUS = "booking_status";
@@ -55,6 +60,7 @@ public class ParaName {
     public static final String KEY_RE_PASS= "re_password";
     public static final String KEY_PROFILEIAMGE= "ProfileImage";
     public static final String KEY_LOGINPROVIDER= "LoginProvider";
+    public static final String KEY_LOGINPROVIDERUSERID= "LoginProviderUserId";
 
 
 

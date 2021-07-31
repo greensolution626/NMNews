@@ -1,8 +1,11 @@
 package com.android.nmnewsagency.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -13,27 +16,45 @@ import com.android.nmnewsagency.R;
 import com.android.nmnewsagency.adapter.FollowersAdapter;
 import com.android.nmnewsagency.adapter.FollowingAdapter;
 import com.android.nmnewsagency.listner.RecyclerTouchListener;
+import com.android.nmnewsagency.modelclass.AddUserDocumentModel;
+import com.android.nmnewsagency.modelclass.GetDocumentModel;
+import com.android.nmnewsagency.modelclass.GetFollowersModel;
+import com.android.nmnewsagency.modelclass.GetFollowingModel;
+import com.android.nmnewsagency.rest.Rest;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FollowingActivituy extends AppCompatActivity {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class FollowingActivituy extends AppCompatActivity implements
+        Callback<Object> {
     RecyclerView recyclerView;
     FollowingAdapter locationAdapter;
     //  List<LocationModel> arrayList;
-    List<String> arrayList;
-    List<Integer> img_List;
+    List<GetFollowingModel.DataBean> arrayList;
     ImageView iamge_back_folowing;
+    Rest rest;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         overridePendingTransition(R.anim.enter, R.anim.exit);
         setContentView(R.layout.activity_following_activituy);
+        rest=new Rest(this,this);
+        iniIT();
+        callserviceFollowing();
+    }
+
+    private void callserviceFollowing() {
+        rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
+        rest.getFOloowing();
+    }
+
+    private void iniIT() {
         recyclerView = (RecyclerView) findViewById(R.id.recy_folowing);
         iamge_back_folowing = (ImageView) findViewById(R.id.iamge_back_folowing);
-        arrayList = new ArrayList<>();
-        img_List = new ArrayList<>();
-        inItItemRecycle();
         iamge_back_folowing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -41,19 +62,10 @@ public class FollowingActivituy extends AppCompatActivity {
             }
         });
     }
+
     private void inItItemRecycle() {
-        img_List.add(R.drawable.searchimage);
-        img_List.add(R.drawable.search5);
-        img_List.add(R.drawable.search4);
-        img_List.add(R.drawable.search3);
-        img_List.add(R.drawable.search2);
-        img_List.add(R.drawable.search1);
-        img_List.add(R.drawable.searchimage);
-        img_List.add(R.drawable.search4);
-        img_List.add(R.drawable.search3);
 
-        locationAdapter = new FollowingAdapter(arrayList,FollowingActivituy.this,img_List);
-
+        locationAdapter = new FollowingAdapter(arrayList,FollowingActivituy.this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setNestedScrollingEnabled(true);
@@ -62,7 +74,7 @@ public class FollowingActivituy extends AppCompatActivity {
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(this, recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                // Movie movie = movieList.get(position);
+
             }
 
             @Override
@@ -70,5 +82,27 @@ public class FollowingActivituy extends AppCompatActivity {
 
             }
         }));
+    }
+
+    @Override
+    public void onResponse(Call<Object> call, Response<Object> response) {
+        rest.dismissProgressdialog();
+        if (response.isSuccessful()) {
+            Object obj = response.body();
+            Log.e("nmnnn", String.valueOf(obj));
+            if (obj instanceof GetFollowingModel) {
+                GetFollowingModel loginModel = (GetFollowingModel) obj;
+                if (loginModel.isStatus()) {
+                    arrayList=loginModel.getData();
+                    inItItemRecycle();
+                }
+            }
+
+        }
+    }
+
+    @Override
+    public void onFailure(Call<Object> call, Throwable t) {
+
     }
 }

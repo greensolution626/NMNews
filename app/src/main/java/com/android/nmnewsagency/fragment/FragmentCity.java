@@ -1,6 +1,7 @@
 package com.android.nmnewsagency.fragment;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,21 +17,30 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.nmnewsagency.R;
 import com.android.nmnewsagency.adapter.LocationAdapter;
 import com.android.nmnewsagency.listner.RecyclerTouchListener;
+import com.android.nmnewsagency.model.CountryModel;
+import com.android.nmnewsagency.pref.Prefrence;
+import com.android.nmnewsagency.rest.Rest;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FragmentCity extends Fragment {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class FragmentCity extends Fragment implements Callback<Object> {
     View view;
     static int state;
-    static String country;
+    static String countryName, stateName;
+    static int stateId;
     RecyclerView recyclerView;
     LocationAdapter locationAdapter;
     //  List<LocationModel> arrayList;
-    List<String> arrayList;
+    List<CountryModel.DataBean> arrayList;
     List<String> arrayList1;
     TextView txt_loc_state, txt_loc_country;
-    ImageView img_closestate, img_closecount,iamge_back_city;
+    ImageView img_closestate, img_closecount, iamge_back_city;
+    Rest rest;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,9 +48,17 @@ public class FragmentCity extends Fragment {
         view = inflater.inflate(R.layout.fragment_select_city, container, false);
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            country = bundle.getString("country");
-            state = bundle.getInt("state");
+            stateId = bundle.getInt("stateId");
+            stateName = bundle.getString("stateNmae");
+            countryName = bundle.getString("countryNmae");
+            Prefrence.setStateIdd(String.valueOf(stateId));
         }
+        rest = new Rest(getActivity(), this);
+        iniIt();
+        return view;
+    }
+
+    private void iniIt() {
         recyclerView = (RecyclerView) view.findViewById(R.id.recy_loc);
         txt_loc_state = (TextView) view.findViewById(R.id.txt_loc_state);
         txt_loc_country = (TextView) view.findViewById(R.id.txt_loc_country);
@@ -61,73 +79,30 @@ public class FragmentCity extends Fragment {
             public void onClick(View v) {
                 closefragment();
             }
-        });iamge_back_city.setOnClickListener(new View.OnClickListener() {
+        });
+        iamge_back_city.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 closefragment();
             }
         });
-        return view;
+        callServicegetCityList();
+    }
+
+    private void callServicegetCityList() {
+        rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
+        rest.getCityList(stateId);
     }
 
     private void inItListData(int state) {
-        if (state == 13) {
-            txt_loc_state.setText("Maharashtra");
-        } else {
-            txt_loc_state.setText("Rajasthan");
-        }
-        txt_loc_country.setText(country);
-
-        if (state == 19) {
-            arrayList.add("Ajmer");
-            arrayList.add("Alwer");
-            arrayList.add("Bikaner");
-            arrayList.add("Barmer");
-            arrayList.add("Jaipur");/*4*/
-            arrayList.add("Bundi");
-            arrayList.add("Churu");
-            arrayList.add("Dausa");
-            arrayList.add("Ganganagar");
-            arrayList.add("Hanumangarh");
-            arrayList.add("Jaisalmer");
-            arrayList.add("Jodhpur");
-            arrayList.add("Karauli");
-            arrayList.add("Kota");
-            arrayList.add("Mount Abu");
-            arrayList.add("Nagaur");
-            arrayList.add("Nawalgarh");
-            arrayList.add("Bharatpur");
-            arrayList.add("Baran");
-            arrayList.add("Bhilwara");
-            arrayList.add("Chittorgarh");
-            arrayList.add("Dholpur");
-            arrayList.add("Jhalawar");
-            arrayList.add("Tonk");
-            arrayList.add("Udaipur");
-            inItItemRecycle();
-        } else if (state == 13) {
-            arrayList.add("Mumbai");/*0*/
-            arrayList.add("Pune");/*1*/
-            arrayList.add("Nagpur");
-            arrayList.add("Thane");
-            arrayList.add("Nashik");
-            arrayList.add("Kalyan");
-            arrayList.add("Vasai");
-            arrayList.add("Aurangabad");
-            arrayList.add("Navi Mumbai");
-            arrayList.add("Solapur");
-            arrayList.add("Latur");
-            arrayList.add("Amravati");
-            arrayList.add("Thane");
-            arrayList.add("Sangli");/*13*/
-            inItItemRecycle();
-        } else {
-            Toast.makeText(getActivity(), state + "else", Toast.LENGTH_SHORT).show();
-        }
+        txt_loc_state.setText(stateName);
+        txt_loc_country.setText(countryName);
     }
 
     private void inItItemRecycle() {
-        locationAdapter = new LocationAdapter(getActivity(),arrayList);
+        if (arrayList != null&& arrayList.size()>0) {
+
+        locationAdapter = new LocationAdapter(getActivity(), arrayList);
 
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -136,21 +111,18 @@ public class FragmentCity extends Fragment {
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                String state1 = arrayList.get(position);
-                if (state1.equals("Jaipur")) {
-                    sgowFragmentByCon(position);
-                } else if (state1.equals("Mumbai")) {
-                    sgowFragmentByCon(position);
-                } else if (state1.equals("Pune")) {
-                    sgowFragmentByCon(position);
-                } else if (state1.equals("Sangli")) {
-                    sgowFragmentByCon(position);
+                Bundle bundle = new Bundle();
+                bundle.putInt("cityId", arrayList.get(position).getId());
+                bundle.putString("cityNmae", arrayList.get(position).getName());
+                bundle.putString("countryNmae", countryName);
+                bundle.putString("stateNmae", stateName);
+                FragmentTahsil fragment2 = new FragmentTahsil();
+                fragment2.setArguments(bundle);
 
-                } else if(state == 13){
-                    Toast.makeText(getActivity(), "No Tahsil available at this movement! Please select Mumbai , Sangli and Pune", Toast.LENGTH_SHORT).show();
-                } else if(state == 19){
-                    Toast.makeText(getActivity(), "No tahsil available at this movement! Please select Jaipur", Toast.LENGTH_SHORT).show();
-                }
+                getFragmentManager()
+                        .beginTransaction().addToBackStack("")
+                        .add(R.id.frame_loc, fragment2)
+                        .commit();
             }
 
             @Override
@@ -158,13 +130,16 @@ public class FragmentCity extends Fragment {
 
             }
         }));
+        } else {
+            Toast.makeText(getActivity(), "No City Available", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void sgowFragmentByCon(int position) {
         Bundle bundle = new Bundle();
-        bundle.putString("country", country); // Put anything what you want
-        bundle.putString("state", txt_loc_state.getText().toString()); // Put anything what you want
-        bundle.putString("city", arrayList.get(position)); // Put anything what you want
+        bundle.putString("countryNmae", countryName);
+        bundle.putString("stateNmae", stateName);
+        //  bundle.putString("city", arrayList.get(position)); // Put anything what you want
         FragmentTahsil fragment2 = new FragmentTahsil();
         fragment2.setArguments(bundle);
 
@@ -176,5 +151,26 @@ public class FragmentCity extends Fragment {
 
     private void closefragment() {
         getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
+    }
+
+    @Override
+    public void onResponse(Call<Object> call, Response<Object> response) {
+        rest.dismissProgressdialog();
+        if (response.isSuccessful()) {
+            Object obj = response.body();
+            Log.e("nmnnn", String.valueOf(obj));
+            if (obj instanceof CountryModel) {
+                CountryModel loginModel = (CountryModel) obj;
+                if (loginModel.isStatus()) {
+                    arrayList = loginModel.getData();
+                    inItItemRecycle();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onFailure(Call<Object> call, Throwable t) {
+
     }
 }

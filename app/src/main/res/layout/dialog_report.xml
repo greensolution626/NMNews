@@ -59,12 +59,14 @@
             android:textSize="18sp" />
 
         <RadioGroup
+            android:id="@+id/radio_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="25dp">
 
             <RadioButton
+                android:id="@+id/radio_frst"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/sarabun_semibold"
@@ -72,6 +74,7 @@
                 android:textSize="18sp" />
 
             <RadioButton
+                android:id="@+id/radio_scond"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -80,6 +83,7 @@
                 android:textSize="18sp" />
 
             <RadioButton
+                android:id="@+id/radio_thrd"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -88,6 +92,7 @@
                 android:textSize="18sp" />
 
             <RadioButton
+                android:id="@+id/radio_furth"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -96,6 +101,7 @@
                 android:textSize="18sp" />
 
             <RadioButton
+                android:id="@+id/radio_fifth"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -104,6 +110,7 @@
                 android:textSize="18sp" />
 
             <RadioButton
+                android:id="@+id/radio_six"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -124,6 +131,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txt_report_subtitle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@null"

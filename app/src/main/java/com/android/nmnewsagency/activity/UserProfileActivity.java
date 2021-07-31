@@ -8,40 +8,80 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.nmnewsagency.R;
+import com.android.nmnewsagency.adapter.GetUserHashNewsAdapter;
+import com.android.nmnewsagency.adapter.GetUserOwnNewsAdapter;
+import com.android.nmnewsagency.adapter.GetUserSaveNewsAdapter;
 import com.android.nmnewsagency.adapter.HashTagDetailAdapter;
 import com.android.nmnewsagency.listner.RecyclerTouchListener;
+import com.android.nmnewsagency.modelclass.AddNewsModel;
+import com.android.nmnewsagency.modelclass.GetProfileDataModel;
+import com.android.nmnewsagency.modelclass.GetUserHashTagModel;
+import com.android.nmnewsagency.modelclass.GetUserOwnNewsModel;
+import com.android.nmnewsagency.modelclass.GetUserSaveNewsModel;
+import com.android.nmnewsagency.modelclass.ReportModelClass;
+import com.android.nmnewsagency.pref.Prefrence;
+import com.android.nmnewsagency.rest.Rest;
+import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserProfileActivity extends AppCompatActivity implements View.OnClickListener {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class UserProfileActivity extends AppCompatActivity implements
+        View.OnClickListener, Callback<Object> {
     RecyclerView recyclerView;
-    HashTagDetailAdapter locationAdapter;
+    GetUserOwnNewsAdapter locationAdapter;
+    GetUserHashNewsAdapter locationAdapter2;
     //  List<LocationModel> arrayList;
-    List<String> arrayList;
+    List<GetUserOwnNewsModel.DataBeanX.DataBean.PagedRecordBean> arrayList;
+    List<GetUserHashTagModel.DataBeanX.DataBean.PagedRecordBean> arrayListHash;
     List<Integer> imAGE;
     BottomSheetDialog bottomSheetDialog;
-    ImageView iamge_back_userdetail, img_repo_userprofile, img_contact, img_video_video, img_video;
+    ImageView iamge_back_userdetail, img_repo_userprofile, img_contact, img_video_video, img_video, img_userprofile;
     LinearLayout lin_folowing_userprofile, lin_folowers_userprofile, lin_ownvideo, lin_owncontact, lin_ownvideo_video;
-    TextView txt_nodata;
+    TextView txt_nodata, txt_userFolowing, txt_userfolow, txt_userUname, txt_userFname,txt_userhashvideo,txt_userownvideo;
+    Rest rest;
+    String id;
+    Button but_folow;
+    GetProfileDataModel.DataBean.AspNetUserBean dataBean;
+    boolean isFoloow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         overridePendingTransition(R.anim.enter, R.anim.exit);
         setContentView(R.layout.activity_user_profile);
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            id = bundle.getString("userId");
+        }
+        rest = new Rest(this, this);
+        iniT();
+        //inItItemRecycle();
+    }
+
+    private void iniT() {
         recyclerView = (RecyclerView) findViewById(R.id.recy_user_detail);
+        but_folow = (Button) findViewById(R.id.but_folow);
         lin_folowers_userprofile = (LinearLayout) findViewById(R.id.lin_folowers_userprofile);
         lin_folowing_userprofile = (LinearLayout) findViewById(R.id.lin_folowing_userprofile);
         lin_ownvideo_video = (LinearLayout) findViewById(R.id.lin_ownvideo_video);
@@ -53,7 +93,15 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
         lin_ownvideo_video.setOnClickListener(this);
         lin_ownvideo.setOnClickListener(this);
         iamge_back_userdetail = (ImageView) findViewById(R.id.iamge_back_userdetail);
+        img_userprofile = (ImageView) findViewById(R.id.img_userprofile);
         txt_nodata = (TextView) findViewById(R.id.txt_nodata);
+
+        txt_userFname = (TextView) findViewById(R.id.txt_userFname);
+        txt_userownvideo = (TextView) findViewById(R.id.txt_userownvideo);
+        txt_userhashvideo = (TextView) findViewById(R.id.txt_userhashvideo);
+        txt_userUname = (TextView) findViewById(R.id.txt_userUname);
+        txt_userfolow = (TextView) findViewById(R.id.txt_userfolow);
+        txt_userFolowing = (TextView) findViewById(R.id.txt_userFolowing);
         img_repo_userprofile = (ImageView) findViewById(R.id.img_repo_userprofile);
         img_contact = (ImageView) findViewById(R.id.img_contact);
         img_video_video = (ImageView) findViewById(R.id.img_video_video);
@@ -70,32 +118,75 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
                 openDialogBox();
             }
         });
-        inItItemRecycle();
+        but_folow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isFoloow) {
+                    //delete
+                    callServicegetFollows(dataBean.getId(), true);
+                } else {
+                    callServicegetFollows(dataBean.getId(), false);
+                }
+
+            }
+        });
+        callServicegetProfiel();
     }
 
-    private void inItItemRecycle() {
-        arrayList = new ArrayList<>();
-        imAGE = new ArrayList<>();
-        arrayList.add("");
-        arrayList.add("");
-        imAGE = new ArrayList<>();
-        imAGE.add(R.drawable.profileimage);
-        imAGE.add(R.drawable.profileimage1);
-        imAGE.add(R.drawable.profileimage2);
-        imAGE.add(R.drawable.profileimage3);
-        imAGE.add(R.drawable.profileimage4);
-        imAGE.add(R.drawable.profileimage5);
-        locationAdapter = new HashTagDetailAdapter(UserProfileActivity.this, arrayList, imAGE);
+    private void callServicegetProfiel() {
+        rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
+        rest.getFrontProfileList(id);
+    }
 
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setNestedScrollingEnabled(true);
-        recyclerView.setAdapter(locationAdapter);
+     private void callServicegetUserSaveVideo() {
+        rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
+        rest.getuserHashtagVideo(id);
+    }
+
+    private void callServicegetFollows(String folow, boolean isfollow) {
+        rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
+        if (isfollow) {
+            rest.UNfollowUser(folow);
+        } else {
+            rest.likeUser(folow);
+        }
+    }
+
+    private void callServicegetReport(String folow, String isfollow, int newid) {
+        rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
+        rest.reportUser(folow, isfollow, newid);
+    }
+
+    private void callServicegetUserOwnNews() {
+        rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
+        rest.getuserOwnVideo_userprofile(id);
+    }
+
+    private void inItItemRecycle(String type) {
+        if (type.equals("save")) {
+            locationAdapter = new GetUserOwnNewsAdapter(UserProfileActivity.this, arrayList);
+            recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
+            recyclerView.setNestedScrollingEnabled(true);
+            recyclerView.setAdapter(locationAdapter);
+        }
+        else if (type.equals("hash")) {
+            locationAdapter2 = new GetUserHashNewsAdapter(UserProfileActivity.this, arrayListHash);
+            recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
+            recyclerView.setNestedScrollingEnabled(true);
+            recyclerView.setAdapter(locationAdapter2);
+        }
+
+
 
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(this, recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                // Movie movie = movieList.get(position);
+                Intent intent = new Intent(UserProfileActivity.this, OwnVideoDetailActivity.class);
+                intent.putExtra("newsid", arrayList.get(position).getNewsId());
+                intent.putExtra("self", "other");
+                startActivity(intent);
             }
 
             @Override
@@ -130,6 +221,8 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
         Dialog dialog = new Dialog(UserProfileActivity.this);
         dialog.setContentView(R.layout.dialog_report);
         ImageView img_close_dialog = dialog.findViewById(R.id.img_close_dialog);
+        TextView txt_report_subtitle = dialog.findViewById(R.id.txt_report_subtitle);
+        RadioGroup radio_group = dialog.findViewById(R.id.radio_group);
         img_close_dialog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -140,6 +233,27 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
         but_submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                RadioButton selectedRadioButton = null;
+                if (radio_group.getCheckedRadioButtonId() == -1) {
+                    Toast.makeText(UserProfileActivity.this, "Please select report reason", Toast.LENGTH_SHORT).show();
+                    return;
+                } else {
+                    // get selected radio button from radioGroup
+                    int selectedId = radio_group.getCheckedRadioButtonId();
+                    // find the radiobutton by returned id
+                    selectedRadioButton = (RadioButton) dialog.findViewById(selectedId);
+                    // Toast.makeText(context, selectedRadioButton.getText().toString() + " is selected", Toast.LENGTH_SHORT).show();
+                }
+                if (txt_report_subtitle.getText().toString().equals("")) {
+                    txt_report_subtitle.setError("Please enter sub reason!");
+                    return;
+                }
+                if (!txt_report_subtitle.getText().toString().equals("") &&
+                        !selectedRadioButton.getText().toString().equals("")) {
+                    //delete
+                    /*callServicegetReport(txt_report_subtitle.getText().toString(),
+                            selectedRadioButton.getText().toString(), Integer.parseInt(id));*/
+                }
                 dialog.dismiss();
             }
         });
@@ -152,27 +266,29 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.lin_folowing_userprofile:
-                Intent intent = new Intent(UserProfileActivity.this, FollowingActivituy.class);
-                startActivity(intent);
+                /*Intent intent = new Intent(UserProfileActivity.this, FollowingActivituy.class);
+                startActivity(intent);*/
                 break;
             case R.id.lin_folowers_userprofile:
-                Intent intent1 = new Intent(UserProfileActivity.this, FollowersActivituy.class);
-                startActivity(intent1);
+               /* Intent intent1 = new Intent(UserProfileActivity.this, FollowersActivituy.class);
+                startActivity(intent1);*/
                 break;
             case R.id.lin_owncontact:
-                txt_nodata.setVisibility(View.VISIBLE);
-                recyclerView.setVisibility(View.GONE);
+                // txt_nodata.setVisibility(View.VISIBLE);
+                //recyclerView.setVisibility(View.GONE);
                 changebagroundimagebycondition2(img_video, img_contact, img_video_video);
+                callServicegetUserSaveVideo();
                 break;
             case R.id.lin_ownvideo_video:
-                txt_nodata.setVisibility(View.VISIBLE);
-                recyclerView.setVisibility(View.GONE);
+                // txt_nodata.setVisibility(View.VISIBLE);
+                // recyclerView.setVisibility(View.GONE);
                 changebagroundimagebycondition1(img_video, img_contact, img_video_video);
                 break;
             case R.id.lin_ownvideo:
-                txt_nodata.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.VISIBLE);
+                //  txt_nodata.setVisibility(View.GONE);
+                //  recyclerView.setVisibility(View.VISIBLE);
                 changebagroundimagebycondition(img_video, img_contact, img_video_video);
+                callServicegetUserOwnNews();
                 break;
         }
     }
@@ -244,5 +360,101 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
                     (R.drawable.ic_video);
         }
 
+    }
+
+    @Override
+    public void onResponse(Call<Object> call, Response<Object> response) {
+        rest.dismissProgressdialog();
+        if (response.isSuccessful()) {
+            Object obj = response.body();
+            Log.e("nmnnn", String.valueOf(obj));
+            if (obj instanceof GetProfileDataModel) {
+                GetProfileDataModel loginModel = (GetProfileDataModel) obj;
+                if (loginModel.isStatus()) {
+                    this.dataBean = loginModel.getData().getAspNetUser();
+                    setDTaontextView(loginModel.getData().getAspNetUser());
+                    isFoloow = loginModel.getData().getAspNetUser().isIsFollowed();
+                }
+            }
+            if (obj instanceof AddNewsModel) {
+                AddNewsModel loginModel = (AddNewsModel) obj;
+                if (loginModel.isStatus()) {
+                    if (isFoloow) {
+                        isFoloow = false;
+                        but_folow.setBackgroundResource(R.drawable.hashtagdetailfollow);
+                        but_folow.setTextColor(Color.parseColor("#FFFFFF"));
+                        but_folow.setText("FOLLOW");
+
+                    } else {
+                        but_folow.setBackgroundResource(R.drawable.userdetail_button);
+                        but_folow.setTextColor(Color.parseColor("#333333"));
+                        but_folow.setText("FOLLOWING");
+                        isFoloow = true;
+                    }
+                    // notifyDataSetChanged();
+                }
+            }
+            if (obj instanceof ReportModelClass) {
+                ReportModelClass loginModel = (ReportModelClass) obj;
+                if (loginModel.isStatus()) {
+                    Toast.makeText(UserProfileActivity.this, "Report successfully added", Toast.LENGTH_SHORT).show();
+                }
+            }
+            if (obj instanceof GetUserOwnNewsModel) {
+                GetUserOwnNewsModel loginModel = (GetUserOwnNewsModel) obj;
+                if (loginModel.isStatus()) {
+                    arrayList = loginModel.getData().getData().getPagedRecord();
+                    inItItemRecycle("save");
+
+                }
+            }
+            if (obj instanceof GetUserHashTagModel) {
+                GetUserHashTagModel loginModel = (GetUserHashTagModel) obj;
+                if (loginModel.isStatus()) {
+                    arrayListHash = loginModel.getData().getData().getPagedRecord();
+                    inItItemRecycle("hash");
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onFailure(Call<Object> call, Throwable t) {
+
+    }
+
+    public void setDTaontextView(GetProfileDataModel.DataBean.AspNetUserBean aspNetUser) {
+        txt_userFname.setText(aspNetUser.getFullName());
+        txt_userUname.setText("@" + aspNetUser.getUserName());
+        txt_userfolow.setText(aspNetUser.getFollowersSuffix());
+        txt_userFolowing.setText(aspNetUser.getFollowingsSuffix());
+        txt_userownvideo.setText(String.valueOf(aspNetUser.getNewsCount()));
+        txt_userhashvideo.setText(String.valueOf(aspNetUser.getUserTagVideo()));
+
+        if (aspNetUser.getAvatar() != null) {
+            if (!aspNetUser.getAvatar().equals("null")) {
+                Glide.with(UserProfileActivity.this)
+                        .load(aspNetUser.getAvatar())
+                        .into(img_userprofile);
+               /* new Handler().post(new Runnable() {
+                    public void run() {
+
+                    }
+                });*/
+            }
+        }
+        if (!aspNetUser.isIsFollowed()) {
+            isFoloow = false;
+            but_folow.setBackgroundResource(R.drawable.hashtagdetailfollow);
+            but_folow.setTextColor(Color.parseColor("#FFFFFF"));
+            but_folow.setText("FOLLOW");
+
+        } else {
+            but_folow.setBackgroundResource(R.drawable.userdetail_button);
+            but_folow.setTextColor(Color.parseColor("#333333"));
+            but_folow.setText("FOLLOWING");
+            isFoloow = true;
+        }
+        callServicegetUserOwnNews();
     }
 }

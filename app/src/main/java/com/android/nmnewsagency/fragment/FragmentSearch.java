@@ -65,7 +65,6 @@ public class FragmentSearch extends Fragment {
             @Override
             public void onClick(View v) {
                 lin_onlysearch.startAnimation(myAnim);
-
                 Intent intent = new Intent(getActivity(), SearchTopBarTabingActivity.class);
                 startActivity(intent);
             }

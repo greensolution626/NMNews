@@ -104,7 +104,7 @@
             android:id="@+id/img_presid"
             android:layout_gravity="center_horizontal|center_vertical"
             android:layout_weight="0.2"
-            android:layout_width="40dp"
+            android:layout_width="35dp"
             android:layout_height="40dp"
              />
     </LinearLayout>
@@ -159,7 +159,7 @@
             android:id="@+id/img_pancard"
             android:layout_gravity="center_horizontal|center_vertical"
             android:layout_weight="0.2"
-            android:layout_width="40dp"
+            android:layout_width="35dp"
             android:layout_height="40dp"
              />
     </LinearLayout>
@@ -212,7 +212,7 @@
 
         <ImageView
             android:id="@+id/img_bank"
-            android:layout_width="40dp"
+            android:layout_width="35dp"
             android:layout_height="40dp"
             android:layout_gravity="center_horizontal|center_vertical"
             android:layout_weight="0.2"

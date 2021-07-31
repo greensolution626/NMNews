@@ -1,11 +1,51 @@
 package com.android.nmnewsagency.rest;
 
 
-
-import android.util.Log;
-
-import com.android.nmnewsagency.model.LoginModel;
-import com.android.nmnewsagency.model.LoginRegisterModel;
+import com.android.nmnewsagency.model.CountryModel;
+import com.android.nmnewsagency.modelclass.AddNewsModel;
+import com.android.nmnewsagency.modelclass.AddUserDocumentModel;
+import com.android.nmnewsagency.modelclass.DeleteCommentsModel;
+import com.android.nmnewsagency.modelclass.DeleteNewsByIdModel;
+import com.android.nmnewsagency.modelclass.GetCommentsModel;
+import com.android.nmnewsagency.modelclass.GetDocumentModel;
+import com.android.nmnewsagency.modelclass.GetFollowersModel;
+import com.android.nmnewsagency.modelclass.GetFollowingModel;
+import com.android.nmnewsagency.modelclass.GetNewsByIdModel;
+import com.android.nmnewsagency.modelclass.GetNewsListModel;
+import com.android.nmnewsagency.modelclass.GetProfileDataModel;
+import com.android.nmnewsagency.modelclass.GetTahsilModel;
+import com.android.nmnewsagency.modelclass.GetUserHashTagModel;
+import com.android.nmnewsagency.modelclass.GetUserOwnNewsModel;
+import com.android.nmnewsagency.modelclass.GetUserSaveNewsModel;
+import com.android.nmnewsagency.modelclass.LikeModelClass;
+import com.android.nmnewsagency.modelclass.LoginModel;
+import com.android.nmnewsagency.modelclass.NewVideoHashtagModelClass;
+import com.android.nmnewsagency.modelclass.NewVideoMentionModelClass;
+import com.android.nmnewsagency.modelclass.NewsCountModel;
+import com.android.nmnewsagency.modelclass.ReportModelClass;
+import com.android.nmnewsagency.modelclass.RequestModel.RequestAddComents;
+import com.android.nmnewsagency.modelclass.RequestModel.RequestAddNews;
+import com.android.nmnewsagency.modelclass.RequestModel.RequestFollow;
+import com.android.nmnewsagency.modelclass.RequestModel.RequestGetComments;
+import com.android.nmnewsagency.modelclass.RequestModel.RequestGetDocument;
+import com.android.nmnewsagency.modelclass.RequestModel.RequestGetNewsById;
+import com.android.nmnewsagency.modelclass.RequestModel.RequestGetNewsListingModel;
+import com.android.nmnewsagency.modelclass.RequestModel.RequestGetProfile;
+import com.android.nmnewsagency.modelclass.RequestModel.RequestGetSaveNews;
+import com.android.nmnewsagency.modelclass.RequestModel.RequestGetTahsil;
+import com.android.nmnewsagency.modelclass.RequestModel.RequestHashTag;
+import com.android.nmnewsagency.modelclass.RequestModel.RequestLike;
+import com.android.nmnewsagency.modelclass.RequestModel.RequestLoginModel;
+import com.android.nmnewsagency.modelclass.RequestModel.RequestReportModel;
+import com.android.nmnewsagency.modelclass.RequestModel.RequestSearchTopSaerch;
+import com.android.nmnewsagency.modelclass.RequestModel.RequestSetAddress;
+import com.android.nmnewsagency.modelclass.RequestModel.RequestuserOwnVideo;
+import com.android.nmnewsagency.modelclass.SaveModelClass;
+import com.android.nmnewsagency.modelclass.SearchTopSearchModel;
+import com.android.nmnewsagency.modelclass.SetAddressModelClass;
+import com.android.nmnewsagency.modelclass.UpdateProfileModel;
+import com.android.nmnewsagency.modelclass.UploadNewsModel;
+import com.android.nmnewsagency.pref.Prefrence;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,39 +53,246 @@ import java.util.Map;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.Body;
+import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.PartMap;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
-/**
- * Created by Vishnu Saini on 2/20/2018.
- * vishnusainideveloper27@gmail.com
- */
 
 public interface RestService {
-    @FormUrlEncoded
+    @Headers({"Content-Type: application/json"})
+  //  @FormUrlEncoded
     @POST(ApiUrls.URL_LOGIN)
-    Call<LoginModel> loginUser(@Field(ParaName.KEY_NAME) String userLogin,
-                               @Field(ParaName.KEY_EMAIL) String password,
-                               @Field(ParaName.KEY_DEVICE_ID) String deviceId,
-                               @Field(ParaName.KEY_DEVICE_TOKEN) String deviceToken,
-                               @Field(ParaName.KEY_DEVICE_TYPE) String deviceType,
-                               @Field(ParaName.KEY_PROFILEIAMGE) String userType,
-                               @Field(ParaName.KEY_LOGINPROVIDER) String provider
+    Call<LoginModel> loginUser(@Header("TokenId") String auth,
+                               @Body RequestLoginModel requestLoginModel
     );
-    @FormUrlEncoded
-    @POST(ApiUrls.URL_LOGIN)
-    Call<LoginRegisterModel> loginUser1(@Field(ParaName.KEY_PHONE_NO) String userLogin,
-                                        @Field(ParaName.KEY_PASSWORD) String password,
-                                        @Field(ParaName.KEY_DEVICE_ID) String deviceId,
-                                        @Field(ParaName.KEY_DEVICE_TOKEN) String deviceToken,
-                                        @Field(ParaName.KEY_DEVICE_TYPE) String deviceType,
-                                        @Field(ParaName.KEY_USER_TYPE) String userType
+
+    @Headers({"Content-Type: application/json"})
+  //  @FormUrlEncoded
+    @POST(ApiUrls.URL_fOLLOW)
+    Call<AddNewsModel> followUser(@Header("TokenId") String auth,
+                               @Body RequestFollow requestLoginModel
     );
-    /*@Multipart
+
+    @Headers({"Content-Type: application/json"})
+  //  @FormUrlEncoded
+    @POST(ApiUrls.URL_GETCOMMENTS)
+    Call<GetCommentsModel> commentsUser(@Header("TokenId") String auth,
+                                        @Body RequestGetComments requestLoginModel
+    );
+
+    @Headers({"Content-Type: application/json"})
+  //  @FormUrlEncoded
+    @POST(ApiUrls.URL_ADDCOMMENTS)
+    Call<ReportModelClass> AddcommentsUser(@Header("TokenId") String auth,
+                                        @Body RequestAddComents requestLoginModel
+    );
+
+    @Headers({"Content-Type: application/json"})
+  //  @FormUrlEncoded
+    @POST(ApiUrls.URL_REPORT)
+    Call<ReportModelClass> reportUser(@Header("TokenId") String auth,
+                                      @Body RequestReportModel requestLoginModel
+    );
+
+    @Headers({"Content-Type: application/json"})
+  //  @FormUrlEncoded
+    @POST(ApiUrls.URL_LIKE)
+    Call<LikeModelClass> LikeUser(@Header("TokenId") String auth,
+                                  @Body RequestLike requestLoginModel
+    );
+    @Headers({"Content-Type: application/json"})
+  //  @FormUrlEncoded
+    @POST(ApiUrls.URL_SAVE)
+    Call<SaveModelClass> SaveUser(@Header("TokenId") String auth,
+                                  @Body RequestLike requestLoginModel
+    );
+
+    @Headers({"Content-Type: application/json"})
+  //  @FormUrlEncoded
+    @POST(ApiUrls.URL_DELETESAVE)
+    Call<SaveModelClass> DeleteSaveUser(@Header("TokenId") String auth,
+                                  @Body RequestLike requestLoginModel
+    );
+
+    @Headers({"Content-Type: application/json"})
+  //  @FormUrlEncoded
+    @POST(ApiUrls.URL_DISLIKE)
+    Call<LikeModelClass> disLikeUser(@Header("TokenId") String auth,
+                                      @Body RequestLike requestLoginModel
+    );
+
+    @Headers({"Content-Type: application/json"})
+  //  @FormUrlEncoded
+    @POST(ApiUrls.URL_UNfOLLOW)
+    Call<AddNewsModel> UNfollowUser(@Header("TokenId") String auth,
+                               @Body RequestFollow requestLoginModel
+    );
+
+    @Headers({"Content-Type: application/json"})
+  //  @FormUrlEncoded
+    @POST(ApiUrls.URL_HASHtAG)
+    Call<NewVideoHashtagModelClass> HashTag(@Header("TokenId") String auth,
+                                                 @Body RequestHashTag requestLoginModel
+    );
+
+    @Headers({"Content-Type: application/json"})
+  //  @FormUrlEncoded
+    @POST(ApiUrls.URL_USERPROFILE)
+    Call<GetProfileDataModel> getProfile(@Header("TokenId") String auth,
+                                      @Body RequestGetProfile requestLoginModel
+    );
+    @Headers({"Content-Type: application/json"})
+  //  @FormUrlEncoded
+    @POST(ApiUrls.URL_GETUSEROWNNEWS)
+    Call<GetUserOwnNewsModel> getuserOwnVideo(@Header("TokenId") String auth,
+                                              @Body RequestuserOwnVideo requestLoginModel
+    );
+    @Headers({"Content-Type: application/json"})
+  //  @FormUrlEncoded
+    @POST(ApiUrls.URL_GETUSERHASHTAGNEWS)
+    Call<GetUserHashTagModel> getuserHashTagVideo(@Header("TokenId") String auth,
+                                              @Body RequestuserOwnVideo requestLoginModel
+    );
+
+    @Headers({"Content-Type: application/json"})
+  //  @FormUrlEncoded
+    @POST(ApiUrls.URL_GETUSERSAVENEWS)
+    Call<GetUserSaveNewsModel> getusersaveNews(@Header("TokenId") String auth,
+                                          @Body RequestGetSaveNews requestLoginModel
+    );
+
+    @Headers({"Content-Type: application/json"})
+  //  @FormUrlEncoded
+    @POST(ApiUrls.URL_MENTION)
+    Call<NewVideoMentionModelClass> Mention(@Header("TokenId") String auth,
+                                                 @Body RequestHashTag requestLoginModel
+    );
+    @Headers({"Content-Type: application/json"})
+    //  @FormUrlEncoded
+    @POST(ApiUrls.URL_GETLIST)
+    Call<GetNewsListModel> getList(@Header("TokenId") String auth,
+                                     @Body RequestGetNewsListingModel requestLoginModel
+    );
+
+    @Headers({"Content-Type: application/json"})
+    //  @FormUrlEncoded
+    @POST(ApiUrls.URL_GETUSERDOCUMENT)
+    Call<GetDocumentModel> getDocument(@Header("TokenId") String auth,
+                                       @Body RequestGetDocument requestLoginModel
+    );
+    @Headers({"Content-Type: application/json"})
+    //  @FormUrlEncoded
+    @POST(ApiUrls.URL_GETFOLLOWERS)
+    Call<GetFollowersModel> getFollowers(@Header("TokenId") String auth,
+                                         @Body RequestGetDocument requestLoginModel
+    );
+    @Headers({"Content-Type: application/json"})
+    //  @FormUrlEncoded
+    @POST(ApiUrls.URL_GETFOLOWING)
+    Call<GetFollowingModel> getFollowING(@Header("TokenId") String auth,
+                                         @Body RequestGetDocument requestLoginModel
+    );
+
+    @Headers({"Content-Type: application/json"})
+    //  @FormUrlEncoded
+    @POST(ApiUrls.URL_SETUSERADDRESS)
+    Call<SetAddressModelClass> setAddress(@Header("TokenId") String auth,
+                                          @Body RequestSetAddress requestLoginModel
+    );
+
+    @Headers({"Content-Type: application/json"})
+    //  @FormUrlEncoded
+    @POST(ApiUrls.URL_GETTAHSIL)
+    Call<GetTahsilModel> getTahsil(@Header("TokenId") String auth,
+                                    @Body RequestGetTahsil requestLoginModel
+    );
+    @Headers({"Content-Type: application/json"})
+    @GET(ApiUrls.GET_COUNTRY_TRUE)
+    Call<CountryModel> getCountryList(@Header("TokenId") String auth);
+
+    @Headers({"Content-Type: application/json"})
+    @GET("Region/GetStateByCountryId/true/{id}")
+    Call<CountryModel> getStateList(@Header("TokenId") String auth,
+                                    @Path("id") int id);
+
+    @Headers({"Content-Type: application/json"})
+    @GET("News/IncreaseNewsViewCount/{id}")
+    Call<NewsCountModel> setnewsCount(@Header("TokenId") String auth,
+                                      @Path("id") int id);
+
+    @Headers({"Content-Type: application/json"})
+    @POST(ApiUrls.GET_NEWSBYID)
+    Call<GetNewsByIdModel> getNewsById(@Header("TokenId") String auth,
+                                       @Body RequestGetNewsById requestLoginModel);
+
+    @Headers({"Content-Type: application/json"})
+    @POST(ApiUrls.GET_SEARCHTOPSESRCH)
+    Call<SearchTopSearchModel> getTopNewsSearch(@Header("TokenId") String auth,
+                                                @Body RequestSearchTopSaerch requestLoginModel);
+
+    @Headers({"Content-Type: application/json"})
+    @GET("News/DeleteNewsByNewsId/{id}")
+    Call<DeleteNewsByIdModel> getDeleteNewsById(@Header("TokenId") String auth,
+                                          @Path("id") int id);
+
+    @Headers({"Content-Type: application/json"})
+    @GET("Comment/DeleteComment/{id}")
+    Call<DeleteCommentsModel> deleteComments(@Header("TokenId") String auth,
+                                             @Path("id") int id);
+
+    @Headers({"Content-Type: application/json"})
+    @GET("Region/GetCityByStateId/{id}/true")
+    Call<CountryModel> getCityList(@Header("TokenId") String auth,
+                                    @Path("id") int id);
+
+    @Headers({"Content-Type: application/json"})
+    @GET("Region/GetTahsilByCityId/{id}/true")
+    Call<CountryModel> getTahsilList(@Header("TokenId") String auth,
+                                    @Path("id") int id);
+
+   // @Headers({"Content-Type: application/json"})
+    @Multipart
+    @POST(ApiUrls.UPLOADNEWS)
+    Call<UploadNewsModel> UploadNews(@Header("TokenId") String auth,
+                                     @Part MultipartBody.Part pic1);
+
+    @Multipart
+    @POST(ApiUrls.UPDATEPROFILE)
+    Call<UpdateProfileModel> updateProfile(@Header("TokenId") String auth,
+                                           @Part("FirstName") RequestBody fname,
+                                           @Part("LastName") RequestBody lname,
+                                           @Part("AboutMe") RequestBody aboutme,
+                                           @Part("UserId") RequestBody userid,
+                                           @Part("Avatar") RequestBody avtar,
+                                           @Part MultipartBody.Part imageresume);
+
+    @Multipart
+    @POST(ApiUrls.ADDUSERDOCUMENT)
+    Call<AddUserDocumentModel> addUserDoc(@Header("TokenId") String auth,
+                                             @Part("DocumentType") RequestBody doctype,
+                                             @Part("UserId") RequestBody userid,
+                                             @Part MultipartBody.Part imageresume);
+
+
+
+
+    @Headers({"Content-Type: application/json"})
+    //  @FormUrlEncoded
+    @POST(ApiUrls.SETADDNEWS)
+    Call<AddNewsModel> addNews(@Header("TokenId") String auth,
+                                 @Body RequestAddNews requestLoginModel
+    );
+
+
+
+  /*  @Multipart
     @POST(ApiUrls.URL_REGISTER)
     Call<UserRegisterModel> registerUser(@PartMap() Map<String, RequestBody> partMap,
                                          @Part MultipartBody.Part pic1);

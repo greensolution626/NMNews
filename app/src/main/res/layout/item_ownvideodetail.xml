@@ -25,17 +25,17 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="5dp">
 
-                <ImageView
-                    android:id="@+id/image_profile"
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/image_own_profile"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:layout_marginTop="5dp"
-                    android:src="@drawable/profileimage" />
+                    android:layout_marginTop="5dp" />
+
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/image_profile"
+                    android:layout_toRightOf="@+id/image_own_profile"
                     android:orientation="vertical"
                     android:padding="10dp">
 
@@ -45,6 +45,7 @@
                         android:orientation="horizontal">
 
                         <TextView
+                            android:id="@+id/txt_own_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/sarabun_semibold"
@@ -64,6 +65,7 @@
                     </LinearLayout>
 
                     <TextView
+                        android:id="@+id/txt_own_dddname"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/sarabun_regular"
@@ -75,36 +77,100 @@
             </RelativeLayout>
 
             <ImageView
+                android:layout_margin="10dp"
                 android:id="@+id/img_delete"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_gravity="end"
-                android:layout_marginRight="10dp"
                 android:src="@drawable/ic_group_7849" />
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginTop="5dp">
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@color/black">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="200dp"
-                android:scaleType="fitXY"
-                android:src="@drawable/homeimagevideo" />
-
-            <ImageView
-                android:layout_width="fill_parent"
+            <FrameLayout
+                android:id="@+id/frME_TOP"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:src="@drawable/ic_play" />
+                android:layout_marginTop="5dp">
 
+                <VideoView
+                    android:id="@+id/vid_own"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:scaleType="centerCrop"
+                    android:visibility="visible" />
+
+                <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+                    android:id="@+id/idExoPlayerVIew"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:visibility="gone"
+                    app:resize_mode="fixed_width" />
+
+                <ImageView
+                    android:id="@+id/video_thuimbnail"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/img_playpause"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:src="@drawable/ic_pause_circle_filled_black_24dp"
+                    android:visibility="invisible" />
+
+
+            </FrameLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/frME_TOP"
+                android:layout_gravity="bottom"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:id="@+id/current"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="00.00"
+                    android:textColor="@color/white"
+                    android:visibility="visible" />
+
+                <SeekBar
+                    android:id="@+id/seekbar"
+                    style="@style/Base.Widget.AppCompat.SeekBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/total"
+                    android:layout_toRightOf="@+id/current"
+                    android:layout_weight="1"
+                    android:theme="@style/SeekBar" />
+
+                <TextView
+                    android:id="@+id/total"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp"
+                    android:text="00.00"
+                    android:textColor="@color/white"
+                    android:visibility="visible" />
+            </RelativeLayout>
         </RelativeLayout>
 
         <TextView
+            android:id="@+id/txt_owndescription"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
@@ -128,6 +194,7 @@
                 android:src="@drawable/ic_view" />
 
             <TextView
+                android:id="@+id/txt_ownviewsqq"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
@@ -145,8 +212,9 @@
                 android:src="@drawable/ic_ellipse_467" />
 
             <TextView
+                android:id="@+id/txt_ownlocation"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="15dp"
                 android:fontFamily="@font/sarabun_regular"
@@ -162,6 +230,7 @@
                 android:src="@drawable/ic_ellipse_467" />
 
             <TextView
+                android:id="@+id/txt_owndatetime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
@@ -197,6 +266,7 @@
                     android:orientation="vertical">
 
                     <ImageView
+                        android:id="@+id/img_ownlike"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:layout_gravity="center_horizontal"
@@ -204,6 +274,7 @@
                         tools:ignore="VectorDrawableCompat" />
 
                     <TextView
+                        android:id="@+id/txt_ownlike"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
@@ -221,6 +292,7 @@
                     android:orientation="vertical">
 
                     <ImageView
+                        android:id="@+id/img_owncoments"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:layout_gravity="center_horizontal"
@@ -228,6 +300,7 @@
                         tools:ignore="VectorDrawableCompat" />
 
                     <TextView
+                        android:id="@+id/txt_owncoments"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
@@ -245,6 +318,7 @@
                     android:orientation="vertical">
 
                     <ImageView
+                        android:id="@+id/img_ownshare"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:layout_gravity="center_horizontal"
@@ -252,6 +326,7 @@
                         tools:ignore="VectorDrawableCompat" />
 
                     <TextView
+                        android:id="@+id/txt_ownshare"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
@@ -261,6 +336,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:visibility="gone"
                     android:id="@+id/lin_create"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"

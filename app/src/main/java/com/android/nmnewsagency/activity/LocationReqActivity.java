@@ -15,12 +15,18 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.nmnewsagency.R;
+import com.android.nmnewsagency.model.CountryModel;
+import com.android.nmnewsagency.modelclass.GetTahsilModel;
+import com.android.nmnewsagency.modelclass.SetAddressModelClass;
+import com.android.nmnewsagency.pref.Prefrence;
+import com.android.nmnewsagency.rest.Rest;
 import com.android.nmnewsagency.utils.Utils;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -39,7 +45,11 @@ import androidx.core.content.ContextCompat;
 import java.util.List;
 import java.util.Locale;
 
-public class LocationReqActivity extends AppCompatActivity {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class LocationReqActivity extends AppCompatActivity implements Callback<Object> {
     private static final int MY_CAMERA_REQUEST_CODE = 22222;
     Button but_loc_manually, but_selfloc;
     TextView txt_loc_manually;
@@ -49,13 +59,15 @@ public class LocationReqActivity extends AppCompatActivity {
     LocationCallback mLocationCallback;
     protected Location mLastLocation;
     ProgressDialog dlg = null;
-    static String city;
+    static String city, address, state, country, postalCode, knownName, houseno, addrs1, latsend, lngsend,tahsil;
+    Rest rest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         overridePendingTransition(R.anim.enter, R.anim.exit);
         setContentView(R.layout.activity_location_req);
+        rest = new Rest(this, this);
         iniIt();
     }
 
@@ -233,25 +245,53 @@ public class LocationReqActivity extends AppCompatActivity {
         } catch (Exception e) {
         }
         if (addresses != null) {
-            String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+            address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
             city = addresses.get(0).getLocality();
-            String state = addresses.get(0).getAdminArea();
-            String country = addresses.get(0).getCountryName();
-            String postalCode = addresses.get(0).getPostalCode();
-            String knownName = addresses.get(0).getSubLocality();
+            state = addresses.get(0).getAdminArea();
+            country = addresses.get(0).getCountryName();
+            postalCode = addresses.get(0).getPostalCode();
+            knownName = addresses.get(0).getSubLocality();
+            houseno = addresses.get(0).getFeatureName();
+            addrs1 = addresses.get(0).getSubLocality();
+            latsend = String.valueOf(addresses.get(0).getLatitude());
+            lngsend = String.valueOf(addresses.get(0).getLongitude());
 
+            Prefrence.setCityName(city);
+            Prefrence.setCountryName(country);
+            Prefrence.setStateName(state);
+            //  Prefrence.settahsil("");
+            Prefrence.setCountryId("");
+            Prefrence.setCityIdd("");
+            Prefrence.setStateIdd("");
+            Prefrence.settahsilIdd("");
             String knownName1 = addresses.get(0).getAdminArea();
             String knownName2 = addresses.get(0).getSubAdminArea();
             dlg.dismiss();
-            goNextAct();
+            callServicesetgetTahsil(city, latsend, lngsend);
+            //  callServicesetAddress(address,city,state,country,postalCode,houseno,addrs1,latsend,lngsend);
+            // goNextAct();
         } else {
             Toast.makeText(LocationReqActivity.this, "Sorry we are not getting your current location !", Toast.LENGTH_SHORT).show();
         }// Only if available else return NULL
     }
 
+    private void callServicesetAddress(String address, String city, String state, String country,
+                                       String postalCode, String houseno, String addrs1, String latSend, String lngSend, String tahsil) {
+        rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
+        rest.setUserAddress(addrs1, "", "APP", "", 0, "", 0, Prefrence.getFirstName(),
+                city, country, address, state, houseno, String.valueOf(Prefrence.getisLocationMatch()), "true", Prefrence.getLastName(), latSend, lngSend, 0, 0,
+                Prefrence.getUserId(), postalCode,tahsil);
+    }
+
+    private void callServicesetgetTahsil(String city, String lat, String lng) {
+        rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
+        rest.setUserTahsil(city, lat, lng);
+    }
+
+
     public void goNextAct() {
         Intent intent = new Intent(LocationReqActivity.this, SelfLocationActivity.class);
-        intent.putExtra("city", city);
+        intent.putExtra("city", tahsil);
         startActivity(intent);
     }
 
@@ -261,7 +301,7 @@ public class LocationReqActivity extends AppCompatActivity {
         switch (requestCode) {
             case MY_CAMERA_REQUEST_CODE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                 //   Toast.makeText(getApplicationContext(), "Permission Granted", Toast.LENGTH_SHORT).show();
+                    //   Toast.makeText(getApplicationContext(), "Permission Granted", Toast.LENGTH_SHORT).show();
                     showProgress();
                     getLastLocation();
                     // main logic
@@ -295,5 +335,42 @@ public class LocationReqActivity extends AppCompatActivity {
                 .setNegativeButton("Cancel", null)
                 .create()
                 .show();
+    }
+
+    @Override
+    public void onResponse(Call<Object> call, Response<Object> response) {
+        rest.dismissProgressdialog();
+        if (response.isSuccessful()) {
+            Object obj = response.body();
+            Log.e("nmnnn", String.valueOf(obj));
+            if (obj instanceof SetAddressModelClass) {
+                SetAddressModelClass loginModel = (SetAddressModelClass) obj;
+                if (loginModel.isStatus()) {
+                    goNextAct();
+                }
+            }
+        }
+        if (response.isSuccessful()) {
+            Object obj = response.body();
+            Log.e("nmnnn", String.valueOf(obj));
+            if (obj instanceof GetTahsilModel) {
+                GetTahsilModel loginModel = (GetTahsilModel) obj;
+                if (loginModel.isStatus()) {
+                    tahsil=loginModel.getData();
+                    Prefrence.setisLocationMatch(loginModel.isStatus());
+                    Prefrence.settahsil(loginModel.getData());
+                    callServicesetAddress(address,city,state,country,postalCode,houseno,addrs1,latsend,lngsend,loginModel.getData());
+                }else{
+                    tahsil="";
+                    Prefrence.setisLocationMatch(loginModel.isStatus());
+                    callServicesetAddress(address,city,state,country,postalCode,houseno,addrs1,latsend,lngsend,"");
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onFailure(Call<Object> call, Throwable t) {
+
     }
 }

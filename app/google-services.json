@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "230002452151",
+    "project_id": "nmnewsagency-24e4e",
+    "storage_bucket": "nmnewsagency-24e4e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:230002452151:android:d23ccca8490a04c2b30f32",
+        "android_client_info": {
+          "package_name": "com.android.nmnewsagency"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "230002452151-9qh82ft9404hgn3ikeiqki4di38t8hen.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBK-5dzVJyLv1qy7qRvNz2VoPVlccdb3J4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "230002452151-9qh82ft9404hgn3ikeiqki4di38t8hen.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

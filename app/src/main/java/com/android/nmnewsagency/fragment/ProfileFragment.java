@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,42 +33,68 @@ import com.android.nmnewsagency.activity.EditProfileActivity;
 import com.android.nmnewsagency.activity.FollowersActivituy;
 import com.android.nmnewsagency.activity.FollowingActivituy;
 import com.android.nmnewsagency.activity.MessageActivity;
+import com.android.nmnewsagency.activity.OwnVideoDetailActivity;
 import com.android.nmnewsagency.activity.PerformanceReporter;
 import com.android.nmnewsagency.activity.SettingActivity;
 import com.android.nmnewsagency.activity.UploadDocumentActivity;
 import com.android.nmnewsagency.activity.UserProfileActivity;
+import com.android.nmnewsagency.adapter.GetUserHashNewsAdapter;
+import com.android.nmnewsagency.adapter.GetUserOwnNewsAdapter;
+import com.android.nmnewsagency.adapter.GetUserSaveNewsAdapter;
 import com.android.nmnewsagency.adapter.HashTagDetailAdapter;
-import com.android.nmnewsagency.adapter.ProfileAdapter;
 import com.android.nmnewsagency.listner.RecyclerTouchListener;
+import com.android.nmnewsagency.model.CountryModel;
+import com.android.nmnewsagency.modelclass.GetProfileDataModel;
+import com.android.nmnewsagency.modelclass.GetUserHashTagModel;
+import com.android.nmnewsagency.modelclass.GetUserOwnNewsModel;
+import com.android.nmnewsagency.modelclass.GetUserSaveNewsModel;
+import com.android.nmnewsagency.pref.Prefrence;
+import com.android.nmnewsagency.rest.Rest;
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class ProfileFragment extends Fragment implements View.OnClickListener {
+public class ProfileFragment extends Fragment implements View.OnClickListener, Callback<Object> {
     View view;
     RecyclerView recyclerView;
-    ProfileAdapter locationAdapter;
-    //  List<LocationModel> arrayList;
-    List<String> arrayList;
+    GetUserSaveNewsAdapter locationAdapter;
+    GetUserOwnNewsAdapter locationAdapter1;
+    GetUserHashNewsAdapter locationAdapter2;
+    List<GetUserSaveNewsModel.DataBeanX.DataBean.PagedRecordBean> arrayList;
+    List<GetUserOwnNewsModel.DataBeanX.DataBean.PagedRecordBean> arrayListOwn;
+    List<GetUserHashTagModel.DataBeanX.DataBean.PagedRecordBean> arrayListHash;
     List<Integer> imAGE;
     RelativeLayout rel_mesage, rel_covrage_quality, rel_upload_doc;
     FrameLayout frame_editprofile;
     LinearLayout lin_folowing, lin_folowers, lin_profile_video,
             lin_profile_share, lin_profile_contact, lin_profile_video_video;
     ImageView image_setting, img_profile_video_video,
-            img_profile_contact, img_profile_share, img_profile_video;
+            img_profile_contact, img_profile_share, img_profile_video, img_profile;
     Animation myAnim;
-    SharedPreferences sh;
-    TextView txt_nodata_profile;
+    TextView txt_nodata_profile, text_name, txt_gat, txt_profilefolowinmg, txt_profilefolow, txt_aboutus,
+            txt_userid,txt_covragescore,txt_hashvideo,txt_savevideo,txt_ownvideo;
+    Rest rest;
+    GetProfileDataModel.DataBean.AspNetUserBean dataBean;
+    String typeWhich="own";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_profile, container, false);
-        sh = getActivity().getSharedPreferences("MySharedPref", MODE_PRIVATE);
+        iniT();
+        return view;
+    }
 
+    private void iniT() {
+        rest = new Rest(getActivity(), this);
         myAnim = AnimationUtils.loadAnimation(getActivity(), R.anim.bounce);
         recyclerView = (RecyclerView) view.findViewById(R.id.recy_profile);
         rel_mesage = (RelativeLayout) view.findViewById(R.id.rel_mesage);
@@ -86,30 +114,45 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         img_profile_contact = (ImageView) view.findViewById(R.id.img_profile_contact);
         img_profile_share = (ImageView) view.findViewById(R.id.img_profile_share);
         img_profile_video = (ImageView) view.findViewById(R.id.img_profile_video);
+        img_profile = (ImageView) view.findViewById(R.id.img_profile);
         txt_nodata_profile = (TextView) view.findViewById(R.id.txt_nodata_profile);
-
-
+        txt_covragescore = (TextView) view.findViewById(R.id.txt_covragescore);
+        txt_gat = (TextView) view.findViewById(R.id.txt_gat);
+        txt_profilefolow = (TextView) view.findViewById(R.id.txt_profilefolow);
+        txt_profilefolowinmg = (TextView) view.findViewById(R.id.txt_profilefolowinmg);
+        text_name = (TextView) view.findViewById(R.id.text_name);
+        txt_aboutus = (TextView) view.findViewById(R.id.txt_aboutus);
+        txt_userid = (TextView) view.findViewById(R.id.txt_userid);
+        txt_hashvideo = (TextView) view.findViewById(R.id.txt_hashvideo);
+        txt_savevideo = (TextView) view.findViewById(R.id.txt_savevideo);
+        txt_ownvideo = (TextView) view.findViewById(R.id.txt_ownvideo);
+       /* if (!Prefrence.getName().equals("") && Prefrence.getName() != null) {
+           // text_name.setText(Prefrence.getName());
+        }*/
         iNiTonClick();
-        inItItemRecycle();
-        return view;
+
+        // inItItemRecycle();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-       /* String s1 = sh.getString("whichone", "");
-        if (s1.equals("")) {
-            rel_covrage_quality.setVisibility(View.GONE);
-            rel_upload_doc.setVisibility(View.GONE);
-        }
-        if (s1.equals("user")) {
-            rel_covrage_quality.setVisibility(View.GONE);
-            rel_upload_doc.setVisibility(View.GONE);
-        }
-        if (s1.equals("reporter")) {
-            rel_covrage_quality.setVisibility(View.VISIBLE);
-            rel_upload_doc.setVisibility(View.VISIBLE);
-        }*/
+        callServicegetProfiel();
+    }
+
+    private void callServicegetProfiel() {
+        rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
+        rest.getProfileList();
+    }
+
+    private void callServicegetUserOwnNews() {
+        rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
+        rest.getuserOwnVideo();
+    }
+
+    private void callServicegetHashtagVideo() {
+        rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
+        rest.getuserHashtagVideo(Prefrence.getUserId());
     }
 
     private void iNiTonClick() {
@@ -127,28 +170,36 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         lin_profile_video.setOnClickListener(this);
     }
 
-    private void inItItemRecycle() {
-        arrayList = new ArrayList<>();
-        imAGE = new ArrayList<>();
-        imAGE.add(R.drawable.profileimage);
-        imAGE.add(R.drawable.profileimage1);
-        imAGE.add(R.drawable.profileimage2);
-        imAGE.add(R.drawable.profileimage3);
-        imAGE.add(R.drawable.profileimage4);
-        imAGE.add(R.drawable.profileimage5);
-        arrayList.add("");
-        arrayList.add("");
-        locationAdapter = new ProfileAdapter(getActivity(), arrayList, imAGE);
+    private void inItItemRecycle(String type) {
+        if (type.equals("save")) {
+            locationAdapter = new GetUserSaveNewsAdapter(getActivity(), arrayList);
+            recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
+            recyclerView.setNestedScrollingEnabled(true);
+            recyclerView.setAdapter(locationAdapter);
+        }
+       else  if (type.equals("own")) {
+            locationAdapter1 = new GetUserOwnNewsAdapter(getActivity(), arrayListOwn);
+            recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
+            recyclerView.setNestedScrollingEnabled(true);
+            recyclerView.setAdapter(locationAdapter1);
+        }
+        else if (type.equals("hash")) {
+            locationAdapter2 = new GetUserHashNewsAdapter(getActivity(), arrayListHash);
+            recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
+            recyclerView.setNestedScrollingEnabled(true);
+            recyclerView.setAdapter(locationAdapter2);
+        }
 
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setNestedScrollingEnabled(true);
-        recyclerView.setAdapter(locationAdapter);
+
 
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                // Movie movie = movieList.get(position);
+
+
             }
 
             @Override
@@ -180,6 +231,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             case R.id.frame_editprofile:
                 frame_editprofile.startAnimation(myAnim);
                 Intent intent3 = new Intent(getActivity(), EditProfileActivity.class);
+                intent3.putExtra("profileimage", dataBean.getAvatar());
+                intent3.putExtra("firstname", dataBean.getFirstName());
+                intent3.putExtra("lastname", dataBean.getLastName());
+                intent3.putExtra("aboutme", (String) dataBean.getAboutMe());
                 startActivity(intent3);
                 break;
             case R.id.lin_folowers:
@@ -198,26 +253,37 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 startActivity(intent6);
                 break;
             case R.id.lin_profile_video:
-                txt_nodata_profile.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.VISIBLE);
+                // txt_nodata_profile.setVisibility(View.GONE);
+                // recyclerView.setVisibility(View.VISIBLE);
                 changebagroundimagebycondition(img_profile_video, img_profile_share, img_profile_contact, img_profile_video_video);
+                typeWhich="own";
+                callServicegetUserOwnNews();
                 break;
             case R.id.lin_profile_share:
-                txt_nodata_profile.setVisibility(View.VISIBLE);
-                recyclerView.setVisibility(View.GONE);
+                //  txt_nodata_profile.setVisibility(View.VISIBLE);
+                //  recyclerView.setVisibility(View.GONE);
                 changebagroundimagebycondition1(img_profile_video, img_profile_share, img_profile_contact, img_profile_video_video);
+                typeWhich="save";
+                callServicegetUserSaveVideo();
                 break;
             case R.id.lin_profile_contact:
-                txt_nodata_profile.setVisibility(View.VISIBLE);
-                recyclerView.setVisibility(View.GONE);
+                //  txt_nodata_profile.setVisibility(View.VISIBLE);
+                //  recyclerView.setVisibility(View.GONE);
                 changebagroundimagebycondition2(img_profile_video, img_profile_share, img_profile_contact, img_profile_video_video);
+                typeWhich="hash";
+                callServicegetHashtagVideo();
                 break;
             case R.id.lin_profile_video_video:
-                txt_nodata_profile.setVisibility(View.VISIBLE);
-                recyclerView.setVisibility(View.GONE);
+                // txt_nodata_profile.setVisibility(View.VISIBLE);
+                // recyclerView.setVisibility(View.GONE);
                 changebagroundimagebycondition3(img_profile_video, img_profile_share, img_profile_contact, img_profile_video_video);
                 break;
         }
+    }
+
+    private void callServicegetUserSaveVideo() {
+        rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
+        rest.getusersaveNews(Prefrence.getUserId());
     }
 
     public void changebagroundimagebycondition(ImageView view1, ImageView view2,
@@ -333,4 +399,72 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     }
 
+    @Override
+    public void onResponse(Call<Object> call, Response<Object> response) {
+        rest.dismissProgressdialog();
+        if (response.isSuccessful()) {
+            Object obj = response.body();
+            Log.e("nmnnn", String.valueOf(obj));
+            if (obj instanceof GetProfileDataModel) {
+                GetProfileDataModel loginModel = (GetProfileDataModel) obj;
+                if (loginModel.isStatus()) {
+                    this.dataBean = loginModel.getData().getAspNetUser();
+                    setDTaontextView(loginModel.getData().getAspNetUser());
+                }
+            }
+            if (obj instanceof GetUserSaveNewsModel) {
+                GetUserSaveNewsModel loginModel = (GetUserSaveNewsModel) obj;
+                if (loginModel.isStatus()) {
+                    arrayList = loginModel.getData().getData().getPagedRecord();
+                    inItItemRecycle("save");
+                }
+            }
+            if (obj instanceof GetUserOwnNewsModel) {
+                GetUserOwnNewsModel loginModel = (GetUserOwnNewsModel) obj;
+                if (loginModel.isStatus()) {
+                    arrayListOwn = loginModel.getData().getData().getPagedRecord();
+                    inItItemRecycle("own");
+                }
+            }
+            if (obj instanceof GetUserHashTagModel) {
+                GetUserHashTagModel loginModel = (GetUserHashTagModel) obj;
+                if (loginModel.isStatus()) {
+                    arrayListHash = loginModel.getData().getData().getPagedRecord();
+                    inItItemRecycle("hash");
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onFailure(Call<Object> call, Throwable t) {
+
+    }
+
+    public void setDTaontextView(GetProfileDataModel.DataBean.AspNetUserBean aspNetUser) {
+        text_name.setText(aspNetUser.getFullName());
+        txt_userid.setText("@" + aspNetUser.getUserName());
+        txt_profilefolow.setText(aspNetUser.getFollowersSuffix());
+        txt_ownvideo.setText(String.valueOf(aspNetUser.getNewsCount()));
+        txt_savevideo.setText(String.valueOf(aspNetUser.getSavedNewsCount()));
+        txt_hashvideo.setText(String.valueOf(aspNetUser.getUserTagVideo()));
+        txt_profilefolowinmg.setText(aspNetUser.getFollowingsSuffix());
+        txt_covragescore.setText(String.valueOf(aspNetUser.getProfile_Score())+"%");
+        if (aspNetUser.getAboutMe() != null) {
+            txt_aboutus.setText((String) aspNetUser.getAboutMe());
+        }
+        if (aspNetUser.getAvatar() != null) {
+            if (!aspNetUser.getAvatar().equals("null")) {
+                Glide.with(requireActivity())
+                        .load(aspNetUser.getAvatar())
+                        .into(img_profile);
+               /* new Handler().post(new Runnable() {
+                    public void run() {
+
+                    }
+                });*/
+            }
+        }
+        callServicegetUserOwnNews();
+    }
 }

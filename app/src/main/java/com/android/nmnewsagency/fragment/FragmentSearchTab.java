@@ -46,9 +46,10 @@ public class FragmentSearchTab extends Fragment {
         listFragment.add(FragmentSearchTopTab.newInstance());
         listFragment.add(FragmentSearchTopTab.newInstance());
 
-        PagerTabHashTagAdapter adapter = new PagerTabHashTagAdapter(getActivity().getSupportFragmentManager(), listFragment, listTab);
+        /*PagerTabHashTagAdapter adapter = new PagerTabHashTagAdapter(getActivity().getSupportFragmentManager(), listFragment, listTab);
         viewPager.setAdapter(adapter);
-        tabLayout.setViewPager(viewPager, adapter);     return view;
+        tabLayout.setViewPager(viewPager, adapter);  */
+        return view;
     }
 
 

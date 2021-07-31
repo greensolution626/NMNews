@@ -19,6 +19,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.nmnewsagency.R;
 import com.android.nmnewsagency.adapter.LocationAdapter;
 import com.android.nmnewsagency.listner.RecyclerTouchListener;
+import com.android.nmnewsagency.model.CountryModel;
+import com.android.nmnewsagency.modelclass.CountryList;
+import com.android.nmnewsagency.modelclass.LoginModel;
+import com.android.nmnewsagency.pref.Prefrence;
+import com.android.nmnewsagency.rest.ApiUrls;
+import com.android.nmnewsagency.rest.Rest;
 import com.google.android.gms.common.api.Status;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
@@ -30,30 +36,43 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class FragmentCountry extends Fragment {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class FragmentCountry extends Fragment implements Callback<Object> {
     View view;
     RecyclerView recyclerView;
     LocationAdapter locationAdapter;
     //  List<LocationModel> arrayList;
-    List<String> arrayList;
+    List<CountryModel.DataBean> arrayList;
     ImageView iamge_back_country;
     EditText search_edit;
     String apiKey = "AIzaSyAlVPWqpH2XbSPRBAuxYmlCougC0k5-stA";
     LinearLayout lin_recycled;
     FrameLayout frame_search;
+    Rest rest;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_first_select_location, container, false);
+        iniIt();
+
+        return view;
+    }
+
+    private void iniIt() {
+        rest = new Rest(getActivity(), this);
         recyclerView = (RecyclerView) view.findViewById(R.id.recy_loc);
         iamge_back_country = (ImageView) view.findViewById(R.id.iamge_back_country);
         search_edit = (EditText) view.findViewById(R.id.search_edit);
         frame_search = (FrameLayout) view.findViewById(R.id.frame_search);
         lin_recycled = (LinearLayout) view.findViewById(R.id.lin_recycled);
-        arrayList = new ArrayList<>();
-        inItListData();
-        inItItemRecycle();
+      //  arrayList = new ArrayList<>();
+        callSefrvice();
+        //inItListData();
+        // inItItemRecycle();
         iamge_back_country.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,23 +82,22 @@ public class FragmentCountry extends Fragment {
         search_edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // iniLizedSearch();
-               // frame_search.setVisibility(View.VISIBLE);
-               // lin_recycled.setVisibility(View.GONE);
+                // iniLizedSearch();
+                // frame_search.setVisibility(View.VISIBLE);
+                // lin_recycled.setVisibility(View.GONE);
             }
         });
-        return view;
     }
 
-    private void inItListData() {
-        arrayList.add("India");
-        arrayList.add("Bangladesh");
-        arrayList.add("Nepal");
-        arrayList.add("Sri Lanka");
+    private void callSefrvice() {
+        rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
+        rest.getCountryList();
     }
 
     private void inItItemRecycle() {
-        locationAdapter = new LocationAdapter(getActivity(),arrayList);
+        if (arrayList != null) {
+
+        locationAdapter = new LocationAdapter(getActivity(), arrayList);
 
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -88,15 +106,11 @@ public class FragmentCountry extends Fragment {
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                // Movie movie = movieList.get(position);
-               // Toast.makeText(getActivity(), arrayList.get(position) + " is selected!", Toast.LENGTH_SHORT).show();
-
                 Bundle bundle = new Bundle();
-                bundle.putString("key",arrayList.get(position) ); // Put anything what you want
-
+                bundle.putInt("countryId",arrayList.get(position).getId());
+                bundle.putString("countryNmae",arrayList.get(position).getName());
                 FragmentState fragment2 = new FragmentState();
                 fragment2.setArguments(bundle);
-
                 getFragmentManager()
                         .beginTransaction().addToBackStack("")
                         .add(R.id.frame_loc, fragment2)
@@ -108,13 +122,17 @@ public class FragmentCountry extends Fragment {
 
             }
         }));
+        } else {
+            Toast.makeText(getActivity(), "No Country Available", Toast.LENGTH_SHORT).show();
+        }
     }
+
     private void closefragment() {
         getActivity().finish();
     }
 
 
-    public void iniLizedSearch(){
+    public void iniLizedSearch() {
         if (!Places.isInitialized()) {
             Places.initialize(getActivity().getApplicationContext(), apiKey);
         }
@@ -139,5 +157,26 @@ public class FragmentCountry extends Fragment {
             }
         });
     }
+
+    @Override
+    public void onResponse(Call<Object> call, Response<Object> response) {
+        rest.dismissProgressdialog();
+        if (response.isSuccessful()) {
+            Object obj = response.body();
+            Log.e("nmnnn",String.valueOf(obj));
+            if (obj instanceof CountryModel) {
+                CountryModel loginModel = (CountryModel) obj;
+                if (loginModel.isStatus()) {
+                    arrayList=loginModel.getData();
+                    inItItemRecycle();
+                }
+            }
+        }
     }
+
+    @Override
+    public void onFailure(Call<Object> call, Throwable t) {
+
+    }
+}
 

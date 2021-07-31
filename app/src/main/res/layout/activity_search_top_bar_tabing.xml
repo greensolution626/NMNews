@@ -4,36 +4,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/white"
+    android:orientation="vertical"
     tools:context=".fragment.FragmentSearchTab">
+
     <LinearLayout
-        android:background="@color/white"
-        android:layout_marginTop="20dp"
         android:id="@+id/lin_searchwithedit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
         android:layout_marginRight="20dp"
+        android:background="@color/white"
+        android:orientation="horizontal"
         android:visibility="visible"
         tools:context=".fragment.HomeFragment">
 
         <ImageView
-            android:background="?android:attr/selectableItemBackground"
             android:id="@+id/iamge_back_searchtopbar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal|center_vertical"
+            android:background="?android:attr/selectableItemBackground"
             app:srcCompat="@drawable/ic_iconly_light_arrow___left"
             tools:ignore="VectorDrawableCompat" />
 
         <EditText
-            android:imeOptions="actionDone"
-            android:singleLine="true"
-            android:textSize="15sp"
-            android:paddingLeft="5dp"
-            android:padding="10dp"
             android:id="@+id/search_edit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -41,13 +37,18 @@
             android:background="@drawable/searchtopbar"
             android:fontFamily="@font/sarabun_regular"
             android:hint="@string/searchitem"
-            />
+            android:imeOptions="actionDone"
+            android:padding="10dp"
+            android:paddingLeft="5dp"
+            android:singleLine="true"
+            android:textSize="15sp" />
     </LinearLayout>
+
     <com.athbk.slidingtablayout.TabLayout
-        android:layout_marginTop="10dp"
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:background="@color/white"
         app:tabTextColor="@color/locbutonbag"
         app:tab_orientation="horizontal"

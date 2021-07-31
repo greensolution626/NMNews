@@ -19,20 +19,16 @@ import com.android.nmnewsagency.activity.CommentsActivity;
 import com.android.nmnewsagency.activity.MessageDetailActivity;
 import com.android.nmnewsagency.activity.UserOwnDegtailProfileActivity;
 import com.android.nmnewsagency.activity.UserProfileActivity;
+import com.android.nmnewsagency.modelclass.GetNewsByIdModel;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.List;
 
 public class OwnVideoDetailAdapter extends RecyclerView.Adapter<OwnVideoDetailAdapter.MyViewHolder> {
-    // private List<LocationModel> moviesList;
-    private List<String> moviesList;
+    private List<GetNewsByIdModel.DataBean> moviesList;
     Context context;
 
-    /*public LocationAdapter(List<LocationModel> moviesList) {
-        this.moviesList = moviesList;
-    }*/
-
-    public OwnVideoDetailAdapter(Context context, List<String> moviesList) {
+    public OwnVideoDetailAdapter(Context context, List<GetNewsByIdModel.DataBean> moviesList) {
         this.moviesList = moviesList;
         this.context = context;
     }
@@ -104,7 +100,7 @@ public class OwnVideoDetailAdapter extends RecyclerView.Adapter<OwnVideoDetailAd
         holder.img_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               openDialogBoxDelete();
+                openDialogBoxDelete();
             }
         });
     }
@@ -126,6 +122,7 @@ public class OwnVideoDetailAdapter extends RecyclerView.Adapter<OwnVideoDetailAd
 
         bottomSheetDialog.show();
     }
+
     private void openDialogBoxDelete() {
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
         bottomSheetDialog.setContentView(R.layout.dialog_delete);

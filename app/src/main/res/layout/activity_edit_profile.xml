@@ -14,16 +14,15 @@
         <RelativeLayout
             android:id="@+id/rel_top_upload"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="14dp">
+            android:layout_height="wrap_content">
 
             <ImageView
-                android:background="?android:attr/selectableItemBackground"
                 android:id="@+id/iamge_back_editprofile"
                 android:layout_width="40dp"
                 android:layout_height="35dp"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="0dp"
+                android:layout_marginLeft="12dp"
+                android:background="?android:attr/selectableItemBackground"
                 app:srcCompat="@drawable/ic_iconly_light_arrow___left__2_"
                 tools:ignore="VectorDrawableCompat" />
 
@@ -53,7 +52,9 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerInParent="true"
+                android:layout_margin="20dp"
                 android:layout_marginRight="5dp"
+                android:background="?android:attr/selectableItemBackground"
                 android:fontFamily="@font/sarabun_bold"
                 android:singleLine="true"
                 android:text="@string/save"
@@ -75,7 +76,8 @@
             android:layout_gravity="center_horizontal|center_vertical"
             android:layout_marginTop="45dp">
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/img_editprofile"
                 android:layout_width="190dp"
                 android:layout_height="190dp"
                 android:src="@drawable/profileimageprofile" />
@@ -99,6 +101,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_frstname"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@null"
@@ -129,6 +132,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_surname"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@null"
@@ -159,6 +163,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_aboutme"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@null"

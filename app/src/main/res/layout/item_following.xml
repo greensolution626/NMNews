@@ -2,29 +2,29 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="10dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="10dp">
 
     <LinearLayout
-        android:background="?android:attr/selectableItemBackground"
-        android:id="@+id/lin_folower"
         android:layout_width="match_parent"
+
         android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
         android:orientation="horizontal"
         android:weightSum="3">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/lin_folower"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1.4"
+            android:layout_weight="1.1"
             android:orientation="horizontal">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/img_folow"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_gravity="center_horizontal|center_vertical"
-                />
+                android:layout_gravity="center_horizontal|center_vertical" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -33,15 +33,17 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:textStyle="bold"
+                    android:id="@+id/txt_folwingname"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:singleLine="true"
-                    android:text="Ramesh Kumar"
+                    android:text="national media news jaipur"
                     android:textColor="@color/loctitle"
-                    android:textSize="18sp" />
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/txt_folwingusername"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
 
@@ -53,11 +55,12 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-
                     android:singleLine="true"
+
                     android:text="7 km away"
                     android:textColor="@color/locsubtitle"
-                    android:textSize="13sp" />
+                    android:textSize="13sp"
+                    android:visibility="gone" />
 
             </LinearLayout>
         </LinearLayout>
@@ -66,24 +69,29 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal|center_vertical"
-            android:layout_weight="1.6">
+            android:layout_weight="1.9">
 
             <RelativeLayout
-                android:layout_width="match_parent"
+                android:id="@+id/rel_folowing_but"
+                android:layout_width="wrap_content"
                 android:layout_height="30dp"
+                android:layout_alignParentRight="true"
                 android:layout_gravity="center_horizontal|center_vertical"
                 android:layout_marginTop="15dp"
+                android:layout_marginRight="10dp"
                 android:layout_marginBottom="10dp"
                 android:background="@drawable/hashtagdetailfollow"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_centerInParent="true"
-                    android:id="@+id/hashtag_name"
+                    android:id="@+id/txt_folowing"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
                     android:fontFamily="@font/sarabun_semibold"
-                    android:text="Unfollow"
+                    android:text="UNFOLLOW"
                     android:textAllCaps="true"
                     android:textColor="@color/white"
                     android:textSize="13dp" />
@@ -91,4 +99,5 @@
             </RelativeLayout>
         </RelativeLayout>
     </LinearLayout>
+
 </LinearLayout>

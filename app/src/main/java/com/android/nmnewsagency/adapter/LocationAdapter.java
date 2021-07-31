@@ -13,20 +13,22 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.nmnewsagency.R;
+import com.android.nmnewsagency.model.CountryModel;
+import com.android.nmnewsagency.modelclass.CountryList;
 import com.android.nmnewsagency.modelclass.LocationModel;
 
 import java.util.List;
 
 public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.MyViewHolder> implements View.OnClickListener {
     // private List<LocationModel> moviesList;
-    private List<String> moviesList;
+    private List<CountryModel.DataBean> moviesList;
     Context context;
 
     /*public LocationAdapter(List<LocationModel> moviesList) {
         this.moviesList = moviesList;
     }*/
 
-    public LocationAdapter(Context context,List<String> moviesList) {
+    public LocationAdapter(Context context,List<CountryModel.DataBean> moviesList) {
         this.moviesList = moviesList;
         this.context = context;
     }
@@ -57,10 +59,10 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.MyView
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        /*LocationModel movie = moviesList.get(position);
-        holder.title.setText(movie.getmName());*/
+        CountryModel.DataBean movie = moviesList.get(position);
+        holder.title.setText(movie.getName());
 
-        holder.title.setText(moviesList.get(position));
+      //  holder.title.setText(moviesList.get(position).getData().get(position).getName());
         /*holder.relloc_location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

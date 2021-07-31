@@ -11,10 +11,10 @@
         android:background="@color/msgview" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_marginTop="5dp"
         android:id="@+id/recycle_search_hashtag"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="5dp"
         android:background="@color/white" />
 
 </LinearLayout>

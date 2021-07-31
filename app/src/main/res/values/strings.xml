@@ -89,18 +89,18 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="pleaseWait">Please Wait .....</string>
-
+    <string name="permissionString">We need permission to show better result . It\'s Compulsory.</string>
     <string name="no_location_detected">
         No location detected. Make sure location is enabled on the device.
     </string>
-
     <string name="permission_rationale">Location permission is needed for core functionality</string>
     <string name="permission_denied_explanation">Permission was denied, but is needed for core
         functionality.</string>
     <string name="settings">Settings</string>
-
-
     <string name="facebook_app_id">502114654436471</string>
     <string name="fb_login_protocol_scheme">fb502114654436471</string>
     <string name="google_mapskey" templateMergeStrategy="preserve" translatable="false">AIzaSyAlVPWqpH2XbSPRBAuxYmlCougC0k5-stA</string>
+
+    <string name="pleaseEnteremail">Please enter email</string>
+
 </resources>

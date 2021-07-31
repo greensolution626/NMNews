@@ -32,7 +32,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     BottomSheetDialog bottomSheetDialog;
     TextView txt_setng_location;
     RelativeLayout rel_uploaddoc;
-     static String whichOne;
+    static String whichOne;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +40,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         overridePendingTransition(R.anim.enter, R.anim.exit);
         setContentView(R.layout.activity_setting);
         iniIt();
-       // setDataOnLocation();
+        // setDataOnLocation();
     }
 
     private void iniIt() {
@@ -63,8 +63,12 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
 
     private void setDataOnLocation() {
         String s1 = Prefrence.gettahsil();
-       // whichOne = sh.getString("whichone", "");
-        txt_setng_location.setText(s1);
+        // whichOne = sh.getString("whichone", "");
+        if (s1.isEmpty()) {
+            txt_setng_location.setText(Prefrence.getCityName());
+        } else {
+            txt_setng_location.setText(s1);
+        }
         /*if(whichOne.equals("reporter")){
             rel_uploaddoc.setVisibility(View.GONE);
         }*/
@@ -149,9 +153,9 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void closrAllActivity() {
-       Prefrence.removeOrClearAllPerferanceData();
+        Prefrence.removeOrClearAllPerferanceData();
         Intent intent = new Intent(SettingActivity.this,
-                LocationReqActivity.class);
+                LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
 

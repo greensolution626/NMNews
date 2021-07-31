@@ -97,6 +97,7 @@
                 android:textSize="19sp" />
 
             <TextView
+                android:id="@+id/txt_covragescore"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
@@ -168,7 +169,8 @@
             android:layout_marginTop="15dp"
             android:background="?android:attr/selectableItemBackground">
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/img_profile"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:src="@drawable/profileimageprofile" />
@@ -187,6 +189,7 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/text_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/sarabun_bold"
@@ -203,6 +206,7 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/txt_userid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal|center_vertical"
@@ -212,6 +216,7 @@
             android:textSize="18sp" />
 
         <TextView
+            android:id="@+id/txt_aboutus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal|center_vertical"
@@ -245,6 +250,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/txt_profilefolow"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal|center_vertical"
@@ -276,6 +282,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/txt_profilefolowinmg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal|center_vertical"
@@ -297,6 +304,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:visibility="gone"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
@@ -305,6 +313,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/txt_gat"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal|center_vertical"
@@ -352,6 +361,7 @@
                     tools:ignore="VectorDrawableCompat" />
 
                 <TextView
+                    android:id="@+id/txt_ownvideo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal|center_vertical"
@@ -381,6 +391,7 @@
                     tools:ignore="VectorDrawableCompat" />
 
                 <TextView
+                    android:id="@+id/txt_savevideo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal|center_vertical"
@@ -410,6 +421,7 @@
                     tools:ignore="VectorDrawableCompat" />
 
                 <TextView
+                    android:id="@+id/txt_hashvideo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal|center_vertical"
@@ -421,6 +433,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:visibility="gone"
                 android:id="@+id/lin_profile_video_video"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

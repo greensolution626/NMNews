@@ -28,7 +28,6 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/sarabun_bold"
             android:singleLine="true"
-            android:text="@string/hashtagdetail"
             android:textColor="@color/loctitle"
             android:textSize="16sp" />
 

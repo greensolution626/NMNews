@@ -1,5 +1,8 @@
 package com.android.nmnewsagency.adapter;
 
+import android.content.Context;
+import android.widget.Toast;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -12,10 +15,12 @@ public class PagerTabHashTagAdapter extends SlidingTabAdapter {
 
     private ArrayList<Fragment> listFragment;
     private ArrayList<TabInfo> listTabInfo;
+    Context context;
 
 
-    public PagerTabHashTagAdapter(FragmentManager fm, ArrayList<Fragment> listFragment, ArrayList<TabInfo> listTabInfo) {
+    public PagerTabHashTagAdapter(Context context,FragmentManager fm, ArrayList<Fragment> listFragment, ArrayList<TabInfo> listTabInfo) {
         super(fm);
+        this.context=context;
         this.listFragment = listFragment;
         this.listTabInfo = listTabInfo;
     }
@@ -27,15 +32,12 @@ public class PagerTabHashTagAdapter extends SlidingTabAdapter {
 
     @Override
     protected int getIcon(int position) {
-        /*if (position == 0) return R.drawable.tab_1_selected;
-        else if (position == 1) return R.drawable.tab_2_selected;
-//        else if (position == 2) return R.drawable.tab_3_selected;
-        else return R.drawable.tab_4_selected;*/
         return 0;
     }
 
     @Override
     public Fragment getItem(int position) {
+       // Toast.makeText(context, String.valueOf(position), Toast.LENGTH_SHORT).show();
         return listFragment.get(position);
     }
 

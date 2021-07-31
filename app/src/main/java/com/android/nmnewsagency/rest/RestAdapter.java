@@ -3,16 +3,15 @@ package com.android.nmnewsagency.rest;
 
 import android.util.Log;
 
+import com.android.nmnewsagency.rest.ApiUrls;
+import com.android.nmnewsagency.rest.RestService;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 
 import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
@@ -21,7 +20,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 import okhttp3.OkHttpClient;
@@ -55,46 +53,16 @@ public class RestAdapter {
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
             @Override
             public void log(String message) {
-                Log.e("response", message);
+                Log.e("responseNMNEWS", message);
             }
         });
-
-        TrustManagerFactory trustManagerFactory = null;
-        try {
-            trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        try {
-            trustManagerFactory.init((KeyStore) null);
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        }
-        TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
-        if (trustManagers.length != 1 || !(trustManagers[0] instanceof X509TrustManager)) {
-            throw new IllegalStateException("Unexpected default trust managers:" + Arrays.toString(trustManagers));
-        }
-        X509TrustManager trustManager = (X509TrustManager) trustManagers[0];
-        SSLContext sslContext = null;
-        try {
-            sslContext = SSLContext.getInstance("SSL");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        try {
-            sslContext.init(null, new TrustManager[] { trustManager }, null);
-        } catch (KeyManagementException e) {
-            e.printStackTrace();
-        }
-        SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
-
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         okClientBuilder.addInterceptor(httpLoggingInterceptor);
         okClientBuilder.addNetworkInterceptor(new StethoInterceptor());
         okClientBuilder.connectTimeout(CONNECTION_TIMEOUT, TimeUnit.SECONDS);
         okClientBuilder.readTimeout(CONNECTION_TIMEOUT, TimeUnit.SECONDS);
         okClientBuilder.writeTimeout(CONNECTION_TIMEOUT, TimeUnit.SECONDS);
-        okClientBuilder.sslSocketFactory(sslSocketFactory, trustManager);;
+        okClientBuilder.sslSocketFactory(getSSLSocketFactory());
         return okClientBuilder.build();
     }
 
