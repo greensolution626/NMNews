@@ -8,6 +8,7 @@
     android:orientation="vertical">
 
     <RelativeLayout
+        android:id="@+id/rel_messsages"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -22,10 +23,10 @@
             android:background="@drawable/searchimage" />
 
         <LinearLayout
-            android:layout_marginTop="15dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
+            android:layout_marginTop="15dp"
             android:layout_toRightOf="@+id/img_mesge"
             android:orientation="vertical">
 
@@ -35,6 +36,7 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/txt_msg_username"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/sarabun_bold"

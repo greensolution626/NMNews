@@ -11,7 +11,7 @@
         android:background="@color/msgview" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycle_search_hashtag"
+        android:id="@+id/recycle_search_topbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="5dp"

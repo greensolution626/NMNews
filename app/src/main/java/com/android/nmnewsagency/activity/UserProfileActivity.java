@@ -23,6 +23,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.nmnewsagency.R;
+import com.android.nmnewsagency.adapter.GetLOtherUserOwnNewsAdapter;
+import com.android.nmnewsagency.adapter.GetOtherUserHashNewsAdapter;
 import com.android.nmnewsagency.adapter.GetUserHashNewsAdapter;
 import com.android.nmnewsagency.adapter.GetUserOwnNewsAdapter;
 import com.android.nmnewsagency.adapter.GetUserSaveNewsAdapter;
@@ -34,6 +36,7 @@ import com.android.nmnewsagency.modelclass.GetUserHashTagModel;
 import com.android.nmnewsagency.modelclass.GetUserOwnNewsModel;
 import com.android.nmnewsagency.modelclass.GetUserSaveNewsModel;
 import com.android.nmnewsagency.modelclass.ReportModelClass;
+import com.android.nmnewsagency.modelclass.ReportUserModel;
 import com.android.nmnewsagency.pref.Prefrence;
 import com.android.nmnewsagency.rest.Rest;
 import com.bumptech.glide.Glide;
@@ -49,8 +52,8 @@ import retrofit2.Response;
 public class UserProfileActivity extends AppCompatActivity implements
         View.OnClickListener, Callback<Object> {
     RecyclerView recyclerView;
-    GetUserOwnNewsAdapter locationAdapter;
-    GetUserHashNewsAdapter locationAdapter2;
+    GetLOtherUserOwnNewsAdapter locationAdapter;
+    GetOtherUserHashNewsAdapter locationAdapter2;
     //  List<LocationModel> arrayList;
     List<GetUserOwnNewsModel.DataBeanX.DataBean.PagedRecordBean> arrayList;
     List<GetUserHashTagModel.DataBeanX.DataBean.PagedRecordBean> arrayListHash;
@@ -152,9 +155,9 @@ public class UserProfileActivity extends AppCompatActivity implements
         }
     }
 
-    private void callServicegetReport(String folow, String isfollow, int newid) {
+    private void callServicegetReport(String folow, String isfollow, String newid) {
         rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
-        rest.reportUser(folow, isfollow, newid);
+        rest.reportAUser(folow, isfollow, newid);
     }
 
     private void callServicegetUserOwnNews() {
@@ -164,14 +167,14 @@ public class UserProfileActivity extends AppCompatActivity implements
 
     private void inItItemRecycle(String type) {
         if (type.equals("save")) {
-            locationAdapter = new GetUserOwnNewsAdapter(UserProfileActivity.this, arrayList);
+            locationAdapter = new GetLOtherUserOwnNewsAdapter(UserProfileActivity.this, arrayList);
             recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
             recyclerView.setItemAnimator(new DefaultItemAnimator());
             recyclerView.setNestedScrollingEnabled(true);
             recyclerView.setAdapter(locationAdapter);
         }
         else if (type.equals("hash")) {
-            locationAdapter2 = new GetUserHashNewsAdapter(UserProfileActivity.this, arrayListHash);
+            locationAdapter2 = new GetOtherUserHashNewsAdapter(UserProfileActivity.this, arrayListHash);
             recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
             recyclerView.setItemAnimator(new DefaultItemAnimator());
             recyclerView.setNestedScrollingEnabled(true);
@@ -183,10 +186,18 @@ public class UserProfileActivity extends AppCompatActivity implements
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(this, recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                Intent intent = new Intent(UserProfileActivity.this, OwnVideoDetailActivity.class);
-                intent.putExtra("newsid", arrayList.get(position).getNewsId());
-                intent.putExtra("self", "other");
-                startActivity(intent);
+                /*if (type.equals("save")) {
+                    Intent intent = new Intent(UserProfileActivity.this, OwnVideoDetailActivity.class);
+                    intent.putExtra("newsid", arrayListHash.get(position).getNewsId());
+                    intent.putExtra("self", "other");
+                    startActivity(intent);
+                }
+                else if (type.equals("hash")) {
+                    Intent intent = new Intent(UserProfileActivity.this, OwnVideoDetailActivity.class);
+                    intent.putExtra("newsid", arrayList.get(position).getNewsId());
+                    intent.putExtra("self", "other");
+                    startActivity(intent);
+                }*/
             }
 
             @Override
@@ -251,8 +262,8 @@ public class UserProfileActivity extends AppCompatActivity implements
                 if (!txt_report_subtitle.getText().toString().equals("") &&
                         !selectedRadioButton.getText().toString().equals("")) {
                     //delete
-                    /*callServicegetReport(txt_report_subtitle.getText().toString(),
-                            selectedRadioButton.getText().toString(), Integer.parseInt(id));*/
+                    callServicegetReport(txt_report_subtitle.getText().toString(),
+                            selectedRadioButton.getText().toString(), id);
                 }
                 dialog.dismiss();
             }
@@ -395,7 +406,7 @@ public class UserProfileActivity extends AppCompatActivity implements
                 }
             }
             if (obj instanceof ReportModelClass) {
-                ReportModelClass loginModel = (ReportModelClass) obj;
+                ReportUserModel loginModel = (ReportUserModel) obj;
                 if (loginModel.isStatus()) {
                     Toast.makeText(UserProfileActivity.this, "Report successfully added", Toast.LENGTH_SHORT).show();
                 }

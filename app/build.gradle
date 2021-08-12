@@ -31,10 +31,21 @@ android {
         exclude 'builddef.lst'
         exclude 'version.txt'
         exclude 'isoparser-default.properties'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE-FIREBASE.txt'
+        exclude 'META-INF/NOTICE'
     }
 }
 configurations {
     all*.exclude group: 'com.android.support', module: 'support-v4'
+}
+repositories {
+    google()
+    jcenter()
+    maven {
+        url "https://github.com/QuickBlox/quickblox-android-sdk-releases/raw/master/"
+    }
+
 }
 dependencies {
     //noinspection GradleCompatible
@@ -53,6 +64,7 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'org.jetbrains:annotations:15.0'
     implementation 'com.google.android.gms:play-services-maps:17.0.1'
+    //implementation 'com.google.firebase:firebase-common-ktx:20.0.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
@@ -103,9 +115,16 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:28.2.0')
     implementation 'com.google.firebase:firebase-analytics:19.0.0'
     implementation 'com.google.firebase:firebase-crashlytics'
-   /* implementation 'com.google.firebase:firebase-core:19.0.0'*/
+  //  implementation 'com.google.firebase:firebase-core:19.0.0'
     implementation 'com.google.firebase:firebase-messaging:22.0.0'
+    //implementation 'com.google.firebase:firebase-database:22.0.0'
 
+
+    //implementation 'com.google.firebase:firebase-analytics:19.0.0'
+   // implementation 'com.google.firebase:firebase-database:20.0.1'
+    implementation 'com.firebase:firebase-client-android:2.5.2'
+    implementation 'com.google.firebase:firebase-database:19.5.0'
+    implementation 'com.google.firebase:firebase-auth:19.4.0'
 
     implementation 'com.github.piasy:rxandroidaudio:1.7.0'
     implementation 'com.github.piasy:AudioProcessor:1.7.0'
@@ -125,12 +144,21 @@ dependencies {
     implementation 'androidx.viewpager2:viewpager2:1.0.0-alpha01'*/
 
     implementation 'com.google.android.exoplayer:exoplayer:2.10.4'
+   // implementation 'com.google.android.exoplayer:exoplayer:2.13.3'
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.10.4'
+
 
     implementation 'org.greenrobot:eventbus:3.1.1'
     //videocompress
     implementation 'com.github.AbedElazizShe:LightCompressor:0.9.4'
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3"
-
+//chat
+    implementation "com.quickblox:quickblox-android-sdk-messages:3.9.2"
+    implementation "com.quickblox:quickblox-android-sdk-chat:3.9.2"
+    implementation "com.quickblox:quickblox-android-sdk-content:3.9.2"
+   // implementation "com.quickblox:quickblox-android-sdk-videochat-webrtc:3.9.2"
+   // implementation "com.quickblox:quickblox-android-sdk-conference:3.9.2"
+    implementation "com.quickblox:quickblox-android-sdk-customobjects:3.9.2"
 
 }

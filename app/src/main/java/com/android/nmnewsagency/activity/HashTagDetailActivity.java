@@ -6,9 +6,14 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.nmnewsagency.R;
@@ -16,54 +21,104 @@ import com.android.nmnewsagency.adapter.HashTagAdapter;
 import com.android.nmnewsagency.adapter.HashTagDetailAdapter;
 import com.android.nmnewsagency.adapter.HomeAdapter;
 import com.android.nmnewsagency.listner.RecyclerTouchListener;
+import com.android.nmnewsagency.modelclass.AddNewsModel;
+import com.android.nmnewsagency.modelclass.HashTagDetailModel;
+import com.android.nmnewsagency.modelclass.SearchTopSearchModel;
+import com.android.nmnewsagency.rest.Rest;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HashTagDetailActivity extends AppCompatActivity {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class HashTagDetailActivity extends AppCompatActivity implements Callback<Object> {
     RecyclerView recyclerView;
     ImageView iamge_back_hashtagdeatil;
+    TextView txt_totalnews, hashtagh_title;
+    Button rel_folow;
     HashTagDetailAdapter locationAdapter;
-    //  List<LocationModel> arrayList;
-    List<String> arrayList;
-    List<Integer> imAGE;
+    List<HashTagDetailModel.DataBeanX.DataBean.PagedRecordBean> arrayList;
+    Rest rest;
+    int hshId;
+    String hashtagName;
+    boolean isFoloow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         overridePendingTransition(R.anim.enter, R.anim.exit);
         setContentView(R.layout.search_hashtag_detail);
-        recyclerView = (RecyclerView) findViewById(R.id.recy_hashtag_detail);
-        iamge_back_hashtagdeatil = (ImageView) findViewById(R.id.iamge_back_hashtagdeatil);
-        arrayList = new ArrayList<>();
-        inItItemRecycle();
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            hshId = (int) bundle.get("hashtagid");
+            hashtagName = (String) bundle.get("hashtagname");
+        }
+        rest=new Rest(this,this);
+        iniT();
         iamge_back_hashtagdeatil.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                HashTagDetailActivity.this.finish();
             }
         });
+        rel_folow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isFoloow) {
+                    //delete
+                    callServicegetFollows(String.valueOf(hshId), true);
+                } else {
+                    callServicegetFollows(String.valueOf(hshId), false);
+                }
+            }
+        });
+        callServicegetHashTag();
+    }
+    private void callServicegetFollows(String folow, boolean isfollow) {
+        rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
+        if (isfollow) {
+            rest.UNfollowUser(folow);
+        } else {
+            rest.likeUser(folow);
+        }
+    }
+    private void iniT() {
+        recyclerView = (RecyclerView) findViewById(R.id.recy_hashtag_detail);
+        iamge_back_hashtagdeatil = (ImageView) findViewById(R.id.iamge_back_hashtagdeatil);
+        hashtagh_title = (TextView) findViewById(R.id.hashtagh_title);
+        txt_totalnews = (TextView) findViewById(R.id.txt_totalnews);
+        rel_folow = (Button) findViewById(R.id.rel_folow);
+        hashtagh_title.setText(hashtagName);
+//        if (!aspNetUser.isIsFollowed()) {
+//            isFoloow = false;
+//            but_folow.setBackgroundResource(R.drawable.hashtagdetailfollow);
+//            but_folow.setTextColor(Color.parseColor("#FFFFFF"));
+//            but_folow.setText("FOLLOW");
+//
+//        } else {
+//            but_folow.setBackgroundResource(R.drawable.userdetail_button);
+//            but_folow.setTextColor(Color.parseColor("#333333"));
+//            but_folow.setText("FOLLOWING");
+//            isFoloow = true;
+//        }
+    }
+
+    private void callServicegetHashTag() {
+        rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
+        rest.getHashTagById(hshId);
     }
 
     private void inItItemRecycle() {
-        arrayList.add("");
-        arrayList.add("");
-        imAGE = new ArrayList<>();
-        imAGE.add(R.drawable.profileimage);
-        imAGE.add(R.drawable.profileimage1);
-        imAGE.add(R.drawable.profileimage2);
-        imAGE.add(R.drawable.profileimage3);
-        imAGE.add(R.drawable.profileimage4);
-        imAGE.add(R.drawable.profileimage5);
-        imAGE.add(R.drawable.profileimage);
-        imAGE.add(R.drawable.profileimage1);
-        imAGE.add(R.drawable.profileimage2);
-        imAGE.add(R.drawable.profileimage3);
-        imAGE.add(R.drawable.profileimage4);
-        imAGE.add(R.drawable.profileimage5);
-        locationAdapter = new HashTagDetailAdapter(HashTagDetailActivity.this,arrayList,imAGE);
+        if (arrayList.size() > 0) {
+            txt_totalnews.setText(String.valueOf(arrayList.size()));
+        }
+        locationAdapter = new HashTagDetailAdapter(HashTagDetailActivity.this, arrayList);
 
-        recyclerView.setLayoutManager(new GridLayoutManager(this,3));
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setNestedScrollingEnabled(true);
         recyclerView.setAdapter(locationAdapter);
@@ -79,5 +134,45 @@ public class HashTagDetailActivity extends AppCompatActivity {
 
             }
         }));
+    }
+
+    @Override
+    public void onResponse(Call<Object> call, Response<Object> response) {
+        rest.dismissProgressdialog();
+        if (response.isSuccessful()) {
+            Object obj = response.body();
+            Log.e("nmnnn", String.valueOf(obj));
+            if (obj instanceof HashTagDetailModel) {
+                HashTagDetailModel searchTopSearchModel = (HashTagDetailModel) obj;
+                if (searchTopSearchModel.getData().isStatus()) {
+                    arrayList = searchTopSearchModel.getData().getData().getPagedRecord();
+                    inItItemRecycle();
+
+                }
+            }
+            if (obj instanceof AddNewsModel) {
+                AddNewsModel loginModel = (AddNewsModel) obj;
+                if (loginModel.isStatus()) {
+                    if (isFoloow) {
+                        isFoloow = false;
+                        rel_folow.setBackgroundResource(R.drawable.hashtagdetailfollow);
+                        rel_folow.setTextColor(Color.parseColor("#FFFFFF"));
+                        rel_folow.setText("FOLLOW");
+
+                    } else {
+                        rel_folow.setBackgroundResource(R.drawable.userdetail_button);
+                        rel_folow.setTextColor(Color.parseColor("#333333"));
+                        rel_folow.setText("FOLLOWING");
+                        isFoloow = true;
+                    }
+                    // notifyDataSetChanged();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onFailure(Call<Object> call, Throwable t) {
+
     }
 }

@@ -33,6 +33,7 @@ public class Prefrence {
     public static final String FLD_DEVICETOKEN = "deviceToken";
     public static final String FLD_POSITION = "recPosition";
     public static final String FLD_ISUPLOAD = "isUpload";
+    public static final String FLD_QBUSERID = "qbuserid";
 
     private static SharedPreferences preference = null;
     private static SharedPreferences.Editor editor;
@@ -54,8 +55,28 @@ public class Prefrence {
     }
 
     public static void removeOrClearAllPerferanceData() {
-        editor.clear();
-        editor.apply();
+      /*  editor.clear();
+        editor.apply();*/
+        editor.remove(FLD_TAHSIL);
+        editor.remove(FLD_USERID);
+        editor.remove(FLD_NAME);
+        editor.remove(FLD_EMAILID);
+        editor.remove(FLD_PROFILEIMAGE);
+        editor.remove(FLD_COUNTRYID);
+        editor.remove(FLD_CITYID);
+        editor.remove(FLD_STATEID);
+        editor.remove(FLD_TAHSILID);
+        editor.remove(String.valueOf(IS_LOGIN));
+        editor.remove(String.valueOf(FLD_ISUPLOAD));
+        editor.remove(FLD_MEDIAFILE);
+        editor.remove(FLD_STATENAME);
+        editor.remove(FLD_CITYNAME);
+        editor.remove(FLD_COUNTRYNAME);
+        editor.remove(FLD_FIRSTNAME);
+        editor.remove(FLD_LASTNAME);
+        editor.remove(FLD_NEWSID);
+        editor.commit();
+       // editor.apply();
     }
 
     public static String getlogin() {
@@ -251,6 +272,15 @@ public class Prefrence {
 
     public static String getnewsId() {
         return preference.getString(FLD_NEWSID, INVALID_STRING);
+    }
+
+    public static void setQbidId(int login) {
+        editor.putInt(FLD_QBUSERID, login);
+        editor.commit();
+    }
+
+    public static int getqbId() {
+        return preference.getInt(FLD_QBUSERID, INVALID_INT);
     }
     public static void setisLocationMatch(boolean login) {
         editor.putBoolean(FLD_ISLOCATIONMATCH,login);

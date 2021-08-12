@@ -74,7 +74,7 @@ public class HomeFragment extends Fragment implements Callback<Object> {
 
         rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
         rest.getNewsList(Prefrence.getCountryName(), Prefrence.getStateName(), Prefrence.getCityName(),
-                Prefrence.gettahsil(), Prefrence.getUserId(), "0", "5");
+                Prefrence.gettahsil(), Prefrence.getUserId(), "0", "10");
     }
 
 
@@ -142,7 +142,6 @@ public class HomeFragment extends Fragment implements Callback<Object> {
                 if (loginModel.isStatus()) {
                     arrayList = loginModel.getData().getPagedRecord();
                     inItItemRecycle();
-
                 }
             }
         }

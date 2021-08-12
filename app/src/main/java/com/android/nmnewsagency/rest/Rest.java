@@ -21,11 +21,13 @@ import com.android.nmnewsagency.modelclass.RequestModel.RequestGetProfile;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestGetSaveNews;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestGetTahsil;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestHashTag;
+import com.android.nmnewsagency.modelclass.RequestModel.RequestHashTagDetail;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestLike;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestLoginModel;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestReportModel;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestSearchTopSaerch;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestSetAddress;
+import com.android.nmnewsagency.modelclass.RequestModel.RequestUserReport;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestuserOwnVideo;
 import com.android.nmnewsagency.modelclass.UploadNewsModel;
 import com.android.nmnewsagency.pref.Prefrence;
@@ -120,7 +122,7 @@ public class Rest {
                           String profileimage, String provideruserid, String provider) {
         RequestLoginModel requestLoginModel = new RequestLoginModel();
         requestLoginModel.setDeviceId(deviceId);
-        requestLoginModel.setDeviceToken(Prefrence.getDeviceToken());
+        requestLoginModel.setDeviceToken(deviceToken);
         requestLoginModel.setDeviceType(deviceType);
         requestLoginModel.setEmail(email);
         requestLoginModel.setName(name);
@@ -195,6 +197,21 @@ public class Rest {
         if (isInterentAvaliable()) {
 
             RestAdapter.getAdapter().reportUser(Constants.FLD_TOKENID,
+                    requestLoginModel).enqueue(callback);
+
+        } else {
+            AlertForInternet();
+        }
+    }
+    public void reportAUser(String subtxt, String txt, String orId) {
+        RequestUserReport requestLoginModel = new RequestUserReport();
+        requestLoginModel.setWhoseReported(orId);
+        requestLoginModel.setReason(txt);
+        requestLoginModel.setSubReason(subtxt);
+        requestLoginModel.setUserId(Prefrence.getUserId());
+
+        if (isInterentAvaliable()) {
+            RestAdapter.getAdapter().reportAUser(Constants.FLD_TOKENID,
                     requestLoginModel).enqueue(callback);
 
         } else {
@@ -336,7 +353,7 @@ public class Rest {
         requestLoginModel.setUserId(id);
         requestLoginModel.setCity_Name(Prefrence.getCityName());
         requestLoginModel.setCountry_Name(Prefrence.getCountryName());
-        requestLoginModel.setPageOffset(10);
+        requestLoginModel.setPageOffset(50);
         requestLoginModel.setState_Name(Prefrence.getStateName());
         if(Prefrence.gettahsil().isEmpty()){
             requestLoginModel.setTahsil_Name(Prefrence.getCityName());
@@ -620,11 +637,32 @@ public class Rest {
         requestLoginModel.setSearchType(id);
         requestLoginModel.setState_Name(Prefrence.getStateName());
         requestLoginModel.setTahsil_Name(Prefrence.gettahsil());
+        requestLoginModel.setLogedInUserId(Prefrence.getUserId());
 
 
         if (isInterentAvaliable()) {
 
             RestAdapter.getAdapter().getTopNewsSearch(Constants.FLD_TOKENID, requestLoginModel).enqueue(callback);
+
+        } else {
+            AlertForInternet();
+        }
+    }
+
+    public void getHashTagById(int id) {
+        RequestHashTagDetail requestLoginModel = new RequestHashTagDetail();
+        requestLoginModel.setCity_Name(Prefrence.getCityName());
+        requestLoginModel.setCountry_Name(Prefrence.getCountryName());
+        requestLoginModel.setPageIndex(0);
+        requestLoginModel.setPageOffset(10);
+        requestLoginModel.setState_Name(Prefrence.getStateName());
+        requestLoginModel.setTahsil_Name("Snaganer");
+        requestLoginModel.setHashTagId(id);
+
+
+        if (isInterentAvaliable()) {
+
+            RestAdapter.getAdapter().getHashTagDetail(Constants.FLD_TOKENID, requestLoginModel).enqueue(callback);
 
         } else {
             AlertForInternet();

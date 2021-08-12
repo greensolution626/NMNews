@@ -5,7 +5,9 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -47,6 +49,7 @@ import com.android.nmnewsagency.modelclass.SaveModelClass;
 import com.android.nmnewsagency.rest.Rest;
 import com.android.nmnewsagency.utils.Utils;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -83,6 +86,7 @@ import com.google.android.exoplayer2.util.Util;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -137,7 +141,26 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
     public void onBindViewHolder(ViewHolder holder, @SuppressLint("RecyclerView") int position) {
 
         holder.setIsRecyclable(false);
-        url = moviesList.get(position).getVideoUrl();
+        if(position==0){
+            url="https://www.rmp-streaming.com/media/bbb-360p.mp4";
+        }/*else if(position==1){
+            url="http://103.251.94.78/videos/6ceaa72e-944b-4b28-8e66-3ab85beea973.mp4";
+        }else if(position==2){
+            url="http://103.251.94.78/videos/2afa6b25-f12f-4390-b6cc-7167fbaaf19c.mp4";
+        } else if(position==3){
+            url="http://103.251.94.78/videos/1b80820e-7cc8-4509-a4f3-3f8b852ad2eb.mp4";
+        }else if(position==4){
+            url="http://103.251.94.78/videos/3e52bef8-93b0-4cb6-a56c-4fe15377d675.mp4";
+        } else if(position==5){
+            url="http://103.251.94.78/videos/9fa80ed4-628a-41f4-9473-8c17729d928a.mp4";
+        }else if(position==6){
+            url="http://103.251.94.78/videos/65e664a9-360a-40b6-b091-769683e0639d.mp4";
+        }else if(position==7){
+            url="http://103.251.94.78/videos/97d487cd-8764-4bdd-9a19-bc3246aacad2.mp4";
+        }*/
+        else {
+            url = moviesList.get(position).getVideoUrl();
+        }
         holder.videoView.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
             @Override
             public void onViewAttachedToWindow(View v) {
@@ -296,6 +319,7 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
                         .into(holder.video_thuimbnail);
             }
         });
+
         new Handler().post(new Runnable() {
             public void run() {
                 Glide.with(context)
@@ -802,7 +826,7 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
                     }, new Configuration(
                             VideoQuality.MEDIUM,
                             false,
-                            false,
+                            true,
                             null /*videoHeight: double, or null*/,
                             null /*videoWidth: double, or null*/,
                             null /*videoBitrate: int, or null*/
@@ -817,6 +841,14 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
             super.onPostExecute(s);
             pBar.dismiss();
         }
+    }
+
+
+    private byte[] bitmapToByte(Bitmap bitmap){
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+        return byteArray;
     }
 }
 

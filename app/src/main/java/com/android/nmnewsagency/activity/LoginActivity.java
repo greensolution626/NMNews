@@ -3,18 +3,19 @@ package com.android.nmnewsagency.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
+import android.os.Build;
 import android.os.Bundle;
-import android.util.Base64;
+import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.android.nmnewsagency.R;
+import com.android.nmnewsagency.extras.Constants;
 import com.android.nmnewsagency.modelclass.LoginModel;
 import com.android.nmnewsagency.pref.Prefrence;
 import com.android.nmnewsagency.rest.Rest;
@@ -24,21 +25,27 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
-import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.firebase.client.Firebase;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.quickblox.auth.session.QBSettings;
+import com.quickblox.chat.QBChatService;
+import com.quickblox.core.LogLevel;
+import com.quickblox.core.QBEntityCallback;
+import com.quickblox.core.ServiceZone;
+import com.quickblox.core.exception.QBResponseException;
+import com.quickblox.users.QBUsers;
+import com.quickblox.users.model.QBUser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 import retrofit2.Call;
@@ -54,12 +61,26 @@ public class LoginActivity extends AppCompatActivity implements Callback<Object>
     Rest rest;
     String provider, prouserid, name, email, image = "";
     LoginButton login_button;
+    QBUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         overridePendingTransition(R.anim.enter, R.anim.exit);
         setContentView(R.layout.activity_login);
+        // Firebase.setAndroidContext(this);
+
+        //  QBSettings.getInstance().setEndpoints(Constants.API_DOMAIN,Constants.CHAT_DOMAIN, ServiceZone.PRODUCTION);
+        // QBSettings.getInstance().setZone(ServiceZone.PRODUCTION);
+
+        // QBSettings.getInstance().setLogLevel(LogLevel.DEBUG);
+        //  QBChatService.setDebugEnabled(true);
+
+        //   QBChatService.getInstance().setReconnectionAllowed(true);
+        user = new QBUser();
+        String deviceId = getDeviceId(LoginActivity.this);
+        Log.e("DeviceId=======", String.valueOf(deviceId));
+        Prefrence.setDeviceId(deviceId);
         iniIt();
         rest = new Rest(this, this);
     }
@@ -179,17 +200,20 @@ public class LoginActivity extends AppCompatActivity implements Callback<Object>
 
                 LoginModel loginModel = (LoginModel) obj;
                 if (loginModel.isStatus()) {
+                    setUpQuickboxSignUp(loginModel.getData().getUserInfo().getUserId(), loginModel.getData().getUserInfo().getName(),
+                            loginModel.getData().getUserInfo().getProfileImage());
                     Prefrence.setLogin(true);
                     Prefrence.setUserId(loginModel.getData().getUserInfo().getUserId());
                     Prefrence.setName(loginModel.getData().getUserInfo().getName());
                     Prefrence.setEmail(loginModel.getData().getUserInfo().getEmail());
                     Prefrence.setProfileImage(loginModel.getData().getUserInfo().getProfileImage());
-                    if(loginModel.getData().isIsAddressFound()){
+                    if (loginModel.getData().isIsAddressFound()) {
                         Prefrence.setCountryName(loginModel.getData().getUserAddress().getGCountry());
                         Prefrence.setCityName(loginModel.getData().getUserAddress().getGCity());
                         Prefrence.settahsil(loginModel.getData().getUserAddress().getGThasil());
                         Prefrence.setStateName(loginModel.getData().getUserAddress().getGState());
                     }
+
                     setDataOnLocation(loginModel.getData().isIsAddressFound());
 
                     //Toast.makeText(LoginActivity.this, loginModel.getMessage(), Toast.LENGTH_LONG).show();
@@ -219,7 +243,8 @@ public class LoginActivity extends AppCompatActivity implements Callback<Object>
     private void createLogin() {
         String deviceType = "ANDROID";
         String deviceId = Prefrence.getDeviceId();
-        String deviceToken = "1234562";
+        String deviceToken = Prefrence.getDeviceToken();
+        // String deviceToken = Application.deviceToken;
 
         rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
         rest.loginUser(name, email, deviceType, deviceId, deviceToken, image, prouserid, provider);
@@ -259,4 +284,114 @@ public class LoginActivity extends AppCompatActivity implements Callback<Object>
         request.executeAsync();
 
     }
+
+    @SuppressLint("HardwareIds")
+    public static String getDeviceId(Context context) {
+
+        String deviceId;
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            deviceId = Settings.Secure.getString(
+                    context.getContentResolver(),
+                    Settings.Secure.ANDROID_ID);
+        } else {
+            final TelephonyManager mTelephony = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+            if (mTelephony.getDeviceId() != null) {
+                deviceId = mTelephony.getDeviceId();
+            } else {
+                deviceId = Settings.Secure.getString(
+                        context.getContentResolver(),
+                        Settings.Secure.ANDROID_ID);
+            }
+        }
+
+        return deviceId;
+    }
+
+    /* public void FirebaseLoginForChat(String name){
+         String user = name;
+         String pass = "news";
+
+         if (user.equals("")) {
+             Toast.makeText(LoginActivity.this, "user blank", Toast.LENGTH_SHORT).show();
+         } else if (pass.equals("")) {
+             Toast.makeText(LoginActivity.this, "pass blank", Toast.LENGTH_SHORT).show();
+         }
+                *//* else if(!user.matches("[A-Za-z0-9]+")){
+                    username.setError("only alphabet or number allowed");
+                }
+                else if(user.length()<5){
+                    username.setError("at least 5 characters long");
+                }
+                else if(pass.length()<5){
+                    password.setError("at least 5 characters long");
+                }*//*
+        else {
+           // final ProgressDialog pd = new ProgressDialog(LoginActivity.this);
+          //  pd.setMessage("Loading...");
+          //  pd.show();
+
+            String url = "https://nmnewsagency-24e4e-default-rtdb.firebaseio.com/users.json";
+
+            StringRequest request = new StringRequest(Request.Method.GET, url, new com.android.volley.Response.Listener<String>() {
+                @Override
+                public void onResponse(String s) {
+                    Firebase reference = new Firebase("https://nmnewsagency-24e4e-default-rtdb.firebaseio.com/users");
+
+                    if (s.equals("null")) {
+                        reference.child(user).child("password").setValue(pass);
+                       // Toast.makeText(LoginActivity.this, "registration successful", Toast.LENGTH_LONG).show();
+                    } else {
+                        try {
+                            JSONObject obj = new JSONObject(s);
+
+                            if (!obj.has(user)) {
+                                reference.child(user).child("password").setValue(pass);
+                               // Toast.makeText(LoginActivity.this, "registration successful", Toast.LENGTH_LONG).show();
+                            } else {
+                               // Toast.makeText(LoginActivity.this, "username already exists", Toast.LENGTH_LONG).show();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                   // pd.dismiss();
+                }
+
+            }, new com.android.volley.Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    System.out.println("" + error);
+                   // pd.dismiss();
+                }
+
+
+            });
+
+            RequestQueue rQueue = Volley.newRequestQueue(LoginActivity.this);
+            rQueue.add(request);
+        }
+    }*/
+    public void setUpQuickboxSignUp(String userid, String name, String imagde) {
+        user.setLogin(userid);
+        user.setPassword("nmnewsnmnews");
+        user.setFullName(name);
+        user.setCustomData(imagde);
+
+        QBUsers.signUp(user).performAsync(new QBEntityCallback<QBUser>() {
+            @Override
+            public void onSuccess(QBUser qbUser, Bundle bundle) {
+                Log.e("QBNSERVER=======", qbUser.toString());
+                Prefrence.setQbidId(qbUser.getId());
+            }
+
+            @Override
+            public void onError(QBResponseException e) {
+                Log.e("QBNSERVERERROR=======", e.toString());
+            }
+        });
+    }
+
 }

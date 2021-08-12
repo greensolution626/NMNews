@@ -76,12 +76,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/profile"
-            android:padding="10dp">
+            android:padding="5dp">
 
             <ImageView
                 android:id="@+id/image_quality"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_marginLeft="10dp"
                 android:src="@drawable/ic_group_7898" />
 
@@ -94,7 +94,7 @@
                 android:fontFamily="@font/sarabun_bold"
                 android:text="@string/covragequality"
                 android:textColor="@color/profilescore"
-                android:textSize="19sp" />
+                android:textSize="17sp" />
 
             <TextView
                 android:id="@+id/txt_covragescore"
@@ -106,12 +106,12 @@
                 android:fontFamily="@font/sarabun_bold"
                 android:text="0%"
                 android:textColor="@color/profilescore"
-                android:textSize="19sp" />
+                android:textSize="17sp" />
 
             <ImageView
                 android:id="@+id/image_next"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
@@ -123,12 +123,13 @@
             android:id="@+id/rel_upload_doc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="15dp">
+            android:padding="10dp">
 
             <ImageView
+                android:layout_marginTop="5dp"
                 android:id="@+id/imge_paper"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
                 android:layout_marginLeft="15dp"
                 android:src="@drawable/ic_paper" />
 
@@ -141,12 +142,12 @@
                 android:fontFamily="@font/sarabun_bold"
                 android:text="@string/uploaddoc"
                 android:textColor="@color/loctitle"
-                android:textSize="19sp" />
+                android:textSize="17sp" />
 
 
             <ImageView
-                android:layout_width="15dp"
-                android:layout_height="15dp"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
@@ -166,23 +167,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal|center_vertical"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="3dp"
             android:background="?android:attr/selectableItemBackground">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/img_profile"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
+                android:layout_width="130dp"
+                android:layout_height="130dp"
                 android:src="@drawable/profileimageprofile" />
 
             <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_gravity="bottom|end"
                 android:src="@drawable/ic_group_7899" />
         </FrameLayout>
 
         <LinearLayout
+            android:layout_marginTop="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal|center_vertical"
@@ -195,11 +197,11 @@
                 android:fontFamily="@font/sarabun_bold"
                 android:text="Ashok Kumar"
                 android:textColor="@color/loctitle"
-                android:textSize="25sp" />
+                android:textSize="20sp" />
 
             <ImageView
-                android:layout_width="23dp"
-                android:layout_height="23dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_gravity="center_horizontal|center_vertical"
                 android:layout_marginLeft="10dp"
                 android:src="@drawable/ic_group_7840" />
@@ -213,7 +215,7 @@
             android:fontFamily="@font/sarabun_bold"
             android:text="@string/profileid"
             android:textColor="@color/locsubtitle"
-            android:textSize="18sp" />
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/txt_aboutus"
@@ -223,7 +225,7 @@
             android:fontFamily="@font/sarabun_bold"
             android:text="about you"
             android:textColor="@color/loctitle"
-            android:textSize="18sp" />
+            android:textSize="15sp" />
 
         <View
             android:layout_width="match_parent"
@@ -237,14 +239,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="5dp">
+            android:padding="0dp">
 
             <LinearLayout
                 android:id="@+id/lin_folowers"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:layout_marginTop="4dp"
                 android:layout_weight="1"
                 android:background="?android:attr/selectableItemBackground"
                 android:orientation="vertical">
@@ -258,7 +259,7 @@
                     android:text="20k"
                     android:textAllCaps="true"
                     android:textColor="@color/loctitle"
-                    android:textSize="20dp" />
+                    android:textSize="18sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -276,7 +277,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:layout_marginTop="4dp"
                 android:layout_weight="1"
                 android:background="?android:attr/selectableItemBackground"
                 android:orientation="vertical">
@@ -290,7 +290,7 @@
                     android:text="14"
                     android:textAllCaps="true"
                     android:textColor="@color/loctitle"
-                    android:textSize="20dp" />
+                    android:textSize="18sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -336,11 +336,12 @@
         </LinearLayout>
 
         <LinearLayout
+            android:layout_marginTop="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/adbag"
             android:orientation="horizontal"
-            android:padding="15dp">
+            android:padding="7dp">
 
             <LinearLayout
                 android:id="@+id/lin_profile_video"

@@ -2,14 +2,17 @@ package com.android.nmnewsagency.activity;
 
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
@@ -19,6 +22,7 @@ import android.os.Environment;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -84,6 +88,7 @@ public class VideoViewActivity22 extends AppCompatActivity implements Callback<O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_view22);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         rest = new Rest(this, this);
 
         processPickImage();
@@ -158,7 +163,15 @@ public class VideoViewActivity22 extends AppCompatActivity implements Callback<O
                 // stop recording and release camera
                 mediaRecorder.stop();  // stop the recording
                 releaseMediaRecorder(); // release the MediaRecorder object
-                mCamera.lock();         // take camera access back from MediaRecorder
+                mCamera.lock();
+
+                /*Bitmap bitmap=null;
+                // take camera access back from MediaRecorder
+                try {
+                    bitmap=retriveVideoFrameFromVideo(String.valueOf(mediaFile));
+                } catch (Throwable throwable) {
+                    throwable.printStackTrace();
+                }*/
 
                 // inform the user that recording has stopped
                 isRecording = false;
@@ -243,7 +256,7 @@ public class VideoViewActivity22 extends AppCompatActivity implements Callback<O
           // Step 3: Set a CamcorderProfile (requires API Level 8 or higher)
         mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_480P));
         //size 20 mb
-        mediaRecorder.setMaxFileSize(20000000);
+       // mediaRecorder.setMaxFileSize(20000000);
         // Step 4: Set output file
         mediaRecorder.setOutputFile(getOutputMediaFile(MEDIA_TYPE_VIDEO).toString());
 
@@ -418,9 +431,10 @@ public class VideoViewActivity22 extends AppCompatActivity implements Callback<O
                 .show();
     }
 
+
     public void showtimerVideoCapture() {
         img_cameraview.setVisibility(View.GONE);
-        countDownTimer = new CountDownTimer(30000, 1000) {
+        countDownTimer = new CountDownTimer(300000, 1000) {
             public void onTick(long millisUntilFinished) {
                 // Used for formatting digit to be in 2 digits only
                 NumberFormat f = new DecimalFormat("00");
@@ -574,4 +588,32 @@ public class VideoViewActivity22 extends AppCompatActivity implements Callback<O
         callServiceUploadNews(outputPaTH);
     }
 
+
+    @SuppressLint("NewApi")
+    public static Bitmap retriveVideoFrameFromVideo(String p_videoPath)
+            throws Throwable
+    {
+        Bitmap m_bitmap = null;
+        MediaMetadataRetriever m_mediaMetadataRetriever = null;
+        try
+        {
+            m_mediaMetadataRetriever = new MediaMetadataRetriever();
+            m_mediaMetadataRetriever.setDataSource(p_videoPath);
+            m_bitmap = m_mediaMetadataRetriever.getFrameAtTime();
+        }
+        catch (Exception m_e)
+        {
+            throw new Throwable(
+                    "Exception in retriveVideoFrameFromVideo(String p_videoPath)"
+                            + m_e.getMessage());
+        }
+        finally
+        {
+            if (m_mediaMetadataRetriever != null)
+            {
+                m_mediaMetadataRetriever.release();
+            }
+        }
+        return m_bitmap;
+    }
 }

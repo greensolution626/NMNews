@@ -154,6 +154,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
 
     private void closrAllActivity() {
         Prefrence.removeOrClearAllPerferanceData();
+
         Intent intent = new Intent(SettingActivity.this,
                 LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

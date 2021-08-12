@@ -1,34 +1,39 @@
 package com.android.nmnewsagency.adapter;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.nmnewsagency.R;
+import com.android.nmnewsagency.activity.HashTagDetailActivity;
+import com.android.nmnewsagency.modelclass.SearchTopSearchModel;
 
 import java.util.List;
 
 public class HashTagAdapter extends RecyclerView.Adapter<HashTagAdapter.MyViewHolder> {
-   // private List<LocationModel> moviesList;
-    private List<String> moviesList;
+    private List<SearchTopSearchModel.DataBeanX.DataBean.PagedRecordBean> moviesList;
+    Context context;
 
-    /*public LocationAdapter(List<LocationModel> moviesList) {
+    public HashTagAdapter(Context context,List<SearchTopSearchModel.DataBeanX.DataBean.PagedRecordBean> moviesList) {
         this.moviesList = moviesList;
-    }*/
-
-    public HashTagAdapter(List<String> moviesList) {
-        this.moviesList = moviesList;
+        this.context=context;
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView title;
+        LinearLayout lin_hashtaghhh;
 
         public MyViewHolder(View view) {
             super(view);
            title = (TextView) view.findViewById(R.id.hashtag_name);
+            lin_hashtaghhh = (LinearLayout) view.findViewById(R.id.lin_hashtaghhh);
         }
     }
 
@@ -41,10 +46,18 @@ public class HashTagAdapter extends RecyclerView.Adapter<HashTagAdapter.MyViewHo
 
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
-        /*LocationModel movie = moviesList.get(position);
-        holder.title.setText(movie.getmName());*/
-        holder.title.setText(moviesList.get(position));
+    public void onBindViewHolder(MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
+        holder.title.setText(moviesList.get(position).getTitle());
+        holder.lin_hashtaghhh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(context, HashTagDetailActivity.class);
+                intent.putExtra("hashtagid",moviesList.get(position).getId());
+                intent.putExtra("hashtagname",moviesList.get(position).getTitle());
+                context.startActivity(intent);
+            }
+        });
+
     }
 
     @Override

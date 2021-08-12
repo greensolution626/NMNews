@@ -85,7 +85,7 @@ public class UserOwnDegtailProfileActivity extends AppCompatActivity implements 
         imAGE.add(R.drawable.profileimage3);
         imAGE.add(R.drawable.profileimage4);
         imAGE.add(R.drawable.profileimage5);
-        locationAdapter = new HashTagDetailAdapter(UserOwnDegtailProfileActivity.this, arrayList, imAGE);
+       // locationAdapter = new HashTagDetailAdapter(UserOwnDegtailProfileActivity.this, arrayList, imAGE);
 
         recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         recyclerView.setItemAnimator(new DefaultItemAnimator());

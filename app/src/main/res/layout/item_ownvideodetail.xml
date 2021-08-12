@@ -33,6 +33,7 @@
 
 
                 <LinearLayout
+                    android:id="@+id/lin_ownvideo_profile"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@+id/image_own_profile"
@@ -77,12 +78,15 @@
             </RelativeLayout>
 
             <ImageView
-                android:layout_margin="10dp"
+                android:padding="10dp"
                 android:id="@+id/img_delete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
                 android:src="@drawable/ic_group_7849" />
         </RelativeLayout>
 
@@ -98,25 +102,25 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp">
 
-                <VideoView
-                    android:id="@+id/vid_own"
-                    android:layout_width="match_parent"
-                    android:layout_height="250dp"
-                    android:layout_gravity="center_horizontal|center_vertical"
-                    android:scaleType="centerCrop"
-                    android:visibility="visible" />
-
-                <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+                <com.google.android.exoplayer2.ui.PlayerView
                     android:id="@+id/idExoPlayerVIew"
                     android:layout_width="match_parent"
                     android:layout_height="300dp"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     app:resize_mode="fixed_width" />
+                <!-- <VideoView
+                     android:id="@+id/img_homeprofile"
+                     android:layout_width="match_parent"
+                     android:layout_height="250dp"
+                     android:layout_gravity="center_horizontal|center_vertical"
+                     android:scaleType="centerCrop"
+                     android:visibility="visible" />-->
+
 
                 <ImageView
                     android:id="@+id/video_thuimbnail"
                     android:layout_width="match_parent"
-                    android:layout_height="250dp"
+                    android:layout_height="300dp"
                     android:visibility="visible" />
 
                 <ImageView
@@ -131,6 +135,7 @@
             </FrameLayout>
 
             <RelativeLayout
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/frME_TOP"

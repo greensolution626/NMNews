@@ -3,6 +3,7 @@
     android:layout_width="300dp"
     android:layout_height="wrap_content"
     android:layout_marginRight="10dp"
+    android:id="@+id/lin_videoes"
     android:background="?android:attr/selectableItemBackground"
     android:orientation="vertical">
 
@@ -19,6 +20,7 @@
             android:src="@drawable/homeimagevideo" />
 
         <ImageView
+            android:visibility="gone"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -27,12 +29,12 @@
     </RelativeLayout>
 
     <TextView
+        android:id="@+id/video_search"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_marginLeft="5dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:fontFamily="@font/sarabun_semibold"
-        android:text="@string/titlehome"
         android:textColor="@color/locsubtitle"
         android:textSize="16sp" />
 </LinearLayout>

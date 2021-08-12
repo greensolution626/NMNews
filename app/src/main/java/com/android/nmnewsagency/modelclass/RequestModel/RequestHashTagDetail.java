@@ -1,44 +1,31 @@
 package com.android.nmnewsagency.modelclass.RequestModel;
 
-public class RequestSearchTopSaerch {
-
+public class RequestHashTagDetail {
 
     /**
-     * Query :
-     * SearchType : 1
+     * HashTagId : 54
      * PageIndex : 0
      * PageOffset : 50
      * Country_Name : India
      * State_Name : Rajasthan
      * City_Name : Jaipur
      * Tahsil_Name : Snaganer
-     * LogedInUserId : e3efdf6a-e61f-4a2a-bfd3-baea75854bc6
      */
 
-    private String Query;
-    private int SearchType;
+    private int HashTagId;
     private int PageIndex;
     private int PageOffset;
     private String Country_Name;
     private String State_Name;
     private String City_Name;
     private String Tahsil_Name;
-    private String LogedInUserId;
 
-    public String getQuery() {
-        return Query;
+    public int getHashTagId() {
+        return HashTagId;
     }
 
-    public void setQuery(String Query) {
-        this.Query = Query;
-    }
-
-    public int getSearchType() {
-        return SearchType;
-    }
-
-    public void setSearchType(int SearchType) {
-        this.SearchType = SearchType;
+    public void setHashTagId(int HashTagId) {
+        this.HashTagId = HashTagId;
     }
 
     public int getPageIndex() {
@@ -87,13 +74,5 @@ public class RequestSearchTopSaerch {
 
     public void setTahsil_Name(String Tahsil_Name) {
         this.Tahsil_Name = Tahsil_Name;
-    }
-
-    public String getLogedInUserId() {
-        return LogedInUserId;
-    }
-
-    public void setLogedInUserId(String LogedInUserId) {
-        this.LogedInUserId = LogedInUserId;
     }
 }

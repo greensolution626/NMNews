@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -65,36 +66,14 @@ public class SplashScreen extends AppCompatActivity {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
-            String deviceId = getDeviceId(SplashScreen.this);
-            Prefrence.setDeviceId(deviceId);
+
             initView();
         } else {
             requestLocationPermission();
         }
     }
 
-    @SuppressLint("HardwareIds")
-    public static String getDeviceId(Context context) {
 
-        String deviceId;
-
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            deviceId = Settings.Secure.getString(
-                    context.getContentResolver(),
-                    Settings.Secure.ANDROID_ID);
-        } else {
-            final TelephonyManager mTelephony = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-            if (mTelephony.getDeviceId() != null) {
-                deviceId = mTelephony.getDeviceId();
-            } else {
-                deviceId = Settings.Secure.getString(
-                        context.getContentResolver(),
-                        Settings.Secure.ANDROID_ID);
-            }
-        }
-
-        return deviceId;
-    }
 
     private void initView() {
         new Handler().postDelayed(new Runnable() {

@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.android.nmnewsagency.R;
 import com.android.nmnewsagency.adapter.PagerTabHashTagAdapter;
 import com.android.nmnewsagency.fragment.FragmentSearchHashTagTab;
+import com.android.nmnewsagency.fragment.FragmentSearchPeopleTab;
 import com.android.nmnewsagency.fragment.FragmentSearchTopTab;
 import com.android.nmnewsagency.model.CountryModel;
 import com.android.nmnewsagency.modelclass.SearchTopSearchModel;
@@ -27,6 +28,7 @@ import com.athbk.slidingtablayout.model.TabInfo;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -40,6 +42,8 @@ public class SearchTopBarTabingActivity extends AppCompatActivity implements Cal
     EditText search_edit;
     EventBus eventBus;
     PagerTabHashTagAdapter adapter;
+    int TabId = 1;
+    ArrayList<SearchTopSearchModel.DataBeanX.DataBean.PagedRecordBean> arrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +52,7 @@ public class SearchTopBarTabingActivity extends AppCompatActivity implements Cal
         setContentView(R.layout.activity_search_top_bar_tabing);
         rest = new Rest(this, this);
         inIt();
+       // callServicegetTopSaerch(search_edit.getText().toString());
     }
 
     private void inIt() {
@@ -66,12 +71,38 @@ public class SearchTopBarTabingActivity extends AppCompatActivity implements Cal
 
         ArrayList<Fragment> listFragment = new ArrayList<>();
         listFragment.add(FragmentSearchTopTab.newInstance());
-        listFragment.add(FragmentSearchTopTab.newInstance());
+        listFragment.add(FragmentSearchPeopleTab.newInstance());
         listFragment.add(FragmentSearchHashTagTab.newInstance());
 
         adapter = new PagerTabHashTagAdapter(this, this.getSupportFragmentManager(), listFragment, listTab);
         viewPager.setAdapter(adapter);
+        viewPager.setOffscreenPageLimit(1);
         tabLayout.setViewPager(viewPager, adapter);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if(position==0){
+                    TabId = 1;
+                }
+                else if(position==1){
+                    TabId = 3;
+                }
+                else if(position==2){
+                    TabId = 4;
+                }
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         iamge_back_searchtopbar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,7 +118,7 @@ public class SearchTopBarTabingActivity extends AppCompatActivity implements Cal
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Toast.makeText(SearchTopBarTabingActivity.this, String.valueOf(count), Toast.LENGTH_SHORT).show();
+               // Toast.makeText(SearchTopBarTabingActivity.this, String.valueOf(count), Toast.LENGTH_SHORT).show();
                 if (count > 2) {
                     callServicegetTopSaerch(search_edit.getText().toString());
                 }
@@ -98,12 +129,12 @@ public class SearchTopBarTabingActivity extends AppCompatActivity implements Cal
 
             }
         });
-        // callServicegetTopSaerch("");
+
     }
 
-    private void callServicegetTopSaerch(String query) {
+    private void callServicegetTopSaerch( String query) {
         rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
-        rest.getNewsTopSearch(1, query);
+        rest.getNewsTopSearch(TabId, query);
     }
 
     @Override
@@ -113,9 +144,11 @@ public class SearchTopBarTabingActivity extends AppCompatActivity implements Cal
             Object obj = response.body();
             Log.e("nmnnn", String.valueOf(obj));
             if (obj instanceof SearchTopSearchModel) {
-                SearchTopSearchModel loginModel = (SearchTopSearchModel) obj;
-                if (loginModel.isStatus()) {
-
+                SearchTopSearchModel searchTopSearchModel = (SearchTopSearchModel) obj;
+                if (searchTopSearchModel.getData().isStatus()) {
+                    arrayList= (ArrayList<SearchTopSearchModel.DataBeanX.DataBean.PagedRecordBean>) searchTopSearchModel.getData().getData().getPagedRecord();
+                    Log.e("sending",arrayList.toString());
+                    EventBus.getDefault().post(arrayList);
                 }
             }
         }
@@ -126,24 +159,4 @@ public class SearchTopBarTabingActivity extends AppCompatActivity implements Cal
 
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
-    }
-
-
-/*
-    // FragmentSearchTopTab.setSataOnViews(loginModel.getData().getData().getPagedRecord());
-    FragmentSearchTopTab fragmentSearchTopTab = FragmentSearchTopTab.newInstance();
-                    fragmentSearchTopTab.setSataOnViews(loginModel.getData().getData().getPagedRecord());
-    //FragmentSearchTopTab.newInstance().setSataOnViews(loginModel.getData().getData().getPagedRecord());
-                    Toast.makeText(this, String.valueOf(fragmentSearchTopTab.isResumed()), Toast.LENGTH_SHORT).show();
-    ;*/
 }

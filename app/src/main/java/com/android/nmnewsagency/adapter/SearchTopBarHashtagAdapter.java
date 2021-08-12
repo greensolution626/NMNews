@@ -1,15 +1,20 @@
 package com.android.nmnewsagency.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.nmnewsagency.R;
+import com.android.nmnewsagency.activity.HashTagDetailActivity;
+import com.android.nmnewsagency.modelclass.SearchTopSearchModel;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 
@@ -17,54 +22,65 @@ import java.util.List;
 
 public class SearchTopBarHashtagAdapter extends RecyclerView.Adapter<SearchTopBarHashtagAdapter.MyViewHolder> {
     // private List<LocationModel> moviesList;
-    private List<String> moviesList;
-    private List<Integer> imgList;
+    List<SearchTopSearchModel.DataBeanX.DataBean.PagedRecordBean> moviesList;
     private Context context;
 
     /*public LocationAdapter(List<LocationModel> moviesList) {
         this.moviesList = moviesList;
     }*/
 
-    public SearchTopBarHashtagAdapter(Context context, List<String> moviesList, List<Integer> imgList) {
+    public SearchTopBarHashtagAdapter(Context context, List<SearchTopSearchModel.DataBeanX.DataBean.PagedRecordBean> moviesList) {
         this.moviesList = moviesList;
-        this.imgList = imgList;
         this.context = context;
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView title;
-        public ImageView image_profile_hashtag;
+        public TextView search_user_name, search_subuser_name;
+        public ImageView search_image;
+        public RelativeLayout rel_tabing;
+
 
         public MyViewHolder(View view) {
             super(view);
-            // title = (TextView) view.findViewById(R.id.loc_name);
-            image_profile_hashtag = (ImageView) view.findViewById(R.id.image_profile_hashtag);
+            search_image = (ImageView) view.findViewById(R.id.search_image);
+            search_user_name = (TextView) view.findViewById(R.id.search_user_name);
+            search_subuser_name = (TextView) view.findViewById(R.id.search_subuser_name);
+            rel_tabing = (RelativeLayout) view.findViewById(R.id.rel_tabing);
         }
     }
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_search_hashtagbar, parent, false);
+                .inflate(R.layout.item_search_peopletopbartabing, parent, false);
         return new MyViewHolder(itemView);
     }
 
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
-        /*LocationModel movie = moviesList.get(position);
-        holder.title.setText(movie.getmName());*/
-        // holder.title.setText(moviesList.get(position));
+    public void onBindViewHolder(MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
+        holder.search_user_name.setText(moviesList.get(position).getTitle());
+        holder.search_subuser_name.setText(String.valueOf(moviesList.get(position).getSearchcount()));
         Glide.with(context)
-                .load(imgList.get(position))
+                .load(moviesList.get(position).getAvatar())
                 .placeholder(R.color.adbag)
                 .centerCrop()
-                .transition(DrawableTransitionOptions.withCrossFade(500))
-                .into(holder.image_profile_hashtag);
+                .into(holder.search_image);
+
+        holder.rel_tabing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, HashTagDetailActivity.class);
+                intent.putExtra("hashtagid", moviesList.get(position).getId());
+                intent.putExtra("hashtagname", moviesList.get(position).getTitle());
+                context.startActivity(intent);
+            }
+        });
+
     }
 
     @Override
     public int getItemCount() {
-        return imgList.size();
+        return moviesList.size();
     }
 }

@@ -13,6 +13,7 @@ public class ApiUrls {
        public static final String URL_GETCOMMENTS = "Comment/GetComment";
        public static final String URL_ADDCOMMENTS = "Comment/AddComment";
        public static final String URL_REPORT = "News/reportnews";
+       public static final String URL_USERREPORT = "User/Userreport";
        public static final String URL_LIKE = "Common/AddLikes";
        public static final String URL_SAVE = "Common/AddNewsSave";
        public static final String URL_DELETESAVE = "Common/DeleteNewsSave";
@@ -28,6 +29,7 @@ public class ApiUrls {
     public static final String GET_COUNTRY_TRUE = "Region/GetCountry/true";
     public static final String GET_NEWSBYID = "News/GetNewsDetailBYId";
     public static final String GET_SEARCHTOPSESRCH= "Search/GetSearchKeywordByQuery";
+    public static final String GET_HASHTAGDETYAIL= "News/GetNewsByHashTagPagi";
     public static final String GET_CITY_TRUE = "Region/GetStateByCountryId/true/";
     public static final String SETADDNEWS = "News/AddNews";
     public static final String UPLOADNEWS = "News/upload-news-file";

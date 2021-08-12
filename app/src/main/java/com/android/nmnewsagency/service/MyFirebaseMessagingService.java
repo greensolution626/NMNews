@@ -47,7 +47,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onNewToken(String token) {
         super.onNewToken(token);
-        Log.e("Devicetoken", "onNewTokenDevice: " + token);
+        Log.e("Devicetoken=====", "onNewTokenDevice: " + token);
         Prefrence.setDeviceToken(token);
         // getSharedPreferences("_", MODE_PRIVATE).getString("fb", "empty");
     }

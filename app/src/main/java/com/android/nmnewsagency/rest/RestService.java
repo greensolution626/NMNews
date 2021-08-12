@@ -17,12 +17,14 @@ import com.android.nmnewsagency.modelclass.GetTahsilModel;
 import com.android.nmnewsagency.modelclass.GetUserHashTagModel;
 import com.android.nmnewsagency.modelclass.GetUserOwnNewsModel;
 import com.android.nmnewsagency.modelclass.GetUserSaveNewsModel;
+import com.android.nmnewsagency.modelclass.HashTagDetailModel;
 import com.android.nmnewsagency.modelclass.LikeModelClass;
 import com.android.nmnewsagency.modelclass.LoginModel;
 import com.android.nmnewsagency.modelclass.NewVideoHashtagModelClass;
 import com.android.nmnewsagency.modelclass.NewVideoMentionModelClass;
 import com.android.nmnewsagency.modelclass.NewsCountModel;
 import com.android.nmnewsagency.modelclass.ReportModelClass;
+import com.android.nmnewsagency.modelclass.ReportUserModel;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestAddComents;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestAddNews;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestFollow;
@@ -34,11 +36,13 @@ import com.android.nmnewsagency.modelclass.RequestModel.RequestGetProfile;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestGetSaveNews;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestGetTahsil;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestHashTag;
+import com.android.nmnewsagency.modelclass.RequestModel.RequestHashTagDetail;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestLike;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestLoginModel;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestReportModel;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestSearchTopSaerch;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestSetAddress;
+import com.android.nmnewsagency.modelclass.RequestModel.RequestUserReport;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestuserOwnVideo;
 import com.android.nmnewsagency.modelclass.SaveModelClass;
 import com.android.nmnewsagency.modelclass.SearchTopSearchModel;
@@ -99,6 +103,12 @@ public interface RestService {
     @POST(ApiUrls.URL_REPORT)
     Call<ReportModelClass> reportUser(@Header("TokenId") String auth,
                                       @Body RequestReportModel requestLoginModel
+    );
+    @Headers({"Content-Type: application/json"})
+  //  @FormUrlEncoded
+    @POST(ApiUrls.URL_USERREPORT)
+    Call<ReportUserModel> reportAUser(@Header("TokenId") String auth,
+                                      @Body RequestUserReport requestLoginModel
     );
 
     @Headers({"Content-Type: application/json"})
@@ -236,6 +246,11 @@ public interface RestService {
     @POST(ApiUrls.GET_SEARCHTOPSESRCH)
     Call<SearchTopSearchModel> getTopNewsSearch(@Header("TokenId") String auth,
                                                 @Body RequestSearchTopSaerch requestLoginModel);
+
+    @Headers({"Content-Type: application/json"})
+    @POST(ApiUrls.GET_HASHTAGDETYAIL)
+    Call<HashTagDetailModel> getHashTagDetail(@Header("TokenId") String auth,
+                                              @Body RequestHashTagDetail requestLoginModel);
 
     @Headers({"Content-Type: application/json"})
     @GET("News/DeleteNewsByNewsId/{id}")

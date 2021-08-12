@@ -16,14 +16,18 @@ buildscript {
 
 allprojects {
     repositories {
-        maven { url 'https://jitpack.io' }
-        maven { url 'https://dl.bintray.com/camerakit/camerakit-android'}
         google()
-        mavenCentral()
         jcenter() // Warning: this repository is going to shut down soon
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://dl.bintray.com/camerakit/camerakit-android' }
+        maven {
+            url "https://github.com/QuickBlox/quickblox-android-sdk-releases/raw/master/"
+        }
+        mavenCentral()
     }
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+def qbSdkVersion = '3.9.2'

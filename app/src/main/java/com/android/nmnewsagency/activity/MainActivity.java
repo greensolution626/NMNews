@@ -24,6 +24,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
@@ -76,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         overridePendingTransition(R.anim.enter, R.anim.exit);
         setContentView(R.layout.activity_main);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         rest = new Rest(this, this);
         inItViews();
         setOnClickListner();
@@ -325,7 +327,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     long seconds = TimeUnit.MILLISECONDS.toSeconds(timeInMillisec);
                     Log.e("seconds==", String.valueOf(seconds));
 
-                if (seconds<=30) {
+                if (seconds<=300) {
                     boolean compree= GetVieeoPath(MainActivity.this,String.valueOf(selectedImagePath),outputPaTH);
                     Log.e("compressPathMain",String.valueOf(compree));
 

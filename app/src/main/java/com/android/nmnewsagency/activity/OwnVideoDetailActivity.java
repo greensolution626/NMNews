@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -27,10 +28,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.android.nmnewsagency.Application;
 import com.android.nmnewsagency.R;
 import com.android.nmnewsagency.adapter.HomeAdapter;
 import com.android.nmnewsagency.adapter.OwnVideoDetailAdapter;
 import com.android.nmnewsagency.adapter.RejectedVideoAdapter;
+import com.android.nmnewsagency.adapter.ViewPagerAdapter;
 import com.android.nmnewsagency.listner.RecyclerTouchListener;
 import com.android.nmnewsagency.modelclass.AddNewsModel;
 import com.android.nmnewsagency.modelclass.DeleteNewsByIdModel;
@@ -42,6 +45,34 @@ import com.android.nmnewsagency.modelclass.SaveModelClass;
 import com.android.nmnewsagency.rest.Rest;
 import com.android.nmnewsagency.utils.Utils;
 import com.bumptech.glide.Glide;
+import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.LoadControl;
+import com.google.android.exoplayer2.PlaybackParameters;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.extractor.ExtractorsFactory;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
+import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.upstream.BandwidthMeter;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultAllocator;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+import com.google.android.exoplayer2.upstream.HttpDataSource;
+import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
+import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.ArrayList;
@@ -65,14 +96,19 @@ public class OwnVideoDetailActivity extends AppCompatActivity implements Callbac
     ImageView img_delete, image_own_profile, video_thuimbnail, img_playpause, img_ownlike;
     VideoView videoView;
     SeekBar seekbar;
-    int current_pos, total_duration;
+    int current_pos;
+    int total_duration;
     boolean show = true, isLike = false, isSave = false;
+    LinearLayout lin_ownvideo_profile;
+    PlayerView idExoPlayerVIew;
+    SimpleExoPlayer exoPlayer = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       // overridePendingTransition(R.anim.enter, R.anim.exit);
+        // overridePendingTransition(R.anim.enter, R.anim.exit);
         setContentView(R.layout.item_ownvideodetail);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             newsId = (int) bundle.get("newsid");
@@ -86,8 +122,9 @@ public class OwnVideoDetailActivity extends AppCompatActivity implements Callbac
     }
 
     private void inIt() {
-
         lin_chat_qwnvideo = (LinearLayout) findViewById(R.id.lin_chat_qwnvideo);
+
+        lin_ownvideo_profile = (LinearLayout) findViewById(R.id.lin_ownvideo_profile);
         lin_create = (LinearLayout) findViewById(R.id.lin_create);
         lin_own_share = (LinearLayout) findViewById(R.id.lin_own_share);
         lin_own_comnt = (LinearLayout) findViewById(R.id.lin_own_comnt);
@@ -107,16 +144,25 @@ public class OwnVideoDetailActivity extends AppCompatActivity implements Callbac
         txt_ownlocation = (TextView) findViewById(R.id.txt_ownlocation);
         txt_owndescription = (TextView) findViewById(R.id.txt_owndescription);
         total = (TextView) findViewById(R.id.total);
-        videoView = (VideoView) findViewById(R.id.vid_own);
+        //videoView = (VideoView) findViewById(R.id.vid_own);
         seekbar = (SeekBar) findViewById(R.id.seekbar);
         if (whichOne.equals("self")) {
-        if (whichType.equals("hash")) {
-            img_delete.setVisibility(View.GONE);
-        }}
+            if (whichType.equals("hash")) {
+                img_delete.setVisibility(View.GONE);
+            }
+        }
         lin_chat_qwnvideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(OwnVideoDetailActivity.this, MessageDetailActivity.class);
+                startActivity(intent);
+            }
+        });
+        lin_ownvideo_profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(OwnVideoDetailActivity.this, UserProfileActivity.class);
+                intent.putExtra("userId", arrayList.get(0).getUserId());
                 startActivity(intent);
             }
         });
@@ -164,14 +210,17 @@ public class OwnVideoDetailActivity extends AppCompatActivity implements Callbac
                         txt_ownlike.setText(String.valueOf(set));
                         arrayList.get(0).setLikesCount(Integer.parseInt(txt_ownlike.getText().toString()));
                     }
+                    isLike = false;
                     img_ownlike.setImageResource(R.drawable.ic_like);
                     callServicegetDisLike(arrayList.get(0).getNewsId());
+
                 } else {
                     int no = Integer.parseInt(txt_ownlike.getText().toString());
 
                     txt_ownlike.setText(String.valueOf(no + 1));
                     arrayList.get(0).setLikesCount(Integer.parseInt(txt_ownlike.getText().toString()));
                     img_ownlike.setImageResource(R.drawable.ic_dislike);
+                    isLike = true;
                     callServicegetLike(arrayList.get(0).getNewsId());
                 }
             }
@@ -262,7 +311,8 @@ public class OwnVideoDetailActivity extends AppCompatActivity implements Callbac
         txt_owncoments.setText(String.valueOf(arrayList.get(0).getCommentCount()));
 
         Uri videouri = Uri.parse(arrayList.get(0).getVideoUrl());
-        videoView.setVideoURI(videouri);
+        setUrlOnSimpleExoPlayer();
+       /* videoView.setVideoURI(videouri);
         videoView.requestFocus();
         videoView.start();
 
@@ -284,7 +334,7 @@ public class OwnVideoDetailActivity extends AppCompatActivity implements Callbac
                             video_thuimbnail.setVisibility(View.GONE);
                             total_duration = videoView.getDuration();
                             seekbar.setMax((int) total_duration);
-                            total.setText(Utils.timeConversion((long) current_pos));
+                            total.setText(Utils.timeConversion((long) total_duration));
                             return true;
                         }
                         return false;
@@ -303,7 +353,7 @@ public class OwnVideoDetailActivity extends AppCompatActivity implements Callbac
                     show = true;
                 }
             }
-        });
+        });*/
         img_playpause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -318,7 +368,7 @@ public class OwnVideoDetailActivity extends AppCompatActivity implements Callbac
         });
 
 
-        current_pos = videoView.getCurrentPosition();
+      /*  current_pos = videoView.getCurrentPosition();
 
         //display video duration
         current.setText(Utils.timeConversion((long) current_pos));
@@ -353,7 +403,7 @@ public class OwnVideoDetailActivity extends AppCompatActivity implements Callbac
                 current_pos = seekBar.getProgress();
                 videoView.seekTo((int) current_pos);
             }
-        });
+        });*/
 
     }
 
@@ -480,4 +530,125 @@ public class OwnVideoDetailActivity extends AppCompatActivity implements Callbac
         rest.reportUser(folow, isfollow, newid);
     }
 
+    public void setUrlOnSimpleExoPlayer() {
+        idExoPlayerVIew = (PlayerView) findViewById(R.id.idExoPlayerVIew);
+        try {
+            BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+            TrackSelector trackSelector = new DefaultTrackSelector(new AdaptiveTrackSelection.Factory(bandwidthMeter));
+            LoadControl loadControl = new DefaultLoadControl.Builder()
+                    .setAllocator(new DefaultAllocator(true, 10))
+                    .setBufferDurationsMs(VideoPlayerConfig.MIN_BUFFER_DURATION,
+                            VideoPlayerConfig.MAX_BUFFER_DURATION,
+                            VideoPlayerConfig.MIN_PLAYBACK_START_BUFFER,
+                            VideoPlayerConfig.MIN_PLAYBACK_RESUME_BUFFER)
+                    .setTargetBufferBytes(-1)
+                    .setPrioritizeTimeOverSizeThresholds(true).createDefaultLoadControl();
+            exoPlayer = ExoPlayerFactory.newSimpleInstance(OwnVideoDetailActivity.this, trackSelector,loadControl);
+            Uri videouri = Uri.parse(arrayList.get(0).getVideoUrl());
+            DefaultHttpDataSourceFactory dataSourceFactory = new DefaultHttpDataSourceFactory("exoplayer_video");
+            ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
+            MediaSource mediaSource = new ExtractorMediaSource(videouri, dataSourceFactory, extractorsFactory, null, null);
+            idExoPlayerVIew.setPlayer(exoPlayer);
+            exoPlayer.prepare(mediaSource);
+            exoPlayer.setPlayWhenReady(true);
+            idExoPlayerVIew.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+                @Override
+                public void onViewAttachedToWindow(View v) {
+                }
+
+                @Override
+                public void onViewDetachedFromWindow(View v) {
+                    // idExoPlayerVIew.getPlayer().stop();
+                }
+            });
+        } catch (Exception e) {
+            // below line is used for
+            // handling our errors.
+            Log.e("TAG", "Error : " + e.toString());
+        }
+        SimpleExoPlayer finalExoPlayer = exoPlayer;
+        exoPlayer.addListener(new Player.EventListener() {
+
+            @Override
+            public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+
+            }
+
+            @Override
+            public void onLoadingChanged(boolean isLoading) {
+
+            }
+
+            @Override
+            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                if (playbackState == ExoPlayer.STATE_READY) {
+                    // Toast.makeText(context, "STATE_READY", Toast.LENGTH_SHORT).show();
+                    video_thuimbnail.setVisibility(View.GONE);
+                    idExoPlayerVIew.setControllerShowTimeoutMs(1500);
+
+                } else if (playbackState == ExoPlayer.STATE_BUFFERING) {
+                    // Toast.makeText(context, "STATE_BUFFERING", Toast.LENGTH_SHORT).show();
+                    //  video_thuimbnail.setVisibility(View.VISIBLE);
+                    // exo_pause.setVisibility(View.GONE);
+                    idExoPlayerVIew.setControllerShowTimeoutMs(3000);
+
+                } else if (playbackState == ExoPlayer.STATE_ENDED) {
+                    // Toast.makeText(context, "STATE_ENDED", Toast.LENGTH_SHORT).show();
+                    finalExoPlayer.seekTo(0);
+                    idExoPlayerVIew.setControllerShowTimeoutMs(1);
+                }
+            }
+
+            @Override
+            public void onRepeatModeChanged(int repeatMode) {
+            }
+
+            @Override
+            public void onPlayerError(ExoPlaybackException error) {
+            }
+
+            @Override
+            public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
+            }
+        });
+
+
+    }
+
+    public void releasePlayer() {
+        if (exoPlayer != null) {
+            //  Toast.makeText(context, "releasePlayer", Toast.LENGTH_SHORT).show();
+            exoPlayer.setPlayWhenReady(true);
+            exoPlayer.stop();
+            exoPlayer.release();
+            exoPlayer = null;
+
+            idExoPlayerVIew.setPlayer(null);
+            idExoPlayerVIew = null;
+            System.out.println("releasePlayer");
+            Log.e("releasePlayer", "releasePlayer");
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        releasePlayer();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setUrlOnSimpleExoPlayer();
+    }
+    public class VideoPlayerConfig {
+        //Minimum Video you want to buffer while Playing
+        public static final int MIN_BUFFER_DURATION = 1000;
+        //Max Video you want to buffer during PlayBack
+        public static final int MAX_BUFFER_DURATION = 2000;
+        //Min Video you want to buffer before start Playing it
+        public static final int MIN_PLAYBACK_START_BUFFER = 1000;
+        //Min video You want to buffer when user resumes video
+        public static final int MIN_PLAYBACK_RESUME_BUFFER = 1000;
+    }
 }

@@ -35,15 +35,15 @@
                     android:padding="10dp">
 
                     <ImageView
-                        android:background="?android:attr/selectableItemBackground"
                         android:id="@+id/iamge_back_hashtagdeatil"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:background="?android:attr/selectableItemBackground"
                         app:srcCompat="@drawable/ic_iconly_light_arrow___left"
                         tools:ignore="VectorDrawableCompat" />
 
                     <TextView
-                        android:id="@+id/search_edit"
+                        android:id="@+id/hashtagh_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
@@ -84,7 +84,8 @@
             android:layout_marginTop="15dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/hashtagdetailfollow"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/hashtag_name"
@@ -101,6 +102,20 @@
 
         </RelativeLayout>
 
+        <Button
+            android:id="@+id/rel_folow"
+            android:layout_width="110dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/hashtagdetailfollow"
+            android:fontFamily="@font/sarabun_semibold"
+            android:text="@string/follow"
+            android:textColor="@color/white" />
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="65dp"
@@ -109,24 +124,27 @@
             android:padding="10dp">
 
             <LinearLayout
-                android:layout_marginTop="4dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
+                android:layout_marginTop="4dp"
                 android:orientation="vertical">
 
                 <ImageView
-                    android:layout_gravity="center_horizontal|center_vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
                     app:srcCompat="@drawable/ic_group_7830"
                     tools:ignore="VectorDrawableCompat" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:id="@+id/txt_totalnews"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/sarabun_semibold"
-                    android:text="488"
+                    android:text="0"
                     android:textAllCaps="true"
                     android:textColor="@color/tabselct"
                     android:textSize="15dp" />

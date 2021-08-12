@@ -173,24 +173,33 @@ public class ProfileFragment extends Fragment implements View.OnClickListener, C
     private void inItItemRecycle(String type) {
         if (type.equals("save")) {
             locationAdapter = new GetUserSaveNewsAdapter(getActivity(), arrayList);
-            recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+            GridLayoutManager gridLayoutManager=new GridLayoutManager(getActivity(),3);
+            gridLayoutManager.setReverseLayout(true);
+            recyclerView.setLayoutManager(gridLayoutManager);
             recyclerView.setItemAnimator(new DefaultItemAnimator());
             recyclerView.setNestedScrollingEnabled(true);
             recyclerView.setAdapter(locationAdapter);
+            recyclerView.smoothScrollToPosition(recyclerView.getBottom());
         }
        else  if (type.equals("own")) {
             locationAdapter1 = new GetUserOwnNewsAdapter(getActivity(), arrayListOwn);
-            recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+            GridLayoutManager gridLayoutManager=new GridLayoutManager(getActivity(),3);
+            gridLayoutManager.setReverseLayout(true);
+            recyclerView.setLayoutManager(gridLayoutManager);
             recyclerView.setItemAnimator(new DefaultItemAnimator());
-            recyclerView.setNestedScrollingEnabled(true);
+            recyclerView.setNestedScrollingEnabled(false);
             recyclerView.setAdapter(locationAdapter1);
+            recyclerView.smoothScrollToPosition(recyclerView.getBottom());
         }
         else if (type.equals("hash")) {
             locationAdapter2 = new GetUserHashNewsAdapter(getActivity(), arrayListHash);
-            recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+            GridLayoutManager gridLayoutManager=new GridLayoutManager(getActivity(),3);
+            gridLayoutManager.setReverseLayout(true);
+            recyclerView.setLayoutManager(gridLayoutManager);
             recyclerView.setItemAnimator(new DefaultItemAnimator());
             recyclerView.setNestedScrollingEnabled(true);
             recyclerView.setAdapter(locationAdapter2);
+            recyclerView.smoothScrollToPosition(recyclerView.getBottom());
         }
 
 
@@ -449,7 +458,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener, C
         txt_savevideo.setText(String.valueOf(aspNetUser.getSavedNewsCount()));
         txt_hashvideo.setText(String.valueOf(aspNetUser.getUserTagVideo()));
         txt_profilefolowinmg.setText(aspNetUser.getFollowingsSuffix());
-        txt_covragescore.setText(String.valueOf(aspNetUser.getProfile_Score())+"%");
+        txt_covragescore.setText(String.valueOf(aspNetUser.getProfile_Score())+" %");
         if (aspNetUser.getAboutMe() != null) {
             txt_aboutus.setText((String) aspNetUser.getAboutMe());
         }

@@ -50,7 +50,7 @@
             android:fontFamily="@font/sarabun_regular"
             android:gravity="right"
             android:singleLine="true"
-            android:text="@string/dumytext"
+            android:text="dumytext"
             android:textColor="@color/locsubtitle"
             android:textSize="14sp" />
     </LinearLayout>
