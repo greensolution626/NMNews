@@ -44,7 +44,7 @@
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:layout_marginTop="5dp"
-                    android:src="@drawable/profileimage" />
+                     />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -106,7 +106,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="200dp"
                     android:scaleType="fitXY"
-                    android:src="@drawable/homeimagevideo" />
+                     />
 
                 <ImageView
                     android:layout_width="fill_parent"
@@ -381,7 +381,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="200dp"
                     android:scaleType="fitXY"
-                    android:src="@drawable/homeimagevideo" />
+                    />
             </RelativeLayout>
 
             <RelativeLayout

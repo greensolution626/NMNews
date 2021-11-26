@@ -3,10 +3,11 @@ package com.android.nmnewsagency.service;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.android.nmnewsagency.R;
+import com.android.nmnewsagency.modelclass.NewsCountModel;
 import com.android.nmnewsagency.pref.Prefrence;
 import com.android.nmnewsagency.rest.Rest;
 
@@ -41,7 +42,17 @@ public class NewsViewsCount extends Service implements Callback<Object> {
 
     @Override
     public void onResponse(Call<Object> call, Response<Object> response) {
-
+        rest.dismissProgressdialog();
+        if (response.isSuccessful()) {
+            Object obj = response.body();
+            Log.e("nmnnn", String.valueOf(obj));
+            if (obj instanceof NewsCountModel) {
+                NewsCountModel searchTopSearchModel = (NewsCountModel) obj;
+                if (searchTopSearchModel.isStatus()) {
+                   // EventBus.getDefault().post(searchTopSearchModel.getMessage());
+                }
+            }
+        }
     }
 
     @Override

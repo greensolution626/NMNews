@@ -1,30 +1,32 @@
 package com.android.nmnewsagency.activity;
 
+import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
-import android.os.Bundle;
-import android.view.View;
-import android.widget.ImageView;
-
 import com.android.nmnewsagency.R;
 import com.android.nmnewsagency.adapter.PagerTabCovrageQualityAdapter;
-import com.android.nmnewsagency.adapter.Performance_DistricAdapter;
-import com.android.nmnewsagency.adapter.Performance_SelfAdapter;
 import com.android.nmnewsagency.fragment.Performance_SelfFragment;
 import com.android.nmnewsagency.fragment.Performce_DistrictFragment;
-import com.athbk.slidingtablayout.SlidingTabLayout;
 import com.athbk.slidingtablayout.TabLayout;
 import com.athbk.slidingtablayout.model.TabInfo;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public class PerformanceReporter extends AppCompatActivity {
     private ViewPager viewPager;
    // private TabLayout tabLayout;
    private TabLayout tabLayout;
    ImageView iamge_back_performnce;
+   TextView txt_perdatetime;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +34,7 @@ public class PerformanceReporter extends AppCompatActivity {
         setContentView(R.layout.activity_performance_reporter);
 
         viewPager = (ViewPager)findViewById(R.id.viewPager);
+        txt_perdatetime = (TextView) findViewById(R.id.txt_perdatetime);
         iamge_back_performnce = (ImageView) findViewById(R.id.iamge_back_performnce);
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         ArrayList<TabInfo> listTab = new ArrayList<>();
@@ -54,5 +57,8 @@ public class PerformanceReporter extends AppCompatActivity {
                 finish();
             }
         });
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy hh:mm a", Locale.getDefault());
+        String currentDateandTime = sdf.format(new Date());
+        txt_perdatetime.setText(currentDateandTime);
     }
 }

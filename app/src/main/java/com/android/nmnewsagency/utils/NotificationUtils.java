@@ -1,6 +1,5 @@
 package com.android.nmnewsagency.utils;
 
-import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -10,15 +9,20 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.media.AudioAttributes;
 import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Build;
-import android.text.Html;
 
 import androidx.core.app.NotificationCompat;
 
 import com.android.nmnewsagency.R;
+import com.android.nmnewsagency.activity.CommentsActivity;
+import com.android.nmnewsagency.activity.MainActivity;
+import com.android.nmnewsagency.activity.OwnVideoDetailActivity;
+import com.android.nmnewsagency.activity.UserProfileActivity;
+import com.android.nmnewsagency.pref.Prefrence;
+
+import java.io.IOException;
+import java.net.URL;
 
 /**
  * Created by Vishnu Saini on 29-May-18.
@@ -100,51 +104,61 @@ public class NotificationUtils {
     }
 
 
-    public static void sendNotification(Context context, String title, String textMessage, String notificationType,
-                                        String redirectto, String slug) {
-        /*Bitmap icon = BitmapFactory.decodeResource(context.getResources(), R.mipmap.nintyicon);
-        Intent intent;
-        if (redirectto!=null && redirectto.equalsIgnoreCase(Constants.NOTIFICATION_REDIRECT_TO_PAID_COURCE_LIST)&& Config.getIsRegister())
+    public static void sendNotification(Context context, String Description, String type, String NewsId,
+                                        String FromUserId, String ToUserId, String AddedOn, String userId, String url1) {
+      //  Bitmap icon = BitmapFactory.decodeResource(context.getResources(), R.drawable.logo2);
+        Bitmap icon = null;
+        try {
+            URL url = new URL(url1);
+             icon = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+        } catch(IOException e) {
+            System.out.println(e);
+        }
+        Intent intent = null;
+        if (type!=null && type.equalsIgnoreCase("ADD"))
         {
-            intent = new Intent(context, LiveVideoListActivity.class);
-            intent.putExtra(Constants.NOTIFICATION_REDIRECT_TO,Constants.NOTIFICATION_REDIRECT_TO_PAID_COURCE_LIST);
-        }else if (redirectto!=null && redirectto.equalsIgnoreCase(Constants.NOTIFICATION_REDIRECT_TO_PAID_COURCE)&& Config.getIsRegister())
+            intent = new Intent(context, MainActivity.class);
+            Prefrence.setisUpload(true);
+           // intent.putExtra(Constants.NOTIFICATION_REDIRECT_TO,Constants.NOTIFICATION_REDIRECT_TO_PAID_COURCE_LIST);
+        }else if (type!=null && type.equalsIgnoreCase("LIKE"))
         {
-            intent = new Intent(context, BuyPaidClassActivity.class);
-            intent.putExtra(Constants.CLASS_PAIED_DATA,slug);
-            intent.putExtra(Constants.NOTIFICATION_REDIRECT_TO,Constants.NOTIFICATION_REDIRECT_TO_PAID_COURCE);
-        }else if (redirectto!=null && redirectto.equalsIgnoreCase(Constants.NOTIFICATION_REDIRECT_TO_E_BOOK)&& Config.getIsRegister())
+            intent = new Intent(context, OwnVideoDetailActivity.class);
+            intent.putExtra("newsid",Integer.parseInt(NewsId));
+            intent.putExtra("self","other");
+        }else if (type!=null && type.equalsIgnoreCase("COMMENT"))
         {
-            intent = new Intent(context, EbookSubContent.class);
-            intent.putExtra(Constants.NOTIFICATION_REDIRECT_TO,Constants.NOTIFICATION_REDIRECT_TO_E_BOOK);
-            intent.putExtra("maintitle",slug);
-            intent.putExtra("recvintent","ebook");
-        }else if (Config.getIsRegister())
+            intent = new Intent(context, CommentsActivity.class);
+            intent.putExtra("newsId",Integer.parseInt(NewsId));
+        }else if (type!=null && type.equalsIgnoreCase("TAG"))
         {
-
-            intent = new Intent(context, HomeActivity.class);
-        }else
+            intent = new Intent(context, OwnVideoDetailActivity.class);
+            intent.putExtra("newsid",Integer.parseInt(NewsId));
+            intent.putExtra("self","other");
+        }else if (type!=null && type.equalsIgnoreCase("FOLLOW"))
         {
-            intent = new Intent(context, Splash.class);
+            intent = new Intent(context, UserProfileActivity.class);
+            intent.putExtra("userId",Integer.parseInt(userId));
         }
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, "channel_id")
 
-                //.setContentText(textMessage)
+                .setContentText(Description)
                 .setAutoCancel(true)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setContentIntent(pendingIntent)
-                //.setContentInfo(title)
+              //  .setContentInfo(Description)
                 .setLargeIcon(icon)
                 .setColor(Color.RED)
-                //.setStyle(new NotificationCompat.BigTextStyle().bigText(textMessage))
+               // .setStyle(new NotificationCompat.BigTextStyle().bigText(Description))
+                .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(icon))
                 .setLights(Color.RED, 1000, 300)
                 .setDefaults(Notification.DEFAULT_VIBRATE)
-                .setSmallIcon(R.mipmap.ic_launcher_foreground);
+                .setSmallIcon(R.drawable.logo2);
 
-        if (redirectto.equalsIgnoreCase(Constants.NOTIFICATION_REDIRECT_TO_PAID_COURCE))
+       /* if (redirectto.equalsIgnoreCase(Constants.NOTIFICATION_REDIRECT_TO_PAID_COURCE))
         {
             notificationBuilder.addAction(R.mipmap.ic_launcher_foreground, "Buy Now", pendingIntent);
         }else if (redirectto.equalsIgnoreCase(Constants.NOTIFICATION_REDIRECT_TO_E_BOOK))
@@ -159,7 +173,7 @@ public class NotificationUtils {
         } else {
             notificationBuilder.setContentText(Html.fromHtml(textMessage));
             notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(Html.fromHtml(textMessage)));
-        }
+        }*/
 
      //   notificationBuilder.setStyle(new NotificationCompat.BigPictureStyle().bigPicture(icon).setSummaryText(textMessage));
 
@@ -180,7 +194,7 @@ public class NotificationUtils {
             notificationManager.createNotificationChannel(channel);
         }
 
-        notificationManager.notify(0, notificationBuilder.build());*/
+        notificationManager.notify(0, notificationBuilder.build());
     }
 
 }

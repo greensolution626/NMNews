@@ -1,8 +1,5 @@
 package com.android.nmnewsagency.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -13,14 +10,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+
 import com.android.nmnewsagency.R;
 import com.android.nmnewsagency.modelclass.AddUserDocumentModel;
 import com.android.nmnewsagency.modelclass.GetDocumentModel;
-import com.android.nmnewsagency.modelclass.UpdateProfileModel;
 import com.android.nmnewsagency.rest.Rest;
+import com.android.nmnewsagency.utils.ExpandableTextView;
 import com.android.nmnewsagency.utils.FileUtilsss;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -38,19 +37,34 @@ public class UploadDocumentActivity extends AppCompatActivity implements View.On
     SharedPreferences.Editor myEdit;
     Rest rest;
     List<GetDocumentModel.DataBean> getdocModel;
+    ExpandableTextView expandableTextView,expan_txt1,expan_txt2;
+    String yourText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " +
+            "Ut volutpat interdum interdum. Nulla laoreet lacus diam, vitae " +
+            "sodales sapien commodo faucibus. Vestibulum et feugiat enim. Donec " +
+            "semper mi et euismod tempor. Sed sodales eleifend mi id varius. Nam " +
+            "et ornare enim, sit amet gravida sapien. Quisque gravida et enim vel " +
+            "volutpat. Vivamus egestas ut felis a blandit. Vivamus fringilla " +
+            "dignissim mollis. Maecenas imperdiet interdum hendrerit. Aliquam" +
+            " dictum hendrerit ultrices. Ut vitae vestibulum dolor. Donec auctor ante" +
+            " eget libero molestie porta. Nam tempor fringilla ultricies. Nam sem " +
+            "lectus, feugiat eget ullamcorper vitae, ornare et sem. Fusce dapibus ipsum" +
+            " sed laoreet suscipit. ";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         overridePendingTransition(R.anim.enter, R.anim.exit);
         setContentView(R.layout.activity_upload_document);
-        rest=new Rest(this,this);
+        rest = new Rest(this, this);
         INIT();
         callservicegetDocument();
     }
 
     private void INIT() {
         iamge_back_uploaddoc = (ImageView) findViewById(R.id.iamge_back_uploaddoc);
+        expandableTextView = findViewById(R.id.expan_txt);
+        expan_txt1 = findViewById(R.id.expan_txt1);
+        expan_txt2 = findViewById(R.id.expan_txt2);
         img_presid = (ImageView) findViewById(R.id.img_presid);
         img_pancard = (ImageView) findViewById(R.id.img_pancard);
         img_bank = (ImageView) findViewById(R.id.img_bank);
@@ -67,6 +81,7 @@ public class UploadDocumentActivity extends AppCompatActivity implements View.On
         lin_bank.setOnClickListener(this);
         lin_pancard.setOnClickListener(this);
         lin_presid.setOnClickListener(this);
+
     }
 
     public void openGallery() {
@@ -98,8 +113,9 @@ public class UploadDocumentActivity extends AppCompatActivity implements View.On
 
     private void callserviceUploadDoc(String sendFile) {
         rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
-        rest.addUserDocument(cliocl,sendFile);
+        rest.addUserDocument(cliocl, sendFile);
     }
+
     private void callservicegetDocument() {
         rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
         rest.getDocument();
@@ -174,7 +190,7 @@ public class UploadDocumentActivity extends AppCompatActivity implements View.On
             if (obj instanceof GetDocumentModel) {
                 GetDocumentModel loginModel = (GetDocumentModel) obj;
                 if (loginModel.isStatus()) {
-                    getdocModel=loginModel.getData();
+                    getdocModel = loginModel.getData();
                     setDocumentDataBaseonResponce();
                 }
             }
@@ -191,20 +207,25 @@ public class UploadDocumentActivity extends AppCompatActivity implements View.On
 
     private void setDocumentDataBaseonResponce() {
         int i1;
-        if(getdocModel.size()>0){
-        for(i1=0;i1<getdocModel.size();i1++){
-            if(getdocModel.get(i1).getDocumentType().equals("PRESSIDCARD")){
-                changebagroundimagebycondition(img_presid);
+        if (getdocModel.size() > 0) {
+            for (i1 = 0; i1 < getdocModel.size(); i1++) {
+                if (getdocModel.get(i1).getDocumentType().equals("PRESSIDCARD")) {
+                    changebagroundimagebycondition(img_presid);
+                } else if (getdocModel.get(i1).getDocumentType().equals("BANKPASSBOOK")) {
+                    changebagroundimagebycondition(img_bank);
+                } else if (getdocModel.get(i1).getDocumentType().equals("PANCARD")) {
+                    changebagroundimagebycondition(img_pancard);
+                }
+               // expandableTextView.setText(getdocModel.get(i1).getComment());
+                if(i1==0) {
+                    expandableTextView.setText(getdocModel.get(i1).getComment());
+                }else if(i1==1) {
+                    expandableTextView.setText(getdocModel.get(i1).getComment());
+                } else if(i1==2) {
+                    expandableTextView.setText(getdocModel.get(i1).getComment());
+                }
             }
-            else if(getdocModel.get(i1).getDocumentType().equals("BANKPASSBOOK")){
-                changebagroundimagebycondition(img_bank);
-            }
-            else if(getdocModel.get(i1).getDocumentType().equals("PANCARD")){
-                changebagroundimagebycondition(img_pancard);
-            }
-
-        }}
-
+        }
 
 
     }

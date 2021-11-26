@@ -48,7 +48,6 @@
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:fontFamily="@font/sarabun_bold"
-                        android:text="@string/hashtagdetail"
                         android:textSize="19sp" />
                 </RelativeLayout>
             </LinearLayout>

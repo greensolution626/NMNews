@@ -3,8 +3,6 @@ package com.android.nmnewsagency.rest;
 
 import android.util.Log;
 
-import com.android.nmnewsagency.rest.ApiUrls;
-import com.android.nmnewsagency.rest.RestService;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 
 import java.security.KeyManagementException;
@@ -33,7 +31,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class RestAdapter {
-    private static long CONNECTION_TIMEOUT = 100;
+    private static long CONNECTION_TIMEOUT = 300;
     private static String API_BASE_URL = ApiUrls.BASE_URL;
 
     public static RestService getAdapter() {

@@ -1,7 +1,6 @@
 package com.android.nmnewsagency.service;
 
 import android.content.Context;
-import android.preference.Preference;
 import android.util.Log;
 
 import com.android.nmnewsagency.pref.Prefrence;
@@ -31,14 +30,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
             Log.e(TAG, "Notification Body1: " + remoteMessage.getData().size() + "");
-
-           /* String title = remoteMessage.getData().get("title");
-            String message = remoteMessage.getData().get("message");
-            String type = remoteMessage.getData().get("type");
-            String body = remoteMessage.getData().get("body");
-            String redirectto = remoteMessage.getData().get("redirectto");
-            String slug = remoteMessage.getData().get("slug");
-            NotificationUtils.sendNotification(this, title, body, type,redirectto,slug);*/
+            Log.e(TAG, "Notification Body1=====: " + remoteMessage.getData() + "");
+           // String Description = remoteMessage.getData().get("Description");
+            String Description = remoteMessage.getData().get("Description");
+            String type = remoteMessage.getData().get("Notification_Type");
+            String NewsId = remoteMessage.getData().get("NewsId");
+            String FromUserId = remoteMessage.getData().get("FromUserId");
+            String ToUserId = remoteMessage.getData().get("ToUserId");
+            String AddedOn = remoteMessage.getData().get("AddedOn");
+            String UserId = remoteMessage.getData().get("UserId");
+            String url = remoteMessage.getData().get("url");
+            NotificationUtils.sendNotification(this, Description, type, NewsId,FromUserId,ToUserId,AddedOn,UserId,url);
         }
 
 
@@ -55,4 +57,5 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public static String getToken(Context context) {
         return context.getSharedPreferences("_", MODE_PRIVATE).getString("fb", "empty");
     }
+
 }

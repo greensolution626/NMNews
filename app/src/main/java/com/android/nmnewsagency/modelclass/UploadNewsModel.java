@@ -64,6 +64,7 @@ public class UploadNewsModel {
         private String MediaSource;
         private double MediaSize;
         private String SizeUnit;
+        private String VideoId;
         private String VideoUrl;
         private String VideoFullPath;
         private String ImageFullPath;
@@ -138,6 +139,14 @@ public class UploadNewsModel {
 
         public void setSizeUnit(String SizeUnit) {
             this.SizeUnit = SizeUnit;
+        }
+
+        public String getVideoId() {
+            return VideoId;
+        }
+
+        public void setVideoId(String VideoId) {
+            this.VideoId = VideoId;
         }
 
         public String getVideoUrl() {

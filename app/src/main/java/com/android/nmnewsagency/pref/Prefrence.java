@@ -2,6 +2,7 @@ package com.android.nmnewsagency.pref;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.widget.Toast;
 
 
 public class Prefrence {
@@ -34,6 +35,11 @@ public class Prefrence {
     public static final String FLD_POSITION = "recPosition";
     public static final String FLD_ISUPLOAD = "isUpload";
     public static final String FLD_QBUSERID = "qbuserid";
+    public static final String FLD_SETAUTOPLAY = "autoPlay";
+    public static final String FLD_SETNOTIFICATION = "notiFication";
+    public static final String FLD_BAGROUNDDATA = "bagdata";
+    public static final boolean FLD_AUTOPLAY1 = false;
+    public static final boolean FLD_NOTIFICATION1 = false;
 
     private static SharedPreferences preference = null;
     private static SharedPreferences.Editor editor;
@@ -53,7 +59,10 @@ public class Prefrence {
         }
         editor.commit();
     }
-
+public static void removeBagroundDate(){
+    editor.remove(FLD_BAGROUNDDATA);
+    editor.commit();
+}
     public static void removeOrClearAllPerferanceData() {
       /*  editor.clear();
         editor.apply();*/
@@ -75,6 +84,8 @@ public class Prefrence {
         editor.remove(FLD_FIRSTNAME);
         editor.remove(FLD_LASTNAME);
         editor.remove(FLD_NEWSID);
+        editor.remove(String.valueOf(FLD_AUTOPLAY1));
+        editor.remove(String.valueOf(FLD_NOTIFICATION1));
         editor.commit();
        // editor.apply();
     }
@@ -196,6 +207,31 @@ public class Prefrence {
         editor.commit();
 
     }
+    public static boolean isAutoplay() {
+        return preference.getBoolean(String.valueOf(FLD_AUTOPLAY1), INVALID_BOOLEAN);
+    }
+
+    public static void setAutoPlay(boolean login) {
+        editor.putBoolean(String.valueOf(FLD_AUTOPLAY1), login);
+        editor.commit();
+        Toast.makeText(mContext, "notipre"+Prefrence.isNotification(),
+                Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, "autopre"+Prefrence.isAutoplay(),
+                Toast.LENGTH_SHORT).show();
+    }
+    public static boolean isNotification() {
+        return preference.getBoolean(String.valueOf(FLD_NOTIFICATION1), INVALID_BOOLEAN);
+    }
+
+    public static void setNotification(boolean notification) {
+
+        editor.putBoolean(String.valueOf(FLD_NOTIFICATION1), notification);
+        editor.commit();
+        Toast.makeText(mContext, "notipre"+Prefrence.isNotification(),
+                Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, "autopre"+Prefrence.isAutoplay(),
+                Toast.LENGTH_SHORT).show();
+    }
     public static void setVideoFIle(String login) {
         editor.putString(FLD_MEDIAFILE, login);
         editor.commit();
@@ -281,6 +317,30 @@ public class Prefrence {
 
     public static int getqbId() {
         return preference.getInt(FLD_QBUSERID, INVALID_INT);
+    }
+    public static void setSetNotication(String login) {
+        editor.putString(FLD_SETNOTIFICATION, login);
+        editor.commit();
+    }
+
+    public static String getSetNotification() {
+        return preference.getString(FLD_SETNOTIFICATION, "true");
+    }
+    public static void setBagData(String login) {
+        editor.putString(FLD_BAGROUNDDATA, login);
+        editor.commit();
+    }
+
+    public static String getBagData() {
+        return preference.getString(FLD_BAGROUNDDATA, INVALID_STRING);
+    }
+    public static void setSetAutoplay(String login) {
+        editor.putString(FLD_SETAUTOPLAY, login);
+        editor.commit();
+    }
+
+    public static String getSetAutoplay() {
+        return preference.getString(FLD_SETAUTOPLAY, INVALID_STRING);
     }
     public static void setisLocationMatch(boolean login) {
         editor.putBoolean(FLD_ISLOCATIONMATCH,login);

@@ -1,25 +1,18 @@
 package com.android.nmnewsagency.activity;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+import static java.lang.Thread.sleep;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -33,23 +26,29 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.abedelazizshe.lightcompressorlibrary.CompressionListener;
-import com.abedelazizshe.lightcompressorlibrary.VideoCompressor;
-import com.abedelazizshe.lightcompressorlibrary.VideoQuality;
-import com.abedelazizshe.lightcompressorlibrary.config.Configuration;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.android.nmnewsagency.R;
 import com.android.nmnewsagency.fragment.FragmentNotification;
 import com.android.nmnewsagency.fragment.FragmentSearch;
-import com.android.nmnewsagency.fragment.FragmentSearchTab;
 import com.android.nmnewsagency.fragment.HomeFragment;
 import com.android.nmnewsagency.fragment.ProfileFragment;
 import com.android.nmnewsagency.modelclass.UploadNewsModel;
 import com.android.nmnewsagency.pref.Prefrence;
 import com.android.nmnewsagency.rest.Rest;
+import com.android.nmnewsagency.service.NewsUplaodInBagroundService;
 import com.android.nmnewsagency.utils.Utils;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.gson.Gson;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -61,16 +60,23 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, Callback<Object> {
     private static final int IMAGE_PICKER_SELECT = 111;
     ImageView botom_home, botom_search, botom_add, botom_noti, botom_profile, iamge_back;
-    TextView botom_home_text, botom_search_text, botom_noti_text, botom_profile_text;
-    LinearLayout lin_home, lin_search, lin_add, lin_noti, lin_profile, lin_top, lin_onlysearch, lin_searchwithedit;
+    TextView botom_home_text, botom_search_text, botom_noti_text, botom_profile_text, txt_videouplodinbg;
+    LinearLayout lin_home, lin_search, lin_add, lin_noti, lin_profile, lin_top, lin_onlysearch, lin_searchwithedit, lin_topmain,
+            lin_uploadingvideo, lin_uplodingperctage;
     EditText search_edit;
     static final int REQUEST_VIDEO_CAPTURE = 1;
     BottomSheetDialog bottomSheetDialog;
     Animation myAnim;
     Rest rest;
-    boolean statusCompress=false;
+    boolean statusCompress = false, homeFragmentOpen = false, homeclick = false;
     String outputPaTH = Environment.getExternalStorageDirectory().getAbsolutePath() +
             File.separator + System.nanoTime() + "compress.mp4";
+    Fragment currentFragment;
+    ProgressDialog dialog;
+    protected static final long TIME_DELAY = 10000;
+    Handler handler=new Handler();
+    int count =0;
+    UploadNewsModel uploadNewsModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,12 +84,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         overridePendingTransition(R.anim.enter, R.anim.exit);
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        Gson gson = new Gson();
+        String json = Prefrence.getBagData();
+        if(json!=null && !json.isEmpty()) {
+            uploadNewsModel = gson.fromJson(json, UploadNewsModel.class);
+            Prefrence.removeBagroundDate();
+            Intent intent = new Intent(MainActivity.this, NewVideoActivity.class);
+            intent.putExtra("video", uploadNewsModel.getData());
+            startActivity(intent);
+        }
+
         rest = new Rest(this, this);
         inItViews();
         setOnClickListner();
         myAnim = AnimationUtils.loadAnimation(this, R.anim.bounce);
 
         loadFragment(new HomeFragment());
+        homeFragmentOpen = true;
         search_edit = (EditText) findViewById(R.id.search_edit);
         lin_top.setVisibility(View.GONE);
         search_edit.setOnClickListener(new View.OnClickListener() {
@@ -111,6 +129,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (EventBus.getDefault().isRegistered(this)) {
+        } else {
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     private void setOnClickListner() {
@@ -146,6 +179,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         botom_search_text = (TextView) findViewById(R.id.botom_search_text);
         botom_noti_text = (TextView) findViewById(R.id.botom_noti_text);
         botom_profile_text = (TextView) findViewById(R.id.botom_profile_text);
+        txt_videouplodinbg = (TextView) findViewById(R.id.txt_videouplodinbg);
         lin_home = (LinearLayout) findViewById(R.id.lin_home);
         lin_search = (LinearLayout) findViewById(R.id.lin_search);
         lin_add = (LinearLayout) findViewById(R.id.lin_add);
@@ -153,6 +187,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         lin_profile = (LinearLayout) findViewById(R.id.lin_profile);
         lin_top = (LinearLayout) findViewById(R.id.lin_top);
         lin_searchwithedit = (LinearLayout) findViewById(R.id.lin_searchwithedit);
+        lin_topmain = (LinearLayout) findViewById(R.id.lin_topmain);
+        lin_uploadingvideo = (LinearLayout) findViewById(R.id.lin_uploadingvideo);
+        lin_uplodingperctage = (LinearLayout) findViewById(R.id.lin_uplodingperctage);
         lin_onlysearch = (LinearLayout) findViewById(R.id.lin_onlysearch);
     }
 
@@ -160,6 +197,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.lin_home:
+
                 lin_home.startAnimation(myAnim);
                 lin_top.setVisibility(View.GONE);
                 botom_home.setImageResource(R.drawable.ic_home_active);
@@ -171,8 +209,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 botom_search_text.setTextColor(getResources().getColor(R.color.loctitle));
                 botom_noti_text.setTextColor(getResources().getColor(R.color.loctitle));
                 botom_profile_text.setTextColor(getResources().getColor(R.color.loctitle));
-
-                loadFragment(new HomeFragment());
+                if (homeFragmentOpen) {
+                    Prefrence.setisUpload(true);
+                    loadFragment(new HomeFragment());
+                } else if (homeclick) {
+                    Prefrence.setisUpload(true);
+                    loadFragment(new HomeFragment());
+                } else {
+                    loadFragment(new HomeFragment());
+                }
+                homeclick = true;
                 break;
             case R.id.lin_search:
                 lin_search.startAnimation(myAnim);
@@ -186,7 +232,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 botom_search_text.setTextColor(getResources().getColor(R.color.locbutonbag));
                 botom_noti_text.setTextColor(getResources().getColor(R.color.loctitle));
                 botom_profile_text.setTextColor(getResources().getColor(R.color.loctitle));
-
+                homeFragmentOpen = false;
+                homeclick = false;
                 loadFragment(new FragmentSearch());
                 break;
             case R.id.lin_add:
@@ -201,7 +248,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 botom_search_text.setTextColor(getResources().getColor(R.color.loctitle));
                 botom_noti_text.setTextColor(getResources().getColor(R.color.loctitle));
                 botom_profile_text.setTextColor(getResources().getColor(R.color.loctitle));
-                //  dispatchTakeVideoIntent();
+                homeFragmentOpen = false;
+                homeclick = false;
                 openDialogBox();
                 /*Intent intentn = new Intent(MainActivity.this, NewVideoActivity.class);
                 startActivity(intentn);*/
@@ -218,6 +266,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 botom_search_text.setTextColor(getResources().getColor(R.color.loctitle));
                 botom_noti_text.setTextColor(getResources().getColor(R.color.locbutonbag));
                 botom_profile_text.setTextColor(getResources().getColor(R.color.loctitle));
+                homeFragmentOpen = false;
+                homeclick = false;
                 loadFragment(new FragmentNotification());
                 break;
             case R.id.lin_profile:
@@ -232,6 +282,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 botom_search_text.setTextColor(getResources().getColor(R.color.loctitle));
                 botom_noti_text.setTextColor(getResources().getColor(R.color.loctitle));
                 botom_profile_text.setTextColor(getResources().getColor(R.color.locbutonbag));
+                homeFragmentOpen = false;
+                homeclick = false;
                 loadFragment(new ProfileFragment());
                 break;
             case R.id.lin_onlysearch:
@@ -253,8 +305,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void loadFragment(Fragment fragment) {
         FragmentManager fm = getSupportFragmentManager();
+        currentFragment = fm.findFragmentById(R.id.frame_loc);
+
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
-        fragmentTransaction.replace(R.id.frame_loc, fragment);
+        fragmentTransaction.replace(R.id.frame_loc, fragment, fragment.getClass().toString());
         fragmentTransaction.commit(); // save the changes
     }
 
@@ -297,53 +351,107 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onActivityResult(requestCode, resultCode, intent);
         if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == RESULT_OK) {
             Uri videoUri = intent.getData();
-            //videoView.setVideoURI(videoUri);
             Intent intentn = new Intent(MainActivity.this, NewVideoActivity.class);
             intentn.putExtra("video", String.valueOf(videoUri));
             startActivity(intentn);
-        }
+        }//
+        // delete
         if (requestCode == IMAGE_PICKER_SELECT && resultCode == RESULT_OK) {
-            Uri selectedMediaUri = intent.getData();
-           /* if (selectedMediaUri.toString().contains("image")) {
-                //handle image
-            } else if (selectedMediaUri.toString().contains("video")) {*/
-                Uri selectedImageUri = intent.getData();
+            Uri selectedImageUri = intent.getData();
+            String filemanagerstring = selectedImageUri.getPath();
+            Log.e("filemanagerstring==", filemanagerstring);
+            String selectedImagePath = getPath(selectedImageUri);
+            Log.e("selectedImagePath==", selectedImagePath);
+            if (selectedImagePath != null) {
+                //forDemoFunctionANdDelete(selectedImagePath);
+                compressVIdeoandGoingNextActivity(selectedImagePath);
+            }
+        }
+    }
 
-                // OI FILE Manager
-                String filemanagerstring = selectedImageUri.getPath();
-                Log.e("filemanagerstring==", filemanagerstring);
-                // MEDIA GALLERY
-                String selectedImagePath = getPath(selectedImageUri);
-                Log.e("selectedImagePath==", selectedImagePath);
-                if (selectedImagePath != null) {
-                    File file = new File(selectedImagePath);
-                    MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-//use one of overloaded setDataSource() functions to set your data source
-                    retriever.setDataSource(this, Uri.fromFile(file));
-                    String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-                    long timeInMillisec = Long.parseLong(time);
-                    retriever.release();
-                    Log.e("timeInMillisec==", String.valueOf(timeInMillisec));
-                    long seconds = TimeUnit.MILLISECONDS.toSeconds(timeInMillisec);
-                    Log.e("seconds==", String.valueOf(seconds));
+    public void forDemoFunctionANdDelete(String pah) {
+        Prefrence.setVideoFIle(pah);
+        UploadNewsModel.DataBean data = new UploadNewsModel.DataBean();
+        nextActivityGoing(data);
+    }
 
-                if (seconds<=300) {
-                    boolean compree= GetVieeoPath(MainActivity.this,String.valueOf(selectedImagePath),outputPaTH);
-                    Log.e("compressPathMain",String.valueOf(compree));
+    public void compressVIdeoandGoingNextActivity(String selectedImagePath) {
+        File file = new File(selectedImagePath);
+        long length = file.length();
+        length = length / 1024;
+        Log.e("length====", "" + length);
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        Log.e("uri====", Uri.fromFile(file).toString());
+        retriever.setDataSource(selectedImagePath);
+        //  retriever.setDataSource(this, Uri.fromFile(file));
+        String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+        long timeInMillisec = Long.parseLong(time);
+        retriever.release();
+        Log.e("timeInMillisec==", String.valueOf(timeInMillisec));
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(timeInMillisec);
+        Log.e("seconds==", String.valueOf(seconds));
 
-                }else{
-                    showalertDialog();
-                }}
-           // }
+        if (seconds > 300) {
+            showalertDialog("Please select video length less then '5 min' ");
+        } else if (length > 50400) {
+            showalertDialog("Please select video size less then '50 MB' ");
+        } else {
+            callServiceUploadNews(selectedImagePath);
         }
     }
 
     private void callServiceUploadNews(String selectedImagePath) {
-        File file = new File(selectedImagePath);
-        Prefrence.setVideoFIle(String.valueOf(file));
-        rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
-        rest.uploadNews(selectedImagePath);
+        if (rest.isInterentAvaliable()) {
+            File file = new File(selectedImagePath);
+            Prefrence.setVideoFIle(file.getAbsolutePath());
+            // setProgressSet();
+            //rest.ShowDialogue("jgjhfjhfgjhfjyh");
+            // rest.uploadNews(selectedImagePath);
 
+            startService(new Intent(this, NewsUplaodInBagroundService.class));
+        } else {
+            rest.AlertForInternet();
+        }
+
+    }
+
+    public void setProgressSet() {
+        final int totalProgressTime = 100;
+        runOnUiThread(new Runnable() {
+            public void run() {
+                int jumpTime = 0;
+
+                while (jumpTime < totalProgressTime) {
+                    try {
+                        sleep(1000);
+                        jumpTime += 1;
+                        txt_videouplodinbg.setText("" + jumpTime + " %");
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+       /* final int totalProgressTime = 100;
+        final Thread t = new Thread() {
+            @Override
+            public void run() {
+                int jumpTime = 0;
+
+                while (jumpTime < totalProgressTime) {
+                    try {
+                        sleep(1000);
+                        jumpTime += 1;
+                        txt_videouplodinbg.setText("" + jumpTime + " %");
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        t.start();*/
     }
 
     public String getPath(Uri uri) {
@@ -397,6 +505,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 UploadNewsModel loginModel = (UploadNewsModel) obj;
                 if (loginModel.isStatus()) {
+                    // dialog.setProgress(100);
+                    ///dialog.dismiss();
                     nextActivityGoing(loginModel.getData());
                 }
             }
@@ -406,7 +516,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onFailure(Call<Object> call, Throwable t) {
-
+        Log.e("error", t.toString());
+        rest.dismissProgressdialog();
+        Utils.showSnakBarDialog(this, lin_topmain, t.toString(), R.color.alert);
     }
 
     private void nextActivityGoing(UploadNewsModel.DataBean data) {
@@ -414,11 +526,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         intent.putExtra("video", data);
         startActivity(intent);
     }
-    public void showalertDialog() {
+
+    public void showalertDialog(String msg) {
 
         new AlertDialog.Builder(this)
                 .setTitle("Select Video")
-                .setMessage("Please select video length less  then 30 sec")
+                .setMessage(msg)
 
                 // Specifying a listener allows you to take an action before dismissing the dialog.
                 // The dialog is automatically dismissed when a dialog button is clicked.
@@ -436,74 +549,59 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
     }
-    public  boolean GetVieeoPath(Context context, String uri, String outputPaTH) {
-        new Thread() {
-            ProgressDialog pBar;
-            @Override
-            public void run() {
-                super.run();
-                VideoCompressor.start(
-                        null, // => This is required if srcUri is provided. If not, pass null.
-                        null, // => Source can be provided as content uri, it requires context.
-                        uri, // => This could be null if srcUri and context are provided.
-                        outputPaTH,
-                        new CompressionListener() {
-                            @Override
-                            public void onStart() {
-                                // Compression start
-                                pBar = new ProgressDialog(context);
-                                pBar.setMessage("Please wait...It is downloading");
-                                pBar.setIndeterminate(false);
-                                pBar.setCancelable(false);
-                                pBar.show();
-                                Log.e("VideoCompreser", "onStart");
-                            }
 
-                            @Override
-                            public void onSuccess() {
-                                // On Compression success
-                                Log.e("VideoCompreser", "onSuccess");
-                                int lent = outputPaTH.length();
-                                Log.e("VideoCompreser", String.valueOf(lent));
-                                pBar.dismiss();
-                                statusCompress=true;
-                                callmethod();
-                            }
 
-                            @Override
-                            public void onFailure(String failureMessage) {
-                                // On Failure
-                                Log.e("VideoCompreser", failureMessage);
-                            }
-
-                            @Override
-                            public void onProgress(float v) {
-                                // Update UI with progress value
-                                Log.e("VideoCompreser", "onProgress");
-                            }
-
-                            @Override
-                            public void onCancelled() {
-                                // On Cancelled
-                                Log.e("VideoCompreser", "onCancelled");
-                            }
-                        }, new Configuration(
-                                VideoQuality.MEDIUM,
-                                false,
-                                false,
-                                null /*videoHeight: double, or null*/,
-                                null /*videoWidth: double, or null*/,
-                                null /*videoBitrate: int, or null*/
-                        )
-                );
-
-            }
-        }.run();
-        return statusCompress;
-    }
-    private  void callmethod() {
+    private void callmethod() {
         callServiceUploadNews(outputPaTH);
     }
+
     //6.21---2.17
     //7.22---1.06
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onResultReceived(UploadNewsModel.DataBean dataBean) {
+        Prefrence.removeBagroundDate();
+        lin_uplodingperctage.setVisibility(View.GONE);
+        Intent intent = new Intent(MainActivity.this, NewVideoActivity.class);
+        intent.putExtra("video", dataBean);
+        startActivity(intent);
+        // finish();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onResultReceived(String type) {
+       // Toast.makeText(MainActivity.this, "start", Toast.LENGTH_SHORT).show();
+        if (type.equalsIgnoreCase("start")) {
+            lin_uploadingvideo.setVisibility(View.VISIBLE);
+            showtimerVideoCapture();
+        }else{
+            lin_uplodingperctage.setVisibility(View.GONE);
+            lin_uplodingperctage.setVisibility(View.GONE);
+        }
+
+    }
+
+    public void showtimerVideoCapture() {
+
+        CountDownTimer countDownTimer = new CountDownTimer(5000, 1000) {
+            public void onTick(long millisUntilFinished) {
+            }
+
+            public void onFinish() {
+                lin_uploadingvideo.startAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.anim_slide_out_right));
+                lin_uploadingvideo.setVisibility(View.GONE);
+                lin_uplodingperctage.setVisibility(View.VISIBLE);
+                // setProgressSet();
+            }
+        }.start();
+        count=0;
+        handler.post(updateTextRunnable);
+    }
+
+    Runnable updateTextRunnable=new Runnable(){
+        public void run() {
+            count++;
+            txt_videouplodinbg.setText("" +count+"%");
+            handler.postDelayed(this, TIME_DELAY);
+        }
+    };
 }

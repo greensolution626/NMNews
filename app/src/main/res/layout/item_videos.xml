@@ -17,7 +17,7 @@
             android:id="@+id/image_search_video_profile"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:src="@drawable/homeimagevideo" />
+             />
 
         <ImageView
             android:visibility="gone"

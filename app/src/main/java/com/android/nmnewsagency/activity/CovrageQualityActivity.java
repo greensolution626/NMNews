@@ -1,18 +1,16 @@
 package com.android.nmnewsagency.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.nmnewsagency.R;
 import com.android.nmnewsagency.adapter.CovrageQualityAdapter;
-import com.android.nmnewsagency.adapter.HashTagDetailAdapter;
 import com.android.nmnewsagency.listner.RecyclerTouchListener;
 
 import java.util.ArrayList;
@@ -47,14 +45,7 @@ public class CovrageQualityActivity extends AppCompatActivity {
     private void inItItemRecycle() {
         arrayList.add("");
         arrayList.add("");
-        imgList.add(R.drawable.msg1);
-        imgList.add(R.drawable.msg2);
-        imgList.add(R.drawable.msg3);
-        imgList.add(R.drawable.searchimage);
-        imgList.add(R.drawable.msg1);
-        imgList.add(R.drawable.msg2);
-        imgList.add(R.drawable.msg3);
-        imgList.add(R.drawable.searchimage);
+
         locationAdapter = new CovrageQualityAdapter(this,arrayList,imgList);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

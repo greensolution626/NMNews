@@ -6,6 +6,7 @@
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/lin_toplinb"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -51,7 +52,6 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/sarabun_semibold"
                             android:singleLine="true"
-                            android:text="@string/hometitle"
                             android:textColor="@color/locsubtitle"
                             android:textSize="16sp" />
 
@@ -71,7 +71,6 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/sarabun_regular"
                         android:singleLine="true"
-                        android:text="@string/homesubtitle"
                         android:textColor="@color/locsubtitle"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -105,7 +104,7 @@
                 <com.google.android.exoplayer2.ui.PlayerView
                     android:id="@+id/idExoPlayerVIew"
                     android:layout_width="match_parent"
-                    android:layout_height="300dp"
+                    android:layout_height="320dp"
                     android:visibility="visible"
                     app:resize_mode="fixed_width" />
                 <!-- <VideoView
@@ -120,7 +119,7 @@
                 <ImageView
                     android:id="@+id/video_thuimbnail"
                     android:layout_width="match_parent"
-                    android:layout_height="300dp"
+                    android:layout_height="320dp"
                     android:visibility="visible" />
 
                 <ImageView
@@ -181,7 +180,6 @@
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
             android:fontFamily="@font/sarabun_semibold"
-            android:text="@string/titlehome"
             android:textColor="@color/locsubtitle"
             android:textSize="16sp" />
 
@@ -205,7 +203,6 @@
                 android:layout_marginLeft="5dp"
                 android:fontFamily="@font/sarabun_semibold"
                 android:singleLine="true"
-                android:text="170 K"
                 android:textColor="@color/locsubtitle"
                 android:textSize="12sp" />
 
@@ -223,7 +220,6 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="15dp"
                 android:fontFamily="@font/sarabun_regular"
-                android:text="@string/homestate"
                 android:textColor="@color/locsubtitle"
                 android:textSize="12sp" />
 
@@ -240,7 +236,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:fontFamily="@font/sarabun_regular"
-                android:text="@string/homedate"
                 android:textColor="@color/locsubtitle"
                 android:textSize="12sp" />
 
@@ -284,7 +279,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:fontFamily="@font/sarabun_semibold"
-                        android:text="65K"
+                        android:text="0"
                         android:textColor="@color/loctitle" />
                 </LinearLayout>
 
@@ -310,7 +305,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:fontFamily="@font/sarabun_semibold"
-                        android:text="36"
+                        android:text="0"
                         android:textColor="@color/loctitle" />
                 </LinearLayout>
 
@@ -378,8 +373,8 @@
                 android:orientation="vertical">
 
                 <ImageView
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     app:srcCompat="@drawable/ic_chat"
                     tools:ignore="VectorDrawableCompat" />
@@ -401,6 +396,7 @@
             android:background="@color/adbag">
 
             <TextView
+                android:visibility="gone"
                 android:layout_width="50dp"
                 android:layout_height="40dp"
                 android:layout_centerInParent="true"

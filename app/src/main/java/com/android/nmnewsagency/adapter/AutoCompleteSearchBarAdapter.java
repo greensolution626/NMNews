@@ -11,15 +11,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.nmnewsagency.R;
 import com.android.nmnewsagency.modelclass.NewVideoHashtagModelClass;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 
 import java.util.List;
 
 public class AutoCompleteSearchBarAdapter extends RecyclerView.Adapter<AutoCompleteSearchBarAdapter.MyViewHolder> {
     // private List<LocationModel> moviesList;
     private List<NewVideoHashtagModelClass.DataBean.PagedRecordBean> moviesList;
-    private Context context;
+    public Context context;
 
     /*public LocationAdapter(List<LocationModel> moviesList) {
         this.moviesList = moviesList;

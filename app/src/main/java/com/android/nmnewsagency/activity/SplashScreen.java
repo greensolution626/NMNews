@@ -1,18 +1,12 @@
 package com.android.nmnewsagency.activity;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
-import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -91,7 +85,9 @@ public class SplashScreen extends AppCompatActivity {
         int result3 = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
         int result4 = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         int result5 = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
-        // int result6 = ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE);
+        int result6 = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO);
+        int result7 = ContextCompat.checkSelfPermission(this, Manifest.permission.MODIFY_AUDIO_SETTINGS);
+         int result8 = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
         //int result7 = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS);
         //int result8 = ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS);
 
@@ -101,7 +97,9 @@ public class SplashScreen extends AppCompatActivity {
                 && result3 == PackageManager.PERMISSION_GRANTED
                 && result4 == PackageManager.PERMISSION_GRANTED
                 && result5 == PackageManager.PERMISSION_GRANTED
-            //  && result6 == PackageManager.PERMISSION_GRANTED
+                && result6 == PackageManager.PERMISSION_GRANTED
+                && result7 == PackageManager.PERMISSION_GRANTED
+              && result8 == PackageManager.PERMISSION_GRANTED
             //&& result7 == PackageManager.PERMISSION_GRANTED
             //&& result8 == PackageManager.PERMISSION_GRANTED
         )
@@ -119,7 +117,8 @@ public class SplashScreen extends AppCompatActivity {
                         Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_PHONE_STATE,
                         // Manifest.permission.CALL_PHONE,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE,
-                        // Manifest.permission.READ_SMS, Manifest.permission.RECEIVE_SMS
+                        Manifest.permission.RECORD_AUDIO,Manifest.permission.MODIFY_AUDIO_SETTINGS,
+                         Manifest.permission.CAMERA//, Manifest.permission.RECEIVE_SMS
                 },
                 Constants.LOCATION_PERMISSION_CODE);
     }
@@ -164,6 +163,33 @@ public class SplashScreen extends AppCompatActivity {
                 startActivity(intent);
 
             } else if (grantResults.length > 0 && grantResults[4] != PackageManager.PERMISSION_GRANTED) {
+                //checkPermisionStatus();
+                Toast.makeText(this, getResources().getString(R.string.permissionString), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts("package", getPackageName(), null);
+                intent.setData(uri);
+                startActivity(intent);
+
+            } else if (grantResults.length > 0 && grantResults[5] != PackageManager.PERMISSION_GRANTED) {
+                //checkPermisionStatus();
+                Toast.makeText(this, getResources().getString(R.string.permissionString), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts("package", getPackageName(), null);
+                intent.setData(uri);
+                startActivity(intent);
+
+            } else if (grantResults.length > 0 && grantResults[6] != PackageManager.PERMISSION_GRANTED) {
+                //checkPermisionStatus();
+                Toast.makeText(this, getResources().getString(R.string.permissionString), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts("package", getPackageName(), null);
+                intent.setData(uri);
+                startActivity(intent);
+
+            } else if (grantResults.length > 0 && grantResults[7] != PackageManager.PERMISSION_GRANTED) {
                 //checkPermisionStatus();
                 Toast.makeText(this, getResources().getString(R.string.permissionString), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent();

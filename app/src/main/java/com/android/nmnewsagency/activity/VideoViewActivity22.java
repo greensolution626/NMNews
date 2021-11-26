@@ -5,7 +5,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -19,36 +18,28 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.abedelazizshe.lightcompressorlibrary.CompressionListener;
-import com.abedelazizshe.lightcompressorlibrary.VideoCompressor;
-import com.abedelazizshe.lightcompressorlibrary.VideoQuality;
-import com.abedelazizshe.lightcompressorlibrary.config.Configuration;
 import com.android.nmnewsagency.R;
-import com.android.nmnewsagency.modelclass.LoginModel;
 import com.android.nmnewsagency.modelclass.UploadNewsModel;
 import com.android.nmnewsagency.pref.Prefrence;
 import com.android.nmnewsagency.rest.Rest;
+import com.android.nmnewsagency.service.NewsUplaodInBagroundService;
 import com.android.nmnewsagency.utils.Utils;
-import com.camerakit.CameraKit;
 
 import java.io.File;
 import java.io.IOException;
@@ -82,15 +73,17 @@ public class VideoViewActivity22 extends AppCompatActivity implements Callback<O
     Rest rest;
     FrameLayout preview;
     LinearLayout lin_tapheare;
+    RelativeLayout rel_topvideo;
+    ProgressDialog dialog;
     String outputPaTH = Environment.getExternalStorageDirectory().getAbsolutePath() +
             File.separator + System.nanoTime() + "compress.mp4";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_view22);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         rest = new Rest(this, this);
-
         processPickImage();
         iniiT();
         img_cameraview.setOnClickListener(new View.OnClickListener() {
@@ -100,7 +93,7 @@ public class VideoViewActivity22 extends AppCompatActivity implements Callback<O
 
                 if (count == 1) {
                     releaseCamera();
-                    mCamera =  Camera.open(1);
+                    mCamera = Camera.open(1);
                     mCamera.setDisplayOrientation(90);
                     // Create our Preview view and set it as the content of our activity.
                     mPreview = new CameraPreview(VideoViewActivity22.this, mCamera);
@@ -108,7 +101,7 @@ public class VideoViewActivity22 extends AppCompatActivity implements Callback<O
                     count--;
                 } else {
                     releaseCamera();
-                    mCamera =  Camera.open(0);
+                    mCamera = Camera.open(0);
                     mCamera.setDisplayOrientation(90);
                     // Create our Preview view and set it as the content of our activity.
                     mPreview = new CameraPreview(VideoViewActivity22.this, mCamera);
@@ -147,40 +140,9 @@ public class VideoViewActivity22 extends AppCompatActivity implements Callback<O
         img_stop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                countDownTimer.cancel();
-                txt_timer.setText("00:00");
-                captureButton.setVisibility(View.VISIBLE);
-                img_stop.setVisibility(View.GONE);
-                img_cameraview.setVisibility(View.VISIBLE);
-                lin_tapheare.setVisibility(View.VISIBLE);
-
-                //txt_timer_done.setVisibility(View.VISIBLE);
-                txt_timer.setVisibility(View.GONE);
-                img_cameraview.setVisibility(View.VISIBLE);
-                img_stop.setVisibility(View.GONE);
-                captureButton.setVisibility(View.VISIBLE);
-
-                // stop recording and release camera
-                mediaRecorder.stop();  // stop the recording
-                releaseMediaRecorder(); // release the MediaRecorder object
-                mCamera.lock();
-
-                /*Bitmap bitmap=null;
-                // take camera access back from MediaRecorder
-                try {
-                    bitmap=retriveVideoFrameFromVideo(String.valueOf(mediaFile));
-                } catch (Throwable throwable) {
-                    throwable.printStackTrace();
-                }*/
-
-                // inform the user that recording has stopped
-                isRecording = false;
-                if (mediaFile != null) {
-                   // Toast.makeText(VideoViewActivity22.this, String.valueOf(mediaFile), Toast.LENGTH_SHORT).show();
-                    String compree=GetVieeoPath(VideoViewActivity22.this,String.valueOf(mediaFile),outputPaTH);
-                    Log.e("compressPath",compree);
-
-                }
+                //delete
+               //  deletefunction();
+                whenStopClick();
             }
         });
         txt_timer_done.setOnClickListener(new View.OnClickListener() {
@@ -193,21 +155,93 @@ public class VideoViewActivity22 extends AppCompatActivity implements Callback<O
         iamge_back_video.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                countDownTimer.cancel();
+                if(countDownTimer!=null) {
+                    countDownTimer.cancel();
+                }
                 finish();
             }
         });
     }
 
+    public void deletefunction() {
+        countDownTimer.cancel();
+        txt_timer.setText("00:00");
+        captureButton.setVisibility(View.VISIBLE);
+        img_stop.setVisibility(View.GONE);
+        img_cameraview.setVisibility(View.VISIBLE);
+        lin_tapheare.setVisibility(View.VISIBLE);
+
+        //txt_timer_done.setVisibility(View.VISIBLE);
+        txt_timer.setVisibility(View.GONE);
+        img_cameraview.setVisibility(View.VISIBLE);
+        img_stop.setVisibility(View.GONE);
+        captureButton.setVisibility(View.VISIBLE);
+
+        // stop recording and release camera
+        mediaRecorder.stop();  // stop the recording
+        releaseMediaRecorder(); // release the MediaRecorder object
+        mCamera.lock();
+
+        // inform the user that recording has stopped
+        isRecording = false;
+        if (mediaFile != null) {
+            Prefrence.setVideoFIle(mediaFile.getAbsolutePath());
+            UploadNewsModel.DataBean data = new UploadNewsModel.DataBean();
+            nextActivityGoing(data);
+
+        }
+    }
+
+    public void whenStopClick() {
+        countDownTimer.cancel();
+        txt_timer.setText("00:00");
+        captureButton.setVisibility(View.VISIBLE);
+        img_stop.setVisibility(View.GONE);
+        img_cameraview.setVisibility(View.VISIBLE);
+        lin_tapheare.setVisibility(View.VISIBLE);
+
+        //txt_timer_done.setVisibility(View.VISIBLE);
+        txt_timer.setVisibility(View.GONE);
+        img_cameraview.setVisibility(View.VISIBLE);
+        img_stop.setVisibility(View.GONE);
+        captureButton.setVisibility(View.VISIBLE);
+
+        // stop recording and release camera
+        mediaRecorder.stop();  // stop the recording
+        releaseMediaRecorder(); // release the MediaRecorder object
+        mCamera.lock();
+
+                /*Bitmap bitmap=null;
+                // take camera access back from MediaRecorder
+                try {
+                    bitmap=retriveVideoFrameFromVideo(String.valueOf(mediaFile));
+                } catch (Throwable throwable) {
+                    throwable.printStackTrace();
+                }*/
+
+        // inform the user that recording has stopped
+        isRecording = false;
+        if (mediaFile != null) {
+
+            // Toast.makeText(VideoViewActivity22.this, String.valueOf(mediaFile), Toast.LENGTH_SHORT).show();
+            // String compree = GetVieeoPath(VideoViewActivity22.this, String.valueOf(mediaFile), outputPaTH);
+            // Log.e("compressPath", compree);
+            callServiceUploadNews(outputPaTH);
+        }
+
+    }
+
     private void nextActivityGoing(UploadNewsModel.DataBean data) {
+
         Intent intent = new Intent(VideoViewActivity22.this, NewVideoActivity.class);
-        intent.putExtra("video",data);
+        intent.putExtra("video", data);
         startActivity(intent);
         finish();
     }
 
     private void iniiT() {
         lin_tapheare = (LinearLayout) findViewById(R.id.lin_tapheare);
+        rel_topvideo =  findViewById(R.id.rel_topvideo);
         captureButton = (ImageView) findViewById(R.id.button_capture);
         iamge_back_video = (ImageView) findViewById(R.id.iamge_back_video);
         img_stop = (ImageView) findViewById(R.id.img_stop);
@@ -222,6 +256,7 @@ public class VideoViewActivity22 extends AppCompatActivity implements Callback<O
         super.onPause();
         releaseMediaRecorder();       // if you are using MediaRecorder, release it first
         releaseCamera();              // release the camera immediately on pause event
+
     }
 
     private void releaseMediaRecorder() {
@@ -240,11 +275,17 @@ public class VideoViewActivity22 extends AppCompatActivity implements Callback<O
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startRecordingScreen();
+    }
+
     private boolean prepareVideoRecorder() {
-
-       // mCamera = getCameraInstance();
-
-       // mCamera.setDisplayOrientation(90);
+        if (mCamera == null) {
+            mCamera = getCameraInstance();
+        }
+        // mCamera.setDisplayOrientation(90);
         mediaRecorder.setOrientationHint(90);
         // Step 1: Unlock and set camera to MediaRecorder
         mCamera.unlock();
@@ -253,10 +294,10 @@ public class VideoViewActivity22 extends AppCompatActivity implements Callback<O
         // Step 2: Set sources
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
-          // Step 3: Set a CamcorderProfile (requires API Level 8 or higher)
+        // Step 3: Set a CamcorderProfile (requires API Level 8 or higher)
         mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_480P));
         //size 20 mb
-       // mediaRecorder.setMaxFileSize(20000000);
+        // mediaRecorder.setMaxFileSize(20000000);
         // Step 4: Set output file
         mediaRecorder.setOutputFile(getOutputMediaFile(MEDIA_TYPE_VIDEO).toString());
 
@@ -382,13 +423,13 @@ public class VideoViewActivity22 extends AppCompatActivity implements Callback<O
 
     private void startRecordingScreen() {
         mCamera = getCameraInstance();
-        if(mCamera!=null) {
+        if (mCamera != null) {
             mCamera.setDisplayOrientation(90);
         }
         mediaRecorder = new MediaRecorder();
         // Create our Preview view and set it as the content of our activity.
         mPreview = new CameraPreview(this, mCamera);
-         preview = (FrameLayout) findViewById(R.id.camera_preview);
+        preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(mPreview);
     }
 
@@ -460,10 +501,11 @@ public class VideoViewActivity22 extends AppCompatActivity implements Callback<O
                 // inform the user that recording has stopped
                 isRecording = false;
                 if (mediaFile != null) {
-                   Prefrence.setVideoFIle(mediaFile.getAbsolutePath());
-                    String compree=GetVieeoPath(VideoViewActivity22.this,String.valueOf(mediaFile),outputPaTH);
-                    Log.e("compressPath",compree);
-                  // callServiceUploadNews(compree);
+
+                    //  Prefrence.setVideoFIle(mediaFile.getAbsolutePath());
+                    // String compree = GetVieeoPath(VideoViewActivity22.this, String.valueOf(mediaFile), outputPaTH);
+                    // Log.e("compressPath", compree);
+                    callServiceUploadNews(outputPaTH);
                 }
             }
         }.start();
@@ -479,8 +521,10 @@ public class VideoViewActivity22 extends AppCompatActivity implements Callback<O
 
                 UploadNewsModel loginModel = (UploadNewsModel) obj;
                 //editdelete
-               // nextActivityGoing(loginModel.getData());
+                // nextActivityGoing(loginModel.getData());
                 if (loginModel.isStatus()) {
+                    dialog.setProgress(100);
+                    dialog.dismiss();
                     nextActivityGoing(loginModel.getData());
                 }
             }
@@ -490,15 +534,54 @@ public class VideoViewActivity22 extends AppCompatActivity implements Callback<O
 
     @Override
     public void onFailure(Call<Object> call, Throwable t) {
-
+        Log.e("error",t.toString());
+        dialog.dismiss();
+        Utils.showSnakBarDialog(this,rel_topvideo,t.toString(),R.color.alert);
     }
 
     private void callServiceUploadNews(String path) {
-        Prefrence.setVideoFIle(mediaFile.getAbsolutePath());
-        rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
-        rest.uploadNews(path);
+        if (rest.isInterentAvaliable()) {
+            Prefrence.setVideoFIle(mediaFile.getAbsolutePath());
+           // setProgressSet();
+           // rest.uploadNews(mediaFile.getAbsolutePath());
+           // Toast.makeText(this, "callserviceclass", Toast.LENGTH_SHORT).show();
+            startService(new Intent(this, NewsUplaodInBagroundService.class));
+            finish();
+        } else {
+            rest.AlertForInternet();
+        }
 
     }
+
+    public void setProgressSet() {
+        dialog = new ProgressDialog(this);
+        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        dialog.setCancelable(false);
+        dialog.setMessage("Please Wait for a sec ..");
+        dialog.setProgress(0);
+        dialog.setMax(100);
+        dialog.show();
+        final int totalProgressTime = 95;
+        final Thread t = new Thread() {
+            @Override
+            public void run() {
+                int jumpTime = 0;
+
+                while (jumpTime < totalProgressTime) {
+                    try {
+                        sleep(2000);
+                        jumpTime += 2;
+                        dialog.setProgress(jumpTime);
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        t.start();
+    }
+
     private int findFrontFacingCamera() {
 
         // Search for the front facing camera
@@ -508,112 +591,41 @@ public class VideoViewActivity22 extends AppCompatActivity implements Callback<O
             Camera.getCameraInfo(i, info);
             if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
                 Toast.makeText(this, String.valueOf(i), Toast.LENGTH_SHORT).show();
-               // cameraId = i;
-               // cameraFront = true;
+                // cameraId = i;
+                // cameraFront = true;
                 break;
             }
         }
         int cameraId = 0;
         return cameraId;
     }
-    public  String GetVieeoPath(Context context, String uri, String outputPaTH) {
 
-        new Thread() {
-            ProgressDialog pBar;
-            @Override
-            public void run() {
-                super.run();
-                VideoCompressor.start(
-                        null, // => This is required if srcUri is provided. If not, pass null.
-                        null, // => Source can be provided as content uri, it requires context.
-                        uri, // => This could be null if srcUri and context are provided.
-                        outputPaTH,
-                        new CompressionListener() {
-                            @Override
-                            public void onStart() {
-                                // Compression start
-                                pBar = new ProgressDialog(context);
-                                pBar.setMessage("Please wait...It is downloading");
-                                pBar.setIndeterminate(false);
-                                pBar.setCancelable(false);
-                                pBar.show();
-                                Log.e("VideoCompreser", "onStart");
-                            }
 
-                            @Override
-                            public void onSuccess() {
-                                // On Compression success
-                                Log.e("VideoCompreser", "onSuccess");
-                                int lent = outputPaTH.length();
-                                Log.e("VideoCompreser", String.valueOf(lent));
-                                Log.e("VideoCompreser", outputPaTH);
-                                pBar.dismiss();
-                                callmethod();
-
-                            }
-
-                            @Override
-                            public void onFailure(String failureMessage) {
-                                // On Failure
-                                Log.e("VideoCompreser", failureMessage);
-                            }
-
-                            @Override
-                            public void onProgress(float v) {
-                                // Update UI with progress value
-                                Log.e("VideoCompreser", "onProgress");
-                            }
-
-                            @Override
-                            public void onCancelled() {
-                                // On Cancelled
-                                Log.e("VideoCompreser", "onCancelled");
-                            }
-                        }, new Configuration(
-                                VideoQuality.MEDIUM,
-                                false,
-                                false,
-                                null /*videoHeight: double, or null*/,
-                                null /*videoWidth: double, or null*/,
-                                null /*videoBitrate: int, or null*/
-                        )
-                );
-
-            }
-        }.run();
-        return outputPaTH;
-    }
-
-    private  void callmethod() {
+    private void callmethod() {
         callServiceUploadNews(outputPaTH);
     }
 
 
     @SuppressLint("NewApi")
     public static Bitmap retriveVideoFrameFromVideo(String p_videoPath)
-            throws Throwable
-    {
+            throws Throwable {
         Bitmap m_bitmap = null;
         MediaMetadataRetriever m_mediaMetadataRetriever = null;
-        try
-        {
+        try {
             m_mediaMetadataRetriever = new MediaMetadataRetriever();
             m_mediaMetadataRetriever.setDataSource(p_videoPath);
             m_bitmap = m_mediaMetadataRetriever.getFrameAtTime();
-        }
-        catch (Exception m_e)
-        {
+        } catch (Exception m_e) {
             throw new Throwable(
                     "Exception in retriveVideoFrameFromVideo(String p_videoPath)"
                             + m_e.getMessage());
-        }
-        finally
-        {
-            if (m_mediaMetadataRetriever != null)
-            {
+        } finally {
+            if (m_mediaMetadataRetriever != null) {
                 m_mediaMetadataRetriever.release();
             }
         }
         return m_bitmap;
     }
+
+
 }

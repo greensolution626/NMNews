@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lin_topmain"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -13,11 +14,11 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:visibility="gone"
             android:id="@+id/lin_top"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:visibility="gone"
             tools:context=".fragment.HomeFragment">
 
             <LinearLayout
@@ -55,9 +56,9 @@
                 android:id="@+id/lin_searchwithedit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
+                android:orientation="horizontal"
                 android:visibility="gone"
                 tools:context=".fragment.HomeFragment">
 
@@ -71,11 +72,6 @@
                     tools:ignore="VectorDrawableCompat" />
 
                 <EditText
-                    android:imeOptions="actionDone"
-                    android:singleLine="true"
-                    android:textSize="15sp"
-                    android:paddingLeft="5dp"
-                    android:padding="10dp"
                     android:id="@+id/search_edit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -83,21 +79,112 @@
                     android:background="@drawable/searchtopbar"
                     android:fontFamily="@font/sarabun_regular"
                     android:hint="@string/searchitem"
-                     />
+                    android:imeOptions="actionDone"
+                    android:padding="10dp"
+                    android:paddingLeft="5dp"
+                    android:singleLine="true"
+                    android:textSize="15sp" />
             </LinearLayout>
         </LinearLayout>
 
         <FrameLayout
-            android:id="@+id/frame_loc"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/lin_top"
-            android:layout_marginBottom="80dp" />
+            android:layout_marginBottom="64dp">
+
+            <FrameLayout
+                android:id="@+id/frame_loc"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginRight="15dp"
+
+                android:orientation="horizontal"
+                android:padding="5dp"
+                android:visibility="visible">
+
+                <LinearLayout
+                    android:id="@+id/lin_uploadingvideo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/dialog_uploading"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    tools:context=".fragment.HomeFragment">
+
+                    <TextView
+                        android:textSize="13sp"
+                        android:layout_marginTop="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical|center_horizontal"
+                        android:text="Uploading process begin..."
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:textSize="13sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical|center_horizontal"
+                        android:text=" please see in Notification bar .."
+                        android:textStyle="bold" />
+
+                    <ProgressBar
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp"
+                        android:layout_marginLeft="9dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginRight="9dp"
+                        android:layout_marginBottom="13dp"
+                        android:indeterminate="true"
+                        android:max="100"
+                        android:progress="0" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:visibility="gone"
+                    android:id="@+id/lin_uplodingperctage"
+                    android:layout_width="45dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/dialog_uploading1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/txt_videouplodinbg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical|center_horizontal"
+                        android:layout_marginTop="5dp"
+                        android:text="1%"
+                        android:textColor="@color/black"
+                        android:textStyle="bold" />
+
+                    <ProgressBar
+                        android:layout_width="wrap_content"
+                        android:layout_height="20dp"
+                        android:layout_marginLeft="9dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginRight="9dp"
+                        android:layout_marginBottom="13dp"
+                        android:indeterminate="true"
+                        android:max="100"
+                        android:progress="0" />
+                </LinearLayout>
+            </RelativeLayout>
+        </FrameLayout>
 
         <RelativeLayout
-
             android:layout_width="match_parent"
-            android:layout_height="83dp"
+            android:layout_height="60dp"
             android:layout_alignParentBottom="true"
             android:background="@color/white"
             android:orientation="vertical">
@@ -109,16 +196,17 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
+                android:layout_height="60dp"
                 android:layout_alignParentBottom="true"
                 android:layout_gravity="bottom"
+                android:layout_marginTop="2dp"
                 android:background="@color/white"
                 android:orientation="horizontal"
-                android:padding="10dp">
+                android:padding="0dp">
 
                 <LinearLayout
                     android:id="@+id/lin_home"
-                    android:layout_width="50dp"
+                    android:layout_width="40dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:orientation="vertical">
@@ -138,12 +226,13 @@
                         android:layout_gravity="center_horizontal"
                         android:fontFamily="@font/sarabun_regular"
                         android:text="@string/home"
-                        android:textColor="@color/loctitle" />
+                        android:textColor="@color/loctitle"
+                        android:textSize="12sp" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/lin_search"
-                    android:layout_width="50dp"
+                    android:layout_width="40dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:orientation="vertical">
@@ -163,12 +252,13 @@
                         android:layout_gravity="center_horizontal"
                         android:fontFamily="@font/sarabun_regular"
                         android:text="@string/search"
-                        android:textColor="@color/loctitle" />
+                        android:textColor="@color/loctitle"
+                        android:textSize="12sp" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/lin_add"
-                    android:layout_width="50dp"
+                    android:layout_width="40dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:orientation="vertical"
@@ -187,7 +277,7 @@
 
                 <LinearLayout
                     android:id="@+id/lin_noti"
-                    android:layout_width="50dp"
+                    android:layout_width="40dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:orientation="vertical">
@@ -207,12 +297,13 @@
                         android:layout_gravity="center_horizontal"
                         android:fontFamily="@font/sarabun_regular"
                         android:text="@string/noti"
-                        android:textColor="@color/loctitle" />
+                        android:textColor="@color/loctitle"
+                        android:textSize="12sp" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/lin_profile"
-                    android:layout_width="50dp"
+                    android:layout_width="40dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:orientation="vertical">
@@ -232,7 +323,8 @@
                         android:layout_gravity="center_horizontal"
                         android:fontFamily="@font/sarabun_regular"
                         android:text="@string/profile"
-                        android:textColor="@color/loctitle" />
+                        android:textColor="@color/loctitle"
+                        android:textSize="12sp" />
                 </LinearLayout>
 
             </LinearLayout>

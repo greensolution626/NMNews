@@ -1,12 +1,7 @@
 package com.android.nmnewsagency.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -19,28 +14,42 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.nmnewsagency.R;
 import com.android.nmnewsagency.adapter.GetLOtherUserOwnNewsAdapter;
 import com.android.nmnewsagency.adapter.GetOtherUserHashNewsAdapter;
-import com.android.nmnewsagency.adapter.GetUserHashNewsAdapter;
-import com.android.nmnewsagency.adapter.GetUserOwnNewsAdapter;
-import com.android.nmnewsagency.adapter.GetUserSaveNewsAdapter;
-import com.android.nmnewsagency.adapter.HashTagDetailAdapter;
+import com.android.nmnewsagency.chat.ChatHelper;
 import com.android.nmnewsagency.listner.RecyclerTouchListener;
 import com.android.nmnewsagency.modelclass.AddNewsModel;
 import com.android.nmnewsagency.modelclass.GetProfileDataModel;
 import com.android.nmnewsagency.modelclass.GetUserHashTagModel;
 import com.android.nmnewsagency.modelclass.GetUserOwnNewsModel;
-import com.android.nmnewsagency.modelclass.GetUserSaveNewsModel;
-import com.android.nmnewsagency.modelclass.ReportModelClass;
 import com.android.nmnewsagency.modelclass.ReportUserModel;
-import com.android.nmnewsagency.pref.Prefrence;
+import com.android.nmnewsagency.modelclass.UploadNewsModel;
+import com.android.nmnewsagency.pref.SharedPrefsHelper;
 import com.android.nmnewsagency.rest.Rest;
+import com.android.nmnewsagency.utils.Utils;
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.quickblox.chat.QBRestChatService;
+import com.quickblox.chat.model.QBChatDialog;
+import com.quickblox.chat.model.QBDialogCustomData;
+import com.quickblox.chat.model.QBDialogType;
+import com.quickblox.core.QBEntityCallback;
+import com.quickblox.core.exception.QBResponseException;
+import com.quickblox.users.model.QBUser;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,13 +69,17 @@ public class UserProfileActivity extends AppCompatActivity implements
     List<Integer> imAGE;
     BottomSheetDialog bottomSheetDialog;
     ImageView iamge_back_userdetail, img_repo_userprofile, img_contact, img_video_video, img_video, img_userprofile;
-    LinearLayout lin_folowing_userprofile, lin_folowers_userprofile, lin_ownvideo, lin_owncontact, lin_ownvideo_video;
-    TextView txt_nodata, txt_userFolowing, txt_userfolow, txt_userUname, txt_userFname,txt_userhashvideo,txt_userownvideo;
+    LinearLayout lin_folowing_userprofile, lin_folowers_userprofile, lin_ownvideo, lin_owncontact, lin_ownvideo_video,lin_topuser;
+    TextView txt_nodata, txt_userFolowing, txt_userfolow, txt_userUname, txt_userFname, txt_userhashvideo, txt_userownvideo;
     Rest rest;
     String id;
-    Button but_folow;
+    Button but_folow, but_msg_user;
     GetProfileDataModel.DataBean.AspNetUserBean dataBean;
     boolean isFoloow;
+    private static final int UNAUTHORIZED = 401;
+    ProgressDialog pd;
+    QBUser currentUser;
+    private static final int REQUEST_DIALOG_ID_FOR_UPDATE = 165;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +91,16 @@ public class UserProfileActivity extends AppCompatActivity implements
             id = bundle.getString("userId");
         }
         rest = new Rest(this, this);
+        if (!ChatHelper.getInstance().isLogged()) {
+            reloginToChat();
+        }
+        if (ChatHelper.getCurrentUser() != null) {
+            currentUser = ChatHelper.getCurrentUser();
+            Log.e("currentuser======", currentUser.toString());
+        } else {
+            // Log.e(TAG, "Finishing " + TAG + ". Current user is null");
+            // finish();
+        }
         iniT();
         //inItItemRecycle();
     }
@@ -85,9 +108,11 @@ public class UserProfileActivity extends AppCompatActivity implements
     private void iniT() {
         recyclerView = (RecyclerView) findViewById(R.id.recy_user_detail);
         but_folow = (Button) findViewById(R.id.but_folow);
+        but_msg_user = (Button) findViewById(R.id.but_msg_user);
         lin_folowers_userprofile = (LinearLayout) findViewById(R.id.lin_folowers_userprofile);
         lin_folowing_userprofile = (LinearLayout) findViewById(R.id.lin_folowing_userprofile);
         lin_ownvideo_video = (LinearLayout) findViewById(R.id.lin_ownvideo_video);
+        lin_topuser = (LinearLayout) findViewById(R.id.lin_topuser);
         lin_owncontact = (LinearLayout) findViewById(R.id.lin_owncontact);
         lin_ownvideo = (LinearLayout) findViewById(R.id.lin_ownvideo);
         lin_folowers_userprofile.setOnClickListener(this);
@@ -133,6 +158,14 @@ public class UserProfileActivity extends AppCompatActivity implements
 
             }
         });
+        but_msg_user.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //prepareUser(dataBean.getUserName(),dataBean.getFullName(),dataBean.getAvatar());
+                // goingToChatActivity( new QBUser() );
+                nextACtivityzzforChat();
+            }
+        });
         callServicegetProfiel();
     }
 
@@ -141,7 +174,7 @@ public class UserProfileActivity extends AppCompatActivity implements
         rest.getFrontProfileList(id);
     }
 
-     private void callServicegetUserSaveVideo() {
+    private void callServicegetUserSaveVideo() {
         rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
         rest.getuserHashtagVideo(id);
     }
@@ -172,15 +205,13 @@ public class UserProfileActivity extends AppCompatActivity implements
             recyclerView.setItemAnimator(new DefaultItemAnimator());
             recyclerView.setNestedScrollingEnabled(true);
             recyclerView.setAdapter(locationAdapter);
-        }
-        else if (type.equals("hash")) {
+        } else if (type.equals("hash")) {
             locationAdapter2 = new GetOtherUserHashNewsAdapter(UserProfileActivity.this, arrayListHash);
             recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
             recyclerView.setItemAnimator(new DefaultItemAnimator());
             recyclerView.setNestedScrollingEnabled(true);
             recyclerView.setAdapter(locationAdapter2);
         }
-
 
 
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(this, recyclerView, new RecyclerTouchListener.ClickListener() {
@@ -233,6 +264,7 @@ public class UserProfileActivity extends AppCompatActivity implements
         dialog.setContentView(R.layout.dialog_report);
         ImageView img_close_dialog = dialog.findViewById(R.id.img_close_dialog);
         TextView txt_report_subtitle = dialog.findViewById(R.id.txt_report_subtitle);
+        RelativeLayout rel_dialogtop = dialog.findViewById(R.id.rel_dialogtop);
         RadioGroup radio_group = dialog.findViewById(R.id.radio_group);
         img_close_dialog.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -246,7 +278,9 @@ public class UserProfileActivity extends AppCompatActivity implements
             public void onClick(View v) {
                 RadioButton selectedRadioButton = null;
                 if (radio_group.getCheckedRadioButtonId() == -1) {
-                    Toast.makeText(UserProfileActivity.this, "Please select report reason", Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(UserProfileActivity.this, "Please select report reason", Toast.LENGTH_SHORT).show();
+                    Utils.showSnakBarDialog(UserProfileActivity.this,rel_dialogtop,
+                            "Please select report reason ",R.color.alert);
                     return;
                 } else {
                     // get selected radio button from radioGroup
@@ -390,25 +424,31 @@ public class UserProfileActivity extends AppCompatActivity implements
             if (obj instanceof AddNewsModel) {
                 AddNewsModel loginModel = (AddNewsModel) obj;
                 if (loginModel.isStatus()) {
+
                     if (isFoloow) {
                         isFoloow = false;
                         but_folow.setBackgroundResource(R.drawable.hashtagdetailfollow);
                         but_folow.setTextColor(Color.parseColor("#FFFFFF"));
                         but_folow.setText("FOLLOW");
-
+                        Utils.showSnakBarDialog(UserProfileActivity.this,lin_topuser,
+                                "UnFollow successfully ",R.color.msgresponce);
                     } else {
                         but_folow.setBackgroundResource(R.drawable.userdetail_button);
                         but_folow.setTextColor(Color.parseColor("#333333"));
                         but_folow.setText("FOLLOWING");
                         isFoloow = true;
+                        Utils.showSnakBarDialog(UserProfileActivity.this,lin_topuser,
+                                "Follow successfully ",R.color.msgresponce);
                     }
-                    // notifyDataSetChanged();
+                    callServicegetProfiel();
                 }
             }
-            if (obj instanceof ReportModelClass) {
+            if (obj instanceof ReportUserModel) {
                 ReportUserModel loginModel = (ReportUserModel) obj;
                 if (loginModel.isStatus()) {
-                    Toast.makeText(UserProfileActivity.this, "Report successfully added", Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(UserProfileActivity.this, "Report successfully added", Toast.LENGTH_SHORT).show();
+                    Utils.showSnakBarDialog(UserProfileActivity.this,lin_topuser,
+                            "Report successfully added ",R.color.msgresponce);
                 }
             }
             if (obj instanceof GetUserOwnNewsModel) {
@@ -467,5 +507,89 @@ public class UserProfileActivity extends AppCompatActivity implements
             isFoloow = true;
         }
         callServicegetUserOwnNews();
+    }
+
+    private void reloginToChat() {
+        // showProgressDialog(R.string.dlg_relogin);
+        pd=new ProgressDialog(this);
+        pd.setMessage("Please Wait ...");
+        pd.show();
+        if (SharedPrefsHelper.getInstance().hasQbUser()) {
+            ChatHelper.getInstance().loginToChat(SharedPrefsHelper.getInstance().getQbUser(), new QBEntityCallback<Void>() {
+                @Override
+                public void onSuccess(Void aVoid, Bundle bundle) {
+                   pd.dismiss();
+                }
+
+                @Override
+                public void onError(QBResponseException e) {
+                    Log.e("error", "Relogin Failed " + e.getMessage());
+                    pd.dismiss();
+                    //  hideProgressDialog();
+
+                }
+            });
+        }
+    }
+
+    public void nextACtivityzzforChat() {
+        pd=new ProgressDialog(this);
+        pd.setMessage("Please Wait ...");
+        pd.setCancelable(false);
+        pd.show();
+        ArrayList<Integer> occupantIdsList = new ArrayList<Integer>();
+        if(dataBean.getChatId()!=null) {
+            occupantIdsList.add(Integer.valueOf(dataBean.getChatId()));
+        }
+
+        QBDialogCustomData jsonObject = new QBDialogCustomData("jiya");
+       // jsonObject.putString("userid",dataBean.getId());
+        jsonObject.putString("usertag",dataBean.getUserName());
+
+        QBChatDialog dialog = new QBChatDialog();
+        dialog.setType(QBDialogType.PRIVATE);
+        dialog.setOccupantsIds(occupantIdsList);
+        dialog.setPhoto(dataBean.getAvatar());
+        dialog.setCustomData(jsonObject);
+        dialog.setRoomJid("jiya");
+
+        // or just use DialogUtils
+        //QBChatDialog dialog = DialogUtils.buildPrivateDialog(recipientId);
+
+        QBRestChatService.createChatDialog(dialog).performAsync(new QBEntityCallback<QBChatDialog>() {
+            @Override
+            public void onSuccess(QBChatDialog result, Bundle params) {
+                pd.dismiss();
+                Log.e("createChatDialog======", result.toString());
+                ChatActivity.startForResult(UserProfileActivity.this, REQUEST_DIALOG_ID_FOR_UPDATE, result);
+            }
+
+            @Override
+            public void onError(QBResponseException responseException) {
+
+            }
+        });
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onResultReceived(UploadNewsModel.DataBean dataBean) {
+        Intent intent = new Intent(UserProfileActivity.this, NewVideoActivity.class);
+        intent.putExtra("video", dataBean);
+        startActivity(intent);
+        // finish();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(EventBus.getDefault().isRegistered(this)){}
+        else{
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 }

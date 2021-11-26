@@ -21,8 +21,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.android.nmnewsagency.R;
-import com.android.nmnewsagency.model.CountryModel;
 import com.android.nmnewsagency.modelclass.GetTahsilModel;
 import com.android.nmnewsagency.modelclass.SetAddressModelClass;
 import com.android.nmnewsagency.pref.Prefrence;
@@ -35,12 +39,6 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import java.util.List;
 import java.util.Locale;
@@ -59,7 +57,8 @@ public class LocationReqActivity extends AppCompatActivity implements Callback<O
     LocationCallback mLocationCallback;
     protected Location mLastLocation;
     ProgressDialog dlg = null;
-    static String city, address, state, country, postalCode, knownName, houseno, addrs1, latsend, lngsend,tahsil;
+    static String city, address, state, country, postalCode, knownName, houseno, addrs1,tahsil;
+    double latsend, lngsend;
     Rest rest;
 
     @Override
@@ -253,8 +252,8 @@ public class LocationReqActivity extends AppCompatActivity implements Callback<O
             knownName = addresses.get(0).getSubLocality();
             houseno = addresses.get(0).getFeatureName();
             addrs1 = addresses.get(0).getSubLocality();
-            latsend = String.valueOf(addresses.get(0).getLatitude());
-            lngsend = String.valueOf(addresses.get(0).getLongitude());
+            latsend = addresses.get(0).getLatitude();
+            lngsend = addresses.get(0).getLongitude();
 
             Prefrence.setCityName(city);
             Prefrence.setCountryName(country);
@@ -267,7 +266,7 @@ public class LocationReqActivity extends AppCompatActivity implements Callback<O
             String knownName1 = addresses.get(0).getAdminArea();
             String knownName2 = addresses.get(0).getSubAdminArea();
             dlg.dismiss();
-            callServicesetgetTahsil(city, latsend, lngsend);
+            callServicesetgetTahsil(city, latsend, lngsend,country,state);
             //  callServicesetAddress(address,city,state,country,postalCode,houseno,addrs1,latsend,lngsend);
             // goNextAct();
         } else {
@@ -276,16 +275,17 @@ public class LocationReqActivity extends AppCompatActivity implements Callback<O
     }
 
     private void callServicesetAddress(String address, String city, String state, String country,
-                                       String postalCode, String houseno, String addrs1, String latSend, String lngSend, String tahsil) {
+                                       String postalCode, String houseno, String addrs1, double latSend, double lngSend, String tahsil) {
         rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
         rest.setUserAddress(addrs1, "", "APP", "", 0, "", 0, Prefrence.getFirstName(),
-                city, country, address, state, houseno, String.valueOf(Prefrence.getisLocationMatch()), "true", Prefrence.getLastName(), latSend, lngSend, 0, 0,
+                city, country, address, state, houseno, String.valueOf(Prefrence.getisLocationMatch()), "true", Prefrence.getLastName(),
+                latSend, lngSend, 0, 0,
                 Prefrence.getUserId(), postalCode,tahsil);
     }
 
-    private void callServicesetgetTahsil(String city, String lat, String lng) {
+    private void callServicesetgetTahsil(String city, double lat, double lng, String country, String state) {
         rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
-        rest.setUserTahsil(city, lat, lng);
+        rest.setUserTahsil(city, lat, lng,country,state);
     }
 
 
@@ -346,13 +346,10 @@ public class LocationReqActivity extends AppCompatActivity implements Callback<O
             if (obj instanceof SetAddressModelClass) {
                 SetAddressModelClass loginModel = (SetAddressModelClass) obj;
                 if (loginModel.isStatus()) {
+                    Toast.makeText(this, "Location successfully saved", Toast.LENGTH_SHORT).show();
                     goNextAct();
                 }
             }
-        }
-        if (response.isSuccessful()) {
-            Object obj = response.body();
-            Log.e("nmnnn", String.valueOf(obj));
             if (obj instanceof GetTahsilModel) {
                 GetTahsilModel loginModel = (GetTahsilModel) obj;
                 if (loginModel.isStatus()) {
@@ -367,6 +364,7 @@ public class LocationReqActivity extends AppCompatActivity implements Callback<O
                 }
             }
         }
+
     }
 
     @Override

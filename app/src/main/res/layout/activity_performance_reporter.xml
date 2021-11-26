@@ -43,12 +43,12 @@
                 android:textSize="18sp" />
 
             <TextView
+                android:id="@+id/txt_perdatetime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal|center_vertical"
                 android:fontFamily="@font/sarabun_regular"
                 android:singleLine="true"
-                android:text="@string/homedate"
                 android:textColor="@color/locsubtitle"
                 android:textSize="14sp" />
 

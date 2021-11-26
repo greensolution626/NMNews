@@ -3,6 +3,7 @@ package com.android.nmnewsagency.adapter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.nmnewsagency.R;
@@ -18,6 +20,10 @@ import com.android.nmnewsagency.modelclass.SearchTopSearchModel;
 import com.bumptech.glide.Glide;
 
 import java.util.List;
+
+import vimeoextractor.OnVimeoExtractionListener;
+import vimeoextractor.VimeoExtractor;
+import vimeoextractor.VimeoVideo;
 
 public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.MyViewHolder> {
    // private List<LocationModel> moviesList;
@@ -73,5 +79,36 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.MyViewHold
     @Override
     public int getItemCount() {
         return moviesList.size();
+    }
+
+    public void getThumbnail(String vimeoUrl,ImageView imageView) {
+        // Log.e("vimeothumb====","https://vimeo.com/"+vimeoUrl+".xml");
+        VimeoExtractor.getInstance().fetchVideoWithURL("https://vimeo.com/api/v2/video/" + vimeoUrl, null, new OnVimeoExtractionListener() {
+            @Override
+            public void onSuccess(VimeoVideo video) {
+                String hdStream = video.getThumbs().get("640");
+                Log.e("vimeothumb====", hdStream);
+                try {
+                    ContextCompat.getMainExecutor(context).execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Utils.loadImageUsingGlidePlaceHolder(context, hdStream, holder.img_videoThumb, R.mipmap.ic_launcher_foreground);
+                            Glide.with(context)
+                                    .load(hdStream)
+                                    .into(imageView);
+                        }
+                    });
+                } catch (Exception e) {
+
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                Log.e("error", throwable.getMessage());
+            }
+        });
     }
 }

@@ -2,7 +2,6 @@ package com.android.nmnewsagency.modelclass.RequestModel;
 
 public class RequestSetAddress {
 
-
     /**
      * UserId : 528246c8-cf58-4063-851d-e645c356e4e1
      * AddressLine1 : Patel Nagar Near
@@ -25,7 +24,7 @@ public class RequestSetAddress {
      * GThasil : Jaipur
      * GFullAddress : 90 Patel Nagar Near Gopal Pura By Pass Road
      * Lat : 26.8192
-     * Long : 75.7660
+     * Long : 75.766
      * IsAddressMatch : true
      */
 
@@ -49,8 +48,8 @@ public class RequestSetAddress {
     private String GCity;
     private String GThasil;
     private String GFullAddress;
-    private String Lat;
-    private String Long;
+    private double Lat;
+    private double Long;
     private String IsAddressMatch;
 
     public String getUserId() {
@@ -213,19 +212,19 @@ public class RequestSetAddress {
         this.GFullAddress = GFullAddress;
     }
 
-    public String getLat() {
+    public double getLat() {
         return Lat;
     }
 
-    public void setLat(String Lat) {
+    public void setLat(double Lat) {
         this.Lat = Lat;
     }
 
-    public String getLong() {
+    public double getLong() {
         return Long;
     }
 
-    public void setLong(String Long) {
+    public void setLong(double Long) {
         this.Long = Long;
     }
 

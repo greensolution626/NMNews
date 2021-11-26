@@ -1,5 +1,6 @@
 package com.android.nmnewsagency.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
@@ -15,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.nmnewsagency.R;
 import com.android.nmnewsagency.modelclass.DeleteCommentsModel;
 import com.android.nmnewsagency.modelclass.GetCommentsModel;
-import com.android.nmnewsagency.modelclass.ReportModelClass;
 import com.android.nmnewsagency.rest.Rest;
 import com.android.nmnewsagency.utils.Utils;
 import com.bumptech.glide.Glide;
@@ -70,12 +70,14 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
 
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
         rest=new Rest(context,this);
         GetCommentsModel.DataBean movie = moviesList.get(position);
         holder.txt_comm_username.setText(movie.getFirstName());
         holder.txt_comm_msg.setText(movie.getComment());
         holder.txt_comm_datetime.setText(Utils.parseDateToddMMyyyy(movie.getAddedOn()));
+        holder.txt_comm_datetime.setSelected(true);
+        holder.txt_comm_username.setSelected(true);
         if(movie.isCanDelete()){
             holder.img_deletecoments.setVisibility(View.VISIBLE);
         }else{

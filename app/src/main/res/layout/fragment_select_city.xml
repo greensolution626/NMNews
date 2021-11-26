@@ -12,41 +12,42 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
         <LinearLayout
-            android:layout_marginTop="10dp"
             android:id="@+id/lin_searchwithedit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
             android:layout_marginRight="20dp"
+            android:orientation="horizontal"
             android:visibility="visible"
             tools:context=".fragment.HomeFragment">
 
             <ImageView
-                android:background="?android:attr/selectableItemBackground"
                 android:id="@+id/iamge_back_city"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal|center_vertical"
+                android:background="?android:attr/selectableItemBackground"
                 app:srcCompat="@drawable/ic_iconly_light_arrow___left"
                 tools:ignore="VectorDrawableCompat" />
 
             <EditText
-                android:imeOptions="actionDone"
-                android:singleLine="true"
-                android:textSize="15sp"
-                android:paddingLeft="5dp"
-                android:padding="10dp"
+
                 android:id="@+id/search_edit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:background="@drawable/searchtopbar"
                 android:fontFamily="@font/sarabun_regular"
-                android:hint="@string/searchitem"
-                />
+                android:imeOptions="actionDone"
+                android:padding="10dp"
+                android:paddingLeft="5dp"
+                android:singleLine="true"
+                android:textSize="15sp" />
         </LinearLayout>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -59,10 +60,10 @@
             android:textSize="28dp" />
 
         <LinearLayout
-            android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
             android:orientation="horizontal">
 
             <RelativeLayout
@@ -81,23 +82,22 @@
                     tools:ignore="MissingConstraints">
 
                     <TextView
-                        android:layout_marginLeft="10dp"
                         android:id="@+id/txt_loc_country"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="10dp"
                         android:fontFamily="@font/sarabun_bold"
-                        android:text="India"
                         android:textColor="@color/locsubtitle"
                         android:textSize="17dp" />
 
                     <ImageView
                         android:id="@+id/img_closecount"
-                        android:layout_marginRight="10dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
                         app:srcCompat="@drawable/ic_group_7782"
                         tools:ignore="VectorDrawableCompat" />
 
@@ -105,9 +105,9 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:layout_marginLeft="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
+                android:layout_marginLeft="8dp"
                 android:background="@drawable/locationfillgreycolour"
                 android:orientation="vertical"
                 tools:ignore="MissingConstraints">
@@ -120,23 +120,22 @@
                     tools:ignore="MissingConstraints">
 
                     <TextView
-                        android:layout_marginLeft="10dp"
                         android:id="@+id/txt_loc_state"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="10dp"
                         android:fontFamily="@font/sarabun_bold"
-                        android:text="Maharashtre"
                         android:textColor="@color/locsubtitle"
                         android:textSize="17dp" />
 
                     <ImageView
                         android:id="@+id/img_closestate"
-                        android:layout_marginRight="10dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
                         app:srcCompat="@drawable/ic_group_7782"
                         tools:ignore="VectorDrawableCompat" />
 

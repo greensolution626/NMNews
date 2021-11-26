@@ -1,36 +1,38 @@
 package com.android.nmnewsagency.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.android.nmnewsagency.R;
-import com.android.nmnewsagency.activity.CovrageQualityActivity;
-import com.android.nmnewsagency.activity.MessageActivity;
-import com.android.nmnewsagency.activity.MessageDetailActivity;
-import com.android.nmnewsagency.adapter.MessageAdapter;
 import com.android.nmnewsagency.adapter.Performance_SelfAdapter;
 import com.android.nmnewsagency.listner.RecyclerTouchListener;
+import com.android.nmnewsagency.modelclass.Performence_SelfModel;
+import com.android.nmnewsagency.rest.Rest;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
-public class Performance_SelfFragment extends Fragment {
+
+public class Performance_SelfFragment extends Fragment implements Callback<Object> {
     View view;
     RecyclerView recyclerView;
     Performance_SelfAdapter locationAdapter;
     //  List<LocationModel> arrayList;
-    List<String> arrayList;
+    List<Performence_SelfModel.DataBean> arrayList;
     List<Integer> imgList;
+    Rest rest;
 
     public static Performance_SelfFragment newInstance() {
         Bundle args = new Bundle();
@@ -43,25 +45,20 @@ public class Performance_SelfFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_performance__self, container, false);
+        rest=new Rest(getActivity(),this);
         recyclerView = (RecyclerView) view.findViewById(R.id.recy_performance);
-        arrayList = new ArrayList<>();
+      //  arrayList = new ArrayList<>();
         imgList = new ArrayList<>();
-        inItItemRecycle();
+callServicegetPerforSelf();
         return view;
     }
-
+    private void callServicegetPerforSelf() {
+        rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
+        rest.getPerformnceSelf();
+    }
     private void inItItemRecycle() {
-        arrayList.add("");
-        arrayList.add("");
-        imgList.add(R.drawable.msg1);
-        imgList.add(R.drawable.msg2);
-        imgList.add(R.drawable.msg3);
-        imgList.add(R.drawable.searchimage);
-        imgList.add(R.drawable.msg1);
-        imgList.add(R.drawable.msg2);
-        imgList.add(R.drawable.msg3);
-        imgList.add(R.drawable.searchimage);
-        locationAdapter = new Performance_SelfAdapter(getActivity(), arrayList, imgList);
+
+        locationAdapter = new Performance_SelfAdapter(getActivity(), arrayList);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -71,8 +68,8 @@ public class Performance_SelfFragment extends Fragment {
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                Intent intent = new Intent(getActivity(), CovrageQualityActivity.class);
-                startActivity(intent);
+                //Intent intent = new Intent(getActivity(), CovrageQualityActivity.class);
+              //  startActivity(intent);
             }
 
             @Override
@@ -80,5 +77,29 @@ public class Performance_SelfFragment extends Fragment {
 
             }
         }));
+    }
+
+    @Override
+    public void onResponse(Call<Object> call, Response<Object> response) {
+        rest.dismissProgressdialog();
+        if (response.isSuccessful()) {
+            Object obj = response.body();
+            Log.e("nmnnn", String.valueOf(obj));
+            if (obj instanceof Performence_SelfModel) {
+                Performence_SelfModel loginModel = (Performence_SelfModel) obj;
+                if (loginModel.isStatus()) {
+                  arrayList=loginModel.getData();
+                  if(arrayList.size()>0){
+                      inItItemRecycle();
+                  }
+                }
+            }
+
+        }
+    }
+
+    @Override
+    public void onFailure(Call<Object> call, Throwable t) {
+
     }
 }

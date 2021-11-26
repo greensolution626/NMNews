@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.android.nmnewsagency.R;
-import com.android.nmnewsagency.adapter.OwnVideoDetailAdapter;
 import com.android.nmnewsagency.adapter.RejectedVideoAdapter;
 import com.android.nmnewsagency.listner.RecyclerTouchListener;
 

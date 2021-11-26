@@ -37,7 +37,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:singleLine="true"
-                    android:text="naqtionakl media news jaipur "
                     android:textColor="@color/loctitle"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -48,7 +47,6 @@
                     android:layout_height="wrap_content"
 
                     android:singleLine="true"
-                    android:text="@string/profileid"
                     android:textColor="@color/locsubtitle"
                     android:textSize="14sp" />
 

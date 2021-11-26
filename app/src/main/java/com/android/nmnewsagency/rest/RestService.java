@@ -4,6 +4,7 @@ package com.android.nmnewsagency.rest;
 import com.android.nmnewsagency.model.CountryModel;
 import com.android.nmnewsagency.modelclass.AddNewsModel;
 import com.android.nmnewsagency.modelclass.AddUserDocumentModel;
+import com.android.nmnewsagency.modelclass.ChatIdModerl;
 import com.android.nmnewsagency.modelclass.DeleteCommentsModel;
 import com.android.nmnewsagency.modelclass.DeleteNewsByIdModel;
 import com.android.nmnewsagency.modelclass.GetCommentsModel;
@@ -23,15 +24,22 @@ import com.android.nmnewsagency.modelclass.LoginModel;
 import com.android.nmnewsagency.modelclass.NewVideoHashtagModelClass;
 import com.android.nmnewsagency.modelclass.NewVideoMentionModelClass;
 import com.android.nmnewsagency.modelclass.NewsCountModel;
+import com.android.nmnewsagency.modelclass.NotificationModel;
+import com.android.nmnewsagency.modelclass.NotificationSet;
+import com.android.nmnewsagency.modelclass.PagesModel;
+import com.android.nmnewsagency.modelclass.PerformceDistrctModel;
+import com.android.nmnewsagency.modelclass.Performence_SelfModel;
 import com.android.nmnewsagency.modelclass.ReportModelClass;
 import com.android.nmnewsagency.modelclass.ReportUserModel;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestAddComents;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestAddNews;
+import com.android.nmnewsagency.modelclass.RequestModel.RequestChatId;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestFollow;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestGetComments;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestGetDocument;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestGetNewsById;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestGetNewsListingModel;
+import com.android.nmnewsagency.modelclass.RequestModel.RequestGetNotification;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestGetProfile;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestGetSaveNews;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestGetTahsil;
@@ -39,6 +47,9 @@ import com.android.nmnewsagency.modelclass.RequestModel.RequestHashTag;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestHashTagDetail;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestLike;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestLoginModel;
+import com.android.nmnewsagency.modelclass.RequestModel.RequestNotificationSet;
+import com.android.nmnewsagency.modelclass.RequestModel.RequestPerfDistrct;
+import com.android.nmnewsagency.modelclass.RequestModel.RequestPerforSelf;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestReportModel;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestSearchTopSaerch;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestSetAddress;
@@ -49,10 +60,6 @@ import com.android.nmnewsagency.modelclass.SearchTopSearchModel;
 import com.android.nmnewsagency.modelclass.SetAddressModelClass;
 import com.android.nmnewsagency.modelclass.UpdateProfileModel;
 import com.android.nmnewsagency.modelclass.UploadNewsModel;
-import com.android.nmnewsagency.pref.Prefrence;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -64,9 +71,7 @@ import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
-import retrofit2.http.PartMap;
 import retrofit2.http.Path;
-import retrofit2.http.Query;
 
 
 public interface RestService {
@@ -75,6 +80,13 @@ public interface RestService {
     @POST(ApiUrls.URL_LOGIN)
     Call<LoginModel> loginUser(@Header("TokenId") String auth,
                                @Body RequestLoginModel requestLoginModel
+    );
+
+    @Headers({"Content-Type: application/json"})
+  //  @FormUrlEncoded
+    @POST(ApiUrls.URL_CHATID)
+    Call<ChatIdModerl> chatId(@Header("TokenId") String auth,
+                              @Body RequestChatId requestLoginModel
     );
 
     @Headers({"Content-Type: application/json"})
@@ -160,6 +172,30 @@ public interface RestService {
     );
     @Headers({"Content-Type: application/json"})
   //  @FormUrlEncoded
+    @POST(ApiUrls.URL_PERFORMNESELF)
+    Call<Performence_SelfModel> getPerformnceSelf(@Header("TokenId") String auth,
+                                                  @Body RequestPerforSelf requestLoginModel
+    );
+    @Headers({"Content-Type: application/json"})
+  //  @FormUrlEncoded
+    @POST(ApiUrls.URL_PERFORMNEDISTRCT)
+    Call<PerformceDistrctModel> getPerformnceDistrct(@Header("TokenId") String auth,
+                                                     @Body RequestPerfDistrct requestLoginModel
+    );
+    @Headers({"Content-Type: application/json"})
+  //  @FormUrlEncoded
+    @POST(ApiUrls.URL_NOTIFICATIONSET)
+    Call<NotificationSet> setNoti(@Header("TokenId") String auth,
+                                  @Body RequestNotificationSet requestLoginModel
+    );
+    @Headers({"Content-Type: application/json"})
+  //  @FormUrlEncoded
+    @POST(ApiUrls.URL_AUTOPLAY)
+    Call<NotificationSet> setAutoPlay(@Header("TokenId") String auth,
+                                  @Body RequestNotificationSet requestLoginModel
+    );
+    @Headers({"Content-Type: application/json"})
+  //  @FormUrlEncoded
     @POST(ApiUrls.URL_GETUSEROWNNEWS)
     Call<GetUserOwnNewsModel> getuserOwnVideo(@Header("TokenId") String auth,
                                               @Body RequestuserOwnVideo requestLoginModel
@@ -203,6 +239,13 @@ public interface RestService {
     Call<GetFollowersModel> getFollowers(@Header("TokenId") String auth,
                                          @Body RequestGetDocument requestLoginModel
     );
+
+    @Headers({"Content-Type: application/json"})
+    //  @FormUrlEncoded
+    @POST(ApiUrls.URL_GETNOTIFICATION)
+    Call<NotificationModel> getNotification(@Header("TokenId") String auth,
+                                            @Body RequestGetNotification requestLoginModel
+    );
     @Headers({"Content-Type: application/json"})
     //  @FormUrlEncoded
     @POST(ApiUrls.URL_GETFOLOWING)
@@ -231,6 +274,11 @@ public interface RestService {
     @GET("Region/GetStateByCountryId/true/{id}")
     Call<CountryModel> getStateList(@Header("TokenId") String auth,
                                     @Path("id") int id);
+
+    @Headers({"Content-Type: application/json"})
+    @GET("Common/GetMainPageByPageId/{id}")
+    Call<PagesModel> getPages(@Header("TokenId") String auth,
+                              @Path("id") int id);
 
     @Headers({"Content-Type: application/json"})
     @GET("News/IncreaseNewsViewCount/{id}")

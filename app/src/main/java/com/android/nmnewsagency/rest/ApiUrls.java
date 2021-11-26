@@ -9,6 +9,7 @@ public class ApiUrls {
     // public static final String BASE_URL = "https://taxi.vlcare.com/api/";
 
        public static final String URL_LOGIN = "account/social-login";
+       public static final String URL_CHATID = "User/SetUserChatId";
        public static final String URL_fOLLOW = "User/AddUserFollow";
        public static final String URL_GETCOMMENTS = "Comment/GetComment";
        public static final String URL_ADDCOMMENTS = "Comment/AddComment";
@@ -19,9 +20,14 @@ public class ApiUrls {
        public static final String URL_DELETESAVE = "Common/DeleteNewsSave";
        public static final String URL_DISLIKE = "Common/DeleteLike";
        public static final String URL_UNfOLLOW = "User/DeleteUserFollow";
-       public static final String URL_GETLIST = "News/GetNewsByPagiQuery";
+      // public static final String URL_GETLIST = "News/GetNewsByPagiQuery";
+       public static final String URL_GETLIST = "News/GetNewsByPagiQueryWithAds";
        public static final String URL_HASHtAG = "Tags/GetTagsByPagiQuery";
        public static final String URL_USERPROFILE = "User/GetUserProfileDetails";
+       public static final String URL_PERFORMNESELF = "Common/GetDistPerformanceForUser";
+       public static final String URL_PERFORMNEDISTRCT = "Common/GetDistPerformanceForCity";
+       public static final String URL_NOTIFICATIONSET = "User/ChangeUserSettingSendNotification";
+       public static final String URL_AUTOPLAY = "User/ChangeUserSettingAutoPlay";
        public static final String URL_MENTION = "Tags/GetUserTagsByPagiQuery";
        public static final String URL_SETUSERADDRESS = "User/SetUserLocation";
        public static final String URL_GETTAHSIL = "Region/GetTahsilNameByLatLongAndCity";
@@ -41,4 +47,5 @@ public class ApiUrls {
     public static final String URL_GETUSERSAVENEWS = "News/GetUserSavedNews";
     public static final String URL_GETUSEROWNNEWS = "News/GetNewsByUserId";
     public static final String URL_GETUSERHASHTAGNEWS = "News/GetNewsByUserTag";
+    public static final String URL_GETNOTIFICATION = "Notification/GetNotification";
 }

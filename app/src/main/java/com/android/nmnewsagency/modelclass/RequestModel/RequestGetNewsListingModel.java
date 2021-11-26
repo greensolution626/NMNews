@@ -4,12 +4,15 @@ public class RequestGetNewsListingModel {
 
     /**
      * Country_Name : India
-     * State_Name : Rajasthan
-     * City_Name : Jaipur
-     * Tahsil_Name : Snaganer
+     * State_Name : MAHARSHATRA
+     * City_Name : SANGLI
+     * Tahsil_Name : ATPADI
      * UserId : f0523348-0c2f-44e4-b0cd-c5d5d4f66ada
-     * PageIndex : 1
-     * PageOffset : 5
+     * PageIndex : 0
+     * PageOffset : 50
+     * CurrentIndex : 0
+     * TableIndex : 1
+     * loopDate : 01-Jan-1901
      */
 
     private String Country_Name;
@@ -19,6 +22,9 @@ public class RequestGetNewsListingModel {
     private String UserId;
     private int PageIndex;
     private int PageOffset;
+    private int CurrentIndex;
+    private int TableIndex;
+    private String loopDate;
 
     public String getCountry_Name() {
         return Country_Name;
@@ -74,5 +80,29 @@ public class RequestGetNewsListingModel {
 
     public void setPageOffset(int PageOffset) {
         this.PageOffset = PageOffset;
+    }
+
+    public int getCurrentIndex() {
+        return CurrentIndex;
+    }
+
+    public void setCurrentIndex(int CurrentIndex) {
+        this.CurrentIndex = CurrentIndex;
+    }
+
+    public int getTableIndex() {
+        return TableIndex;
+    }
+
+    public void setTableIndex(int TableIndex) {
+        this.TableIndex = TableIndex;
+    }
+
+    public String getLoopDate() {
+        return loopDate;
+    }
+
+    public void setLoopDate(String loopDate) {
+        this.loopDate = loopDate;
     }
 }

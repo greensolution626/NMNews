@@ -6,8 +6,8 @@ public class RequestAddNews {
 
 
     /**
-     * NewsObj : {"Id":0,"Title":"तहसील में कोरोना के 31 नए मरीज मिले तो23 मरीज  ठीक हो कर घर लौटे","Description":"आटपाडी: ","Suggestion":"News Updated","UserId":"6fc00a95-dc1f-473d-b324-a990a9543498","IsBreakingNews":true,"NewsType":1,"CountryId":1,"Country_Name":"India","StateId":1,"State_Name":"Rajasthan","CityId":1,"City_Name":"Jaipur","TahsilId":1,"Tahsil_Name":"Snaganer","AddressLine_1":"Jaipur","AddressLin_2":null,"Lat":270.25688,"Long":45.8549,"ZipCode":"302015","UserTags":"@neeraj tank","HashTags":"#latest news,#corona news"}
-     * NewsMediaObj : {"Id":0,"NewsId":0,"ImageUrl":"xyz.jpg","IsActive":true,"AddedOn":null,"MediaType":"VIDEO","MediaSource":"YOUTUBE","MediaSize":5,"SizeUnit":"MB","VideoUrl":"https://www.youtube.com/watch?v=w88LODwHoQM"}
+     * NewsObj : {"Id":0,"Title":"New Cheating Idea_1","Description":"Cheating ","Suggestion":"News Updated","UserId":"3c37ae72-d7c7-40bf-b2f8-a8705844bc82","IsBreakingNews":true,"NewsType":"1,2,3,4","CountryId":1,"Country_Name":"India","StateId":3,"State_Name":"RAJASTHAN","CityId":483,"City_Name":"JAIPUR","TahsilId":1772,"Tahsil_Name":"JAIPUR","AddressLine_1":"JAIPUR","AddressLin_2":null,"Lat":270.25688,"Long":45.8549,"ZipCode":"302015","UserTags":"@codeslick.in","HashTags":"#latest news,#developer"}
+     * NewsMediaObj : {"Id":0,"NewsId":0,"ImageUrl":"https://i.vimeocdn.com/video/1257885052-7f77428cb2e272c30f74861ba0361ce30f67caf993a2a8d91_1920x1080?r=pad","IsActive":true,"AddedOn":null,"MediaType":"VIDEO","MediaSource":"VIMEO","MediaSize":3.75,"SizeUnit":"MB","VideoUrl":"https://player.vimeo.com/external/615938040.sd.mp4?s=4e1921db75622851795fd48c985ca282067e074c&profile_id=164&oauth2_token_id=1539357354","VideoId":"615938040"}
      */
 
     private NewsObjBean NewsObj;
@@ -32,27 +32,27 @@ public class RequestAddNews {
     public static class NewsObjBean implements Serializable {
         /**
          * Id : 0
-         * Title : तहसील में कोरोना के 31 नए मरीज मिले तो23 मरीज  ठीक हो कर घर लौटे
-         * Description : आटपाडी:
+         * Title : New Cheating Idea_1
+         * Description : Cheating
          * Suggestion : News Updated
-         * UserId : 6fc00a95-dc1f-473d-b324-a990a9543498
+         * UserId : 3c37ae72-d7c7-40bf-b2f8-a8705844bc82
          * IsBreakingNews : true
-         * NewsType : 1
+         * NewsType : 1,2,3,4
          * CountryId : 1
          * Country_Name : India
-         * StateId : 1
-         * State_Name : Rajasthan
-         * CityId : 1
-         * City_Name : Jaipur
-         * TahsilId : 1
-         * Tahsil_Name : Snaganer
-         * AddressLine_1 : Jaipur
+         * StateId : 3
+         * State_Name : RAJASTHAN
+         * CityId : 483
+         * City_Name : JAIPUR
+         * TahsilId : 1772
+         * Tahsil_Name : JAIPUR
+         * AddressLine_1 : JAIPUR
          * AddressLin_2 : null
          * Lat : 270.25688
          * Long : 45.8549
          * ZipCode : 302015
-         * UserTags : @neeraj tank
-         * HashTags : #latest news,#corona news
+         * UserTags : @codeslick.in
+         * HashTags : #latest news,#developer
          */
 
         private int Id;
@@ -61,7 +61,7 @@ public class RequestAddNews {
         private String Suggestion;
         private String UserId;
         private boolean IsBreakingNews;
-        private int NewsType;
+        private String NewsType;
         private int CountryId;
         private String Country_Name;
         private int StateId;
@@ -126,11 +126,11 @@ public class RequestAddNews {
             this.IsBreakingNews = IsBreakingNews;
         }
 
-        public int getNewsType() {
+        public String getNewsType() {
             return NewsType;
         }
 
-        public void setNewsType(int NewsType) {
+        public void setNewsType(String NewsType) {
             this.NewsType = NewsType;
         }
 
@@ -259,14 +259,15 @@ public class RequestAddNews {
         /**
          * Id : 0
          * NewsId : 0
-         * ImageUrl : xyz.jpg
+         * ImageUrl : https://i.vimeocdn.com/video/1257885052-7f77428cb2e272c30f74861ba0361ce30f67caf993a2a8d91_1920x1080?r=pad
          * IsActive : true
          * AddedOn : null
          * MediaType : VIDEO
-         * MediaSource : YOUTUBE
-         * MediaSize : 5
+         * MediaSource : VIMEO
+         * MediaSize : 3.75
          * SizeUnit : MB
-         * VideoUrl : https://www.youtube.com/watch?v=w88LODwHoQM
+         * VideoUrl : https://player.vimeo.com/external/615938040.sd.mp4?s=4e1921db75622851795fd48c985ca282067e074c&profile_id=164&oauth2_token_id=1539357354
+         * VideoId : 615938040
          */
 
         private int Id;
@@ -279,6 +280,7 @@ public class RequestAddNews {
         private double MediaSize;
         private String SizeUnit;
         private String VideoUrl;
+        private String VideoId;
 
         public int getId() {
             return Id;
@@ -358,6 +360,14 @@ public class RequestAddNews {
 
         public void setVideoUrl(String VideoUrl) {
             this.VideoUrl = VideoUrl;
+        }
+
+        public String getVideoId() {
+            return VideoId;
+        }
+
+        public void setVideoId(String VideoId) {
+            this.VideoId = VideoId;
         }
     }
 }

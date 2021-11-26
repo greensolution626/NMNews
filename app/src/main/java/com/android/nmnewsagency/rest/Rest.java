@@ -12,11 +12,13 @@ import androidx.annotation.NonNull;
 import com.android.nmnewsagency.extras.Constants;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestAddComents;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestAddNews;
+import com.android.nmnewsagency.modelclass.RequestModel.RequestChatId;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestFollow;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestGetComments;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestGetDocument;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestGetNewsById;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestGetNewsListingModel;
+import com.android.nmnewsagency.modelclass.RequestModel.RequestGetNotification;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestGetProfile;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestGetSaveNews;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestGetTahsil;
@@ -24,6 +26,9 @@ import com.android.nmnewsagency.modelclass.RequestModel.RequestHashTag;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestHashTagDetail;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestLike;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestLoginModel;
+import com.android.nmnewsagency.modelclass.RequestModel.RequestNotificationSet;
+import com.android.nmnewsagency.modelclass.RequestModel.RequestPerfDistrct;
+import com.android.nmnewsagency.modelclass.RequestModel.RequestPerforSelf;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestReportModel;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestSearchTopSaerch;
 import com.android.nmnewsagency.modelclass.RequestModel.RequestSetAddress;
@@ -33,7 +38,7 @@ import com.android.nmnewsagency.modelclass.UploadNewsModel;
 import com.android.nmnewsagency.pref.Prefrence;
 
 import java.io.File;
-import java.util.HashMap;
+import java.net.URLEncoder;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -78,8 +83,11 @@ public class Rest {
 
     private void init() {
         dialog = new ProgressDialog(ctx);
-        dialog.setMessage(pDialogMessage);
+       // dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         dialog.setCancelable(false);
+       // dialog.setMessage("Please Wait for a sec ..");
+      //  dialog.setProgress(0);
+       // dialog.setMax(100);
         restService = RestAdapter.getAdapter();
 
     }
@@ -105,6 +113,25 @@ public class Rest {
 
         dialog.setMessage(message);
         dialog.show();
+        final int totalProgressTime = 95;
+        final Thread t = new Thread() {
+            @Override
+            public void run() {
+                int jumpTime = 0;
+
+                while (jumpTime < totalProgressTime) {
+                    try {
+                        sleep(2000);
+                        jumpTime += 5;
+                       // dialog.setProgress(jumpTime);
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        t.start();
     }
 
     public void dismissProgressdialog() {
@@ -132,6 +159,20 @@ public class Rest {
         if (isInterentAvaliable()) {
 
             RestAdapter.getAdapter().loginUser(Constants.FLD_TOKENID,
+                    requestLoginModel).enqueue(callback);
+
+        } else {
+            AlertForInternet();
+        }
+    }
+    public void chatId(String userid, String chatid) {
+        RequestChatId requestLoginModel = new RequestChatId();
+        requestLoginModel.setId(userid);
+        requestLoginModel.setChatId(chatid);
+
+        if (isInterentAvaliable()) {
+
+            RestAdapter.getAdapter().chatId(Constants.FLD_TOKENID,
                     requestLoginModel).enqueue(callback);
 
         } else {
@@ -323,14 +364,47 @@ public class Rest {
             AlertForInternet();
         }
     }
+    public void getPerformnceSelf() {
+        RequestPerforSelf requestLoginModel = new RequestPerforSelf();
+        requestLoginModel.setCity_Name(Prefrence.getCityName());
+        requestLoginModel.setCountry_Name(Prefrence.getCountryName());
+        requestLoginModel.setState_Name(Prefrence.getStateName());
+        requestLoginModel.setTahsil_Name(Prefrence.gettahsil());
+
+
+        if (isInterentAvaliable()) {
+            RestAdapter.getAdapter().getPerformnceSelf(Constants.FLD_TOKENID,
+                    requestLoginModel).enqueue(callback);
+
+        } else {
+            AlertForInternet();
+        }
+    }
+    public void getPerformnceDistrct() {
+        RequestPerfDistrct requestLoginModel = new RequestPerfDistrct();
+        requestLoginModel.setCity_Name(Prefrence.getCityName());
+        requestLoginModel.setCountry_Name(Prefrence.getCountryName());
+        requestLoginModel.setState_Name(Prefrence.getStateName());
+        requestLoginModel.setTahsil_Name(Prefrence.gettahsil());
+
+
+        if (isInterentAvaliable()) {
+            RestAdapter.getAdapter().getPerformnceDistrct(Constants.FLD_TOKENID,
+                    requestLoginModel).enqueue(callback);
+
+        } else {
+            AlertForInternet();
+        }
+    }
 
     public void getuserOwnVideo() {
         RequestuserOwnVideo requestLoginModel = new RequestuserOwnVideo();
         requestLoginModel.setPageIndex(0);
         requestLoginModel.setUserId(Prefrence.getUserId());
+       // requestLoginModel.setUserId("a6730420-c310-44a4-8ecf-6c8d34fc9f2c");
         requestLoginModel.setCity_Name(Prefrence.getCityName());
         requestLoginModel.setCountry_Name(Prefrence.getCountryName());
-        requestLoginModel.setPageOffset(10);
+        requestLoginModel.setPageOffset(100);
         requestLoginModel.setState_Name(Prefrence.getStateName());
         if (Prefrence.gettahsil().isEmpty()) {
             requestLoginModel.setTahsil_Name(Prefrence.getCityName());
@@ -353,7 +427,7 @@ public class Rest {
         requestLoginModel.setUserId(id);
         requestLoginModel.setCity_Name(Prefrence.getCityName());
         requestLoginModel.setCountry_Name(Prefrence.getCountryName());
-        requestLoginModel.setPageOffset(50);
+        requestLoginModel.setPageOffset(100);
         requestLoginModel.setState_Name(Prefrence.getStateName());
         if(Prefrence.gettahsil().isEmpty()){
             requestLoginModel.setTahsil_Name(Prefrence.getCityName());
@@ -376,7 +450,7 @@ public class Rest {
         requestLoginModel.setUserId(id);
         requestLoginModel.setCity_Name(Prefrence.getCityName());
         requestLoginModel.setCountry_Name(Prefrence.getCountryName());
-        requestLoginModel.setPageOffset(10);
+        requestLoginModel.setPageOffset(100);
         requestLoginModel.setState_Name(Prefrence.getStateName());
         if(Prefrence.gettahsil().isEmpty()){
             requestLoginModel.setTahsil_Name(Prefrence.getCityName());
@@ -406,10 +480,34 @@ public class Rest {
             AlertForInternet();
         }
     }
+    public void setnotification() {
+        RequestNotificationSet requestLoginModel = new RequestNotificationSet();
+        requestLoginModel.setId(Prefrence.getUserId());
+
+        if (isInterentAvaliable()) {
+            RestAdapter.getAdapter().setNoti(Constants.FLD_TOKENID,
+                    requestLoginModel).enqueue(callback);
+
+        } else {
+            AlertForInternet();
+        }
+    }
+    public void setAutoplay() {
+        RequestNotificationSet requestLoginModel = new RequestNotificationSet();
+        requestLoginModel.setId(Prefrence.getUserId());
+
+        if (isInterentAvaliable()) {
+            RestAdapter.getAdapter().setAutoPlay(Constants.FLD_TOKENID,
+                    requestLoginModel).enqueue(callback);
+
+        } else {
+            AlertForInternet();
+        }
+    }
 
     public void getusersaveNews(String id) {
         RequestGetSaveNews requestLoginModel = new RequestGetSaveNews();
-        requestLoginModel.setPageOffset(10);
+        requestLoginModel.setPageOffset(100);
         requestLoginModel.setPageIndex(0);
         requestLoginModel.setUserId(id);
 
@@ -440,13 +538,16 @@ public class Rest {
 
     public void getNewsList(String countryname, String stateNmae, String cityName,
                             String TahsilName, String UseId,
-                            String pGEINDEX, String pageoffset) {
+                            String pGEINDEX, String pageoffset,String curentIndex,String tableIndex,String loopdate) {
         RequestGetNewsListingModel requestLoginModel = new RequestGetNewsListingModel();
         requestLoginModel.setCity_Name(cityName);
         requestLoginModel.setCountry_Name(countryname);
         requestLoginModel.setPageIndex(Integer.parseInt(pGEINDEX));
         requestLoginModel.setPageOffset(Integer.parseInt(pageoffset));
         requestLoginModel.setState_Name(stateNmae);
+        requestLoginModel.setCurrentIndex(Integer.parseInt(curentIndex));
+        requestLoginModel.setTableIndex(Integer.parseInt(tableIndex));
+        requestLoginModel.setLoopDate(loopdate);
         if (TahsilName.isEmpty()) {
             requestLoginModel.setTahsil_Name(cityName);
         } else {
@@ -468,7 +569,7 @@ public class Rest {
                                String businessname, int cityid, String contactno, int countryid,
                                String frstname, String gcity, String gcountry, String gfuladsres,
                                String gstate, String houseno, String isadrematch, String isdefault,
-                               String lastanmme, String lat, String lng, int stateid,
+                               String lastanmme, double lat, double lng, int stateid,
                                int tahsilid, String userid, String zipcode, String tahsil) {
         RequestSetAddress requestLoginModel = new RequestSetAddress();
         requestLoginModel.setAddressLine1(addres1);
@@ -505,11 +606,13 @@ public class Rest {
         }
     }
 
-    public void setUserTahsil(String city, String lat, String lng) {
+    public void setUserTahsil(String city, double lat, double lng,String country, String state) {
         RequestGetTahsil requestLoginModel = new RequestGetTahsil();
         requestLoginModel.setLong(lng);
         requestLoginModel.setLat(lat);
         requestLoginModel.setCityName(city);
+        requestLoginModel.setCountryName(country);
+        requestLoginModel.setStateName(state);
 
 
         if (isInterentAvaliable()) {
@@ -536,6 +639,7 @@ public class Rest {
         mediaobjbean.setNewsId(data.getNewsId());
         mediaobjbean.setSizeUnit(data.getSizeUnit());
         mediaobjbean.setVideoUrl(data.getVideoUrl());
+        mediaobjbean.setVideoId(data.getVideoId());
 
         objbean.setAddressLin_2(newsObjBean.getAddressLin_2());
         objbean.setAddressLine_1(newsObjBean.getAddressLine_1());
@@ -557,6 +661,9 @@ public class Rest {
         objbean.setTitle(newsObjBean.getTitle());
         objbean.setUserId(newsObjBean.getUserId());
         objbean.setZipCode(newsObjBean.getZipCode());
+
+        objbean.setHashTags(newsObjBean.getHashTags());
+        objbean.setUserTags(newsObjBean.getUserTags());
         requestAddNews.setNewsMediaObj(mediaobjbean);
         requestAddNews.setNewsObj(objbean);
         if (isInterentAvaliable()) {
@@ -584,6 +691,7 @@ public class Rest {
             AlertForInternet();
         }
     }
+
     public void setNewsCount(int  id ) {
         if (isInterentAvaliable()) {
 
@@ -612,6 +720,14 @@ public class Rest {
         } else {
             AlertForInternet();
         }
+    } public void getpages(int id) {
+        if (isInterentAvaliable()) {
+
+            RestAdapter.getAdapter().getPages(Constants.FLD_TOKENID, id).enqueue(callback);
+
+        } else {
+            AlertForInternet();
+        }
     }
 
     public void getNewsById(int id) {
@@ -632,7 +748,7 @@ public class Rest {
         requestLoginModel.setCity_Name(Prefrence.getCityName());
         requestLoginModel.setCountry_Name(Prefrence.getCountryName());
         requestLoginModel.setPageIndex(0);
-        requestLoginModel.setPageOffset(10);
+        requestLoginModel.setPageOffset(100);
         requestLoginModel.setQuery(query);
         requestLoginModel.setSearchType(id);
         requestLoginModel.setState_Name(Prefrence.getStateName());
@@ -704,8 +820,10 @@ public class Rest {
             MultipartBody.Part body1 = null;
             if (video != null) {
                  File file = new File(video);
-                RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-                body1 = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
+                 try {
+                     RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                     body1 = MultipartBody.Part.createFormData("file", URLEncoder.encode(file.getName(), "utf-8"), requestFile);
+                 }catch (Exception e){}
             }
 
             RestAdapter.getAdapter().UploadNews(Constants.FLD_TOKENID, body1).enqueue(callback);
@@ -728,6 +846,8 @@ public class Rest {
             } else {
                 AlertForInternet();
             }
+        }else {
+            AlertForInternet();
         }
     }
 
@@ -744,6 +864,25 @@ public class Rest {
             } else {
                 AlertForInternet();
             }
+        }else {
+            AlertForInternet();
+        }
+    }
+    public void getNotification() {
+        if (isInterentAvaliable()) {
+            RequestGetNotification requestLoginModel = new RequestGetNotification();
+            requestLoginModel.setToUserId(Prefrence.getUserId());
+          //  requestLoginModel.setToUserId("a3a90132-5466-4ceb-a729-b042af0e4158");
+
+            if (isInterentAvaliable()) {
+                RestAdapter.getAdapter().getNotification(Constants.FLD_TOKENID,
+                        requestLoginModel).enqueue(callback);
+
+            } else {
+                AlertForInternet();
+            }
+        }else {
+            AlertForInternet();
         }
     }
 
@@ -760,6 +899,8 @@ public class Rest {
             } else {
                 AlertForInternet();
             }
+        }else {
+            AlertForInternet();
         }
     }
 

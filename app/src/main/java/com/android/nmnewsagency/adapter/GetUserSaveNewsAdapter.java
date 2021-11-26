@@ -2,22 +2,26 @@ package com.android.nmnewsagency.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.nmnewsagency.R;
 import com.android.nmnewsagency.activity.OwnVideoDetailActivity;
 import com.android.nmnewsagency.modelclass.GetUserSaveNewsModel;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 
 import java.util.List;
+
+import vimeoextractor.OnVimeoExtractionListener;
+import vimeoextractor.VimeoExtractor;
+import vimeoextractor.VimeoVideo;
 
 public class GetUserSaveNewsAdapter extends RecyclerView.Adapter<GetUserSaveNewsAdapter.MyViewHolder> {
     private List<GetUserSaveNewsModel.DataBeanX.DataBean.PagedRecordBean> moviesList;
@@ -50,9 +54,10 @@ public class GetUserSaveNewsAdapter extends RecyclerView.Adapter<GetUserSaveNews
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         GetUserSaveNewsModel.DataBeanX.DataBean.PagedRecordBean movie = moviesList.get(position);
-        Glide.with(context)
+      /*  Glide.with(context)
                 .load(movie.getImageUrl())
-                .into(holder.img_hashtag);
+                .into(holder.img_hashtag);*/
+        getThumbnail(movie.getVideoId(),holder.img_hashtag);
         holder.lin_item.setTag(position);
         holder.lin_item.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,5 +76,36 @@ public class GetUserSaveNewsAdapter extends RecyclerView.Adapter<GetUserSaveNews
     @Override
     public int getItemCount() {
         return moviesList.size();
+    }
+
+    public void getThumbnail(String vimeoUrl,ImageView imageView) {
+        // Log.e("vimeothumb====","https://vimeo.com/"+vimeoUrl+".xml");
+        VimeoExtractor.getInstance().fetchVideoWithURL("https://vimeo.com/api/v2/video/" + vimeoUrl, null, new OnVimeoExtractionListener() {
+            @Override
+            public void onSuccess(VimeoVideo video) {
+                String hdStream = video.getThumbs().get("640");
+                Log.e("vimeothumb====", hdStream);
+                try {
+                    ContextCompat.getMainExecutor(context).execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Utils.loadImageUsingGlidePlaceHolder(context, hdStream, holder.img_videoThumb, R.mipmap.ic_launcher_foreground);
+                            Glide.with(context)
+                                    .load(hdStream)
+                                    .into(imageView);
+                        }
+                    });
+                } catch (Exception e) {
+
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                Log.e("error", throwable.getMessage());
+            }
+        });
     }
 }

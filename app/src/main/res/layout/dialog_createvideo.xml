@@ -51,7 +51,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/sarabun_regular"
-                    android:text="@string/loreamtotaltext"
+                    android:text="@string/addvideo1"
                     android:textColor="@color/loctitle"
                     android:textSize="16sp" />
             </LinearLayout>
@@ -93,7 +93,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/sarabun_bold"
                     android:singleLine="true"
-                    android:text="Suggestion on this video"
+                    android:text="Add new video"
                     android:textColor="@color/loctitle"
                     android:textSize="19sp" />
 
@@ -101,7 +101,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/sarabun_regular"
-                    android:text="@string/loreamtotaltext"
+                    android:text="@string/galey1"
                     android:textColor="@color/loctitle"
                     android:textSize="16sp" />
             </LinearLayout>

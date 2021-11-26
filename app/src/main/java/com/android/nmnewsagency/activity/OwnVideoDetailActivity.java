@@ -1,14 +1,8 @@
 package com.android.nmnewsagency.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Color;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,20 +22,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-import com.android.nmnewsagency.Application;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.nmnewsagency.R;
-import com.android.nmnewsagency.adapter.HomeAdapter;
-import com.android.nmnewsagency.adapter.OwnVideoDetailAdapter;
-import com.android.nmnewsagency.adapter.RejectedVideoAdapter;
-import com.android.nmnewsagency.adapter.ViewPagerAdapter;
-import com.android.nmnewsagency.listner.RecyclerTouchListener;
-import com.android.nmnewsagency.modelclass.AddNewsModel;
+import com.android.nmnewsagency.chat.ChatHelper;
 import com.android.nmnewsagency.modelclass.DeleteNewsByIdModel;
 import com.android.nmnewsagency.modelclass.GetNewsByIdModel;
-import com.android.nmnewsagency.modelclass.GetProfileDataModel;
-import com.android.nmnewsagency.modelclass.GetUserSaveNewsModel;
+import com.android.nmnewsagency.modelclass.LikeModelClass;
 import com.android.nmnewsagency.modelclass.ReportModelClass;
 import com.android.nmnewsagency.modelclass.SaveModelClass;
+import com.android.nmnewsagency.modelclass.UploadNewsModel;
+import com.android.nmnewsagency.pref.SharedPrefsHelper;
 import com.android.nmnewsagency.rest.Rest;
 import com.android.nmnewsagency.utils.Utils;
 import com.bumptech.glide.Glide;
@@ -58,22 +50,26 @@ import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
-import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultAllocator;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
-import com.google.android.exoplayer2.upstream.HttpDataSource;
-import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
-import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.quickblox.chat.QBRestChatService;
+import com.quickblox.chat.model.QBChatDialog;
+import com.quickblox.chat.model.QBDialogCustomData;
+import com.quickblox.chat.model.QBDialogType;
+import com.quickblox.core.QBEntityCallback;
+import com.quickblox.core.exception.QBResponseException;
+import com.quickblox.users.model.QBUser;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +80,7 @@ import retrofit2.Response;
 
 public class OwnVideoDetailActivity extends AppCompatActivity implements Callback<Object> {
     RecyclerView recyclerView;
-    OwnVideoDetailAdapter locationAdapter;
+LinearLayout lin_toplinb;
     List<GetNewsByIdModel.DataBean> arrayList;
     int newsId;
     String whichOne, whichType;
@@ -102,6 +98,10 @@ public class OwnVideoDetailActivity extends AppCompatActivity implements Callbac
     LinearLayout lin_ownvideo_profile;
     PlayerView idExoPlayerVIew;
     SimpleExoPlayer exoPlayer = null;
+    ProgressDialog pd;
+    QBUser currentUser;
+    private static final int REQUEST_DIALOG_ID_FOR_UPDATE = 165;
+    ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +118,16 @@ public class OwnVideoDetailActivity extends AppCompatActivity implements Callbac
             }
         }
         rest = new Rest(this, this);
+        if (!ChatHelper.getInstance().isLogged()) {
+            reloginToChat();
+        }
+        if (ChatHelper.getCurrentUser() != null) {
+            currentUser = ChatHelper.getCurrentUser();
+            Log.e("currentuser======", currentUser.toString());
+        } else {
+            // Log.e(TAG, "Finishing " + TAG + ". Current user is null");
+            // finish();
+        }
         inIt();
     }
 
@@ -125,6 +135,7 @@ public class OwnVideoDetailActivity extends AppCompatActivity implements Callbac
         lin_chat_qwnvideo = (LinearLayout) findViewById(R.id.lin_chat_qwnvideo);
 
         lin_ownvideo_profile = (LinearLayout) findViewById(R.id.lin_ownvideo_profile);
+        lin_toplinb = (LinearLayout) findViewById(R.id.lin_toplinb);
         lin_create = (LinearLayout) findViewById(R.id.lin_create);
         lin_own_share = (LinearLayout) findViewById(R.id.lin_own_share);
         lin_own_comnt = (LinearLayout) findViewById(R.id.lin_own_comnt);
@@ -154,8 +165,7 @@ public class OwnVideoDetailActivity extends AppCompatActivity implements Callbac
         lin_chat_qwnvideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(OwnVideoDetailActivity.this, MessageDetailActivity.class);
-                startActivity(intent);
+                nextACtivityzzforChat();
             }
         });
         lin_ownvideo_profile.setOnClickListener(new View.OnClickListener() {
@@ -229,18 +239,48 @@ public class OwnVideoDetailActivity extends AppCompatActivity implements Callbac
     }
 
     private void callserviceaGetNewsByID() {
-        rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
+        rest.ShowDialogue("Please Wait ..");
         rest.getNewsById(newsId);
     }
 
     private void callServicegetLike(int newid) {
-        rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
+       // Toast.makeText(OwnVideoDetailActivity.this, "like", Toast.LENGTH_SHORT).show();
+        rest.ShowDialogue("Please Wait ..");
         rest.likeUser1(newid);
     }
 
     private void callServicegetDisLike(int newid) {
-        rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
+       // Toast.makeText(OwnVideoDetailActivity.this, "dislike", Toast.LENGTH_SHORT).show();
+       rest.ShowDialogue("Please Wait ..");
         rest.DislikeUser(newid);
+    }
+    public void setProgressSet() {
+        dialog = new ProgressDialog(this);
+        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        dialog.setCancelable(false);
+        dialog.setMessage("Please Wait for a sec ..");
+        dialog.setProgress(0);
+        dialog.setMax(100);
+        dialog.show();
+        final int totalProgressTime = 95;
+        final Thread t = new Thread() {
+            @Override
+            public void run() {
+                int jumpTime = 0;
+
+                while (jumpTime < totalProgressTime) {
+                    try {
+                        sleep(2000);
+                        jumpTime += 2;
+                        dialog.setProgress(jumpTime);
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        t.start();
     }
 
     @Override
@@ -259,59 +299,72 @@ public class OwnVideoDetailActivity extends AppCompatActivity implements Callbac
             if (obj instanceof ReportModelClass) {
                 ReportModelClass loginModel = (ReportModelClass) obj;
                 if (loginModel.isStatus()) {
-                    Toast.makeText(OwnVideoDetailActivity.this, "Report successfully added", Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(OwnVideoDetailActivity.this, "Report successfully added", Toast.LENGTH_SHORT).show();
+                    Utils.showSnakBarDialog(this,lin_toplinb,"Report successfully added",R.color.msgresponce);
                 }
             }
             if (obj instanceof DeleteNewsByIdModel) {
                 DeleteNewsByIdModel loginModel = (DeleteNewsByIdModel) obj;
                 if (loginModel.isStatus()) {
-                    // Toast.makeText(OwnVideoDetailActivity.this, "News Deleted successfully ", Toast.LENGTH_SHORT).show();
+                     Toast.makeText(OwnVideoDetailActivity.this, "News Deleted successfully ", Toast.LENGTH_SHORT).show();
                     OwnVideoDetailActivity.this.finish();
                 }
             }
             if (obj instanceof SaveModelClass) {
                 SaveModelClass loginModel = (SaveModelClass) obj;
                 if (loginModel.isStatus()) {
+                    Toast.makeText(OwnVideoDetailActivity.this, "News Unsave successfully ", Toast.LENGTH_SHORT).show();
                     OwnVideoDetailActivity.this.finish();
                     // notifyDataSetChanged();
+                }
+            }
+            if (obj instanceof LikeModelClass) {
+                LikeModelClass loginModel = (LikeModelClass) obj;
+                if (loginModel.isStatus()) {
+                    if(isLike) {
+                        Utils.showSnakBarDialog(this, lin_toplinb, "News Like successfully ", R.color.msgresponce);
+                    }else{
+                        Utils.showSnakBarDialog(this, lin_toplinb, "News UnLike successfully ", R.color.msgresponce);
+                    }
                 }
             }
         }
     }
 
     private void setDataOnViws() {
-        if (arrayList.get(0).isIsLike()) {
-            img_ownlike.setImageResource(R.drawable.ic_dislike);
-            isLike = true;
-        } else {
-            img_ownlike.setImageResource(R.drawable.ic_like);
-            isLike = false;
-        }
-        new Handler().post(new Runnable() {
-            public void run() {
-                Glide.with(OwnVideoDetailActivity.this)
-                        .load(arrayList.get(0).getImageUrl())
-                        .into(video_thuimbnail);
+        if(arrayList.size()>0) {
+            if (arrayList.get(0).isIsLike()) {
+                img_ownlike.setImageResource(R.drawable.ic_dislike);
+                isLike = true;
+            } else {
+                img_ownlike.setImageResource(R.drawable.ic_like);
+                isLike = false;
             }
-        });
-        new Handler().post(new Runnable() {
-            public void run() {
-                Glide.with(OwnVideoDetailActivity.this)
-                        .load(arrayList.get(0).getAvatar())
-                        .into(image_own_profile);
-            }
-        });
-        txt_own_name.setText(arrayList.get(0).getUserName());
-        txt_own_dddname.setText(arrayList.get(0).getDescription());
-        txt_owndescription.setText(arrayList.get(0).getTitle());
-        txt_ownlocation.setText(arrayList.get(0).getState_Name() + " " + arrayList.get(0).getCountry_Name());
-        txt_ownviewsqq.setText(String.valueOf(arrayList.get(0).getViewCount()));
-        txt_owndatetime.setText(Utils.parseDateToddMMyyyy(arrayList.get(0).getAddedOn()));
-        txt_ownlike.setText(String.valueOf(arrayList.get(0).getLikesCount()));
-        txt_owncoments.setText(String.valueOf(arrayList.get(0).getCommentCount()));
+            new Handler().post(new Runnable() {
+                public void run() {
+                    Glide.with(OwnVideoDetailActivity.this)
+                            .load(arrayList.get(0).getImageUrl())
+                            .into(video_thuimbnail);
+                }
+            });
+            new Handler().post(new Runnable() {
+                public void run() {
+                    Glide.with(OwnVideoDetailActivity.this)
+                            .load(arrayList.get(0).getAvatar())
+                            .into(image_own_profile);
+                }
+            });
+            txt_own_name.setText(arrayList.get(0).getUserName());
+            txt_own_dddname.setText(""+arrayList.get(0).getAboutMe());
+            txt_owndescription.setText(arrayList.get(0).getTitle());
+            txt_ownlocation.setText(arrayList.get(0).getState_Name() + " " + arrayList.get(0).getCountry_Name());
+            txt_ownviewsqq.setText(String.valueOf(arrayList.get(0).getViewCount()));
+            txt_owndatetime.setText(Utils.parseDateToddMMyyyy(arrayList.get(0).getAddedOn()));
+            txt_ownlike.setText(String.valueOf(arrayList.get(0).getLikesCount()));
+            txt_owncoments.setText(String.valueOf(arrayList.get(0).getCommentCount()));
 
-        Uri videouri = Uri.parse(arrayList.get(0).getVideoUrl());
-        setUrlOnSimpleExoPlayer();
+            Uri videouri = Uri.parse(arrayList.get(0).getVideoUrl());
+            setUrlOnSimpleExoPlayer();
        /* videoView.setVideoURI(videouri);
         videoView.requestFocus();
         videoView.start();
@@ -354,18 +407,18 @@ public class OwnVideoDetailActivity extends AppCompatActivity implements Callbac
                 }
             }
         });*/
-        img_playpause.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (videoView.isPlaying()) {
-                    videoView.pause();
-                    img_playpause.setImageResource(R.drawable.ic_play_circle_filled_black_30dp);
-                } else {
-                    videoView.start();
-                    img_playpause.setImageResource(R.drawable.ic_pause_circle_filled_black_24dp);
+            img_playpause.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (videoView.isPlaying()) {
+                        videoView.pause();
+                        img_playpause.setImageResource(R.drawable.ic_play_circle_filled_black_30dp);
+                    } else {
+                        videoView.start();
+                        img_playpause.setImageResource(R.drawable.ic_pause_circle_filled_black_24dp);
+                    }
                 }
-            }
-        });
+            });
 
 
       /*  current_pos = videoView.getCurrentPosition();
@@ -404,7 +457,7 @@ public class OwnVideoDetailActivity extends AppCompatActivity implements Callbac
                 videoView.seekTo((int) current_pos);
             }
         });*/
-
+        }
     }
 
     @Override
@@ -456,12 +509,12 @@ public class OwnVideoDetailActivity extends AppCompatActivity implements Callbac
     }
 
     private void callserviceDeleteNewsById() {
-        rest.ShowDialogue(OwnVideoDetailActivity.this.getResources().getString(R.string.pleaseWait));
+        rest.ShowDialogue("Please Wait ..");
         rest.getDeleteNewsById(arrayList.get(0).getNewsId());
     }
 
     private void callServicegetDeleteSave(int newid) {
-        rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
+        rest.ShowDialogue("Please Wait ..");
         rest.deleteSaveUser(newid);
     }
 
@@ -485,6 +538,7 @@ public class OwnVideoDetailActivity extends AppCompatActivity implements Callbac
         dialog.setContentView(R.layout.dialog_report);
         ImageView img_close_dialog = dialog.findViewById(R.id.img_close_dialog);
         TextView txt_report_subtitle = dialog.findViewById(R.id.txt_report_subtitle);
+        RelativeLayout rel_dialogtop = dialog.findViewById(R.id.rel_dialogtop);
         RadioGroup radio_group = dialog.findViewById(R.id.radio_group);
         img_close_dialog.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -498,7 +552,8 @@ public class OwnVideoDetailActivity extends AppCompatActivity implements Callbac
             public void onClick(View v) {
                 RadioButton selectedRadioButton = null;
                 if (radio_group.getCheckedRadioButtonId() == -1) {
-                    Toast.makeText(OwnVideoDetailActivity.this, "Please select report reason", Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(OwnVideoDetailActivity.this, "Please select report reason", Toast.LENGTH_SHORT).show();
+                    Utils.showSnakBarDialog(OwnVideoDetailActivity.this,rel_dialogtop,"Please select report reason",R.color.alert);
                     return;
                 } else {
                     // get selected radio button from radioGroup
@@ -526,7 +581,7 @@ public class OwnVideoDetailActivity extends AppCompatActivity implements Callbac
     }
 
     private void callServicegetReport(String folow, String isfollow, int newid) {
-        rest.ShowDialogue(OwnVideoDetailActivity.this.getResources().getString(R.string.pleaseWait));
+        rest.ShowDialogue("Please Wait ..");
         rest.reportUser(folow, isfollow, newid);
     }
 
@@ -534,7 +589,7 @@ public class OwnVideoDetailActivity extends AppCompatActivity implements Callbac
         idExoPlayerVIew = (PlayerView) findViewById(R.id.idExoPlayerVIew);
         try {
             BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-            TrackSelector trackSelector = new DefaultTrackSelector(new AdaptiveTrackSelection.Factory(bandwidthMeter));
+            TrackSelector trackSelector = new DefaultTrackSelector();
             LoadControl loadControl = new DefaultLoadControl.Builder()
                     .setAllocator(new DefaultAllocator(true, 10))
                     .setBufferDurationsMs(VideoPlayerConfig.MIN_BUFFER_DURATION,
@@ -543,7 +598,7 @@ public class OwnVideoDetailActivity extends AppCompatActivity implements Callbac
                             VideoPlayerConfig.MIN_PLAYBACK_RESUME_BUFFER)
                     .setTargetBufferBytes(-1)
                     .setPrioritizeTimeOverSizeThresholds(true).createDefaultLoadControl();
-            exoPlayer = ExoPlayerFactory.newSimpleInstance(OwnVideoDetailActivity.this, trackSelector,loadControl);
+            exoPlayer = ExoPlayerFactory.newSimpleInstance(OwnVideoDetailActivity.this, trackSelector, loadControl);
             Uri videouri = Uri.parse(arrayList.get(0).getVideoUrl());
             DefaultHttpDataSourceFactory dataSourceFactory = new DefaultHttpDataSourceFactory("exoplayer_video");
             ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
@@ -639,8 +694,13 @@ public class OwnVideoDetailActivity extends AppCompatActivity implements Callbac
     @Override
     protected void onResume() {
         super.onResume();
+        if(EventBus.getDefault().isRegistered(this)){}
+        else{
+            EventBus.getDefault().register(this);
+        }
         setUrlOnSimpleExoPlayer();
     }
+
     public class VideoPlayerConfig {
         //Minimum Video you want to buffer while Playing
         public static final int MIN_BUFFER_DURATION = 1000;
@@ -650,5 +710,80 @@ public class OwnVideoDetailActivity extends AppCompatActivity implements Callbac
         public static final int MIN_PLAYBACK_START_BUFFER = 1000;
         //Min video You want to buffer when user resumes video
         public static final int MIN_PLAYBACK_RESUME_BUFFER = 1000;
+    }
+
+    private void reloginToChat() {
+        // showProgressDialog(R.string.dlg_relogin);
+        pd = new ProgressDialog(this);
+        pd.setMessage("Please Wait ...");
+        pd.show();
+        if (SharedPrefsHelper.getInstance().hasQbUser()) {
+            ChatHelper.getInstance().loginToChat(SharedPrefsHelper.getInstance().getQbUser(), new QBEntityCallback<Void>() {
+                @Override
+                public void onSuccess(Void aVoid, Bundle bundle) {
+                    pd.dismiss();
+                }
+
+                @Override
+                public void onError(QBResponseException e) {
+                    Log.e("error", "Relogin Failed " + e.getMessage());
+                    //  hideProgressDialog();
+
+                }
+            });
+        }
+    }
+
+    public void nextACtivityzzforChat() {
+        pd = new ProgressDialog(this);
+        pd.setMessage("Please Wait ...");
+        pd.setCancelable(false);
+        pd.show();
+        ArrayList<Integer> occupantIdsList = new ArrayList<Integer>();
+        if (arrayList.get(0).getChatId() != null) {
+            occupantIdsList.add(Integer.parseInt(arrayList.get(0).getChatId()));
+        }
+        QBDialogCustomData customData = new QBDialogCustomData();
+        customData.putString("customString", "Value");
+        // jsonObject.putString("userid",arrayList.get(0).getUserId());
+        //jsonObject.putString("usertag",arrayList.get(0).getUserName());
+        QBChatDialog dialog = new QBChatDialog();
+
+        dialog.setPhoto(arrayList.get(0).getAvatar());
+        dialog.setType(QBDialogType.PRIVATE);
+        dialog.setOccupantsIds(occupantIdsList);
+        dialog.setCustomData(customData);
+        dialog.setName("Value");
+
+        // or just use DialogUtils
+        //QBChatDialog dialog = DialogUtils.buildPrivateDialog(recipientId);
+
+        QBRestChatService.createChatDialog(dialog).performAsync(new QBEntityCallback<QBChatDialog>() {
+            @Override
+            public void onSuccess(QBChatDialog result, Bundle params) {
+                pd.dismiss();
+                Log.e("createChatDialog======", result.toString());
+                ChatActivity.startForResult(OwnVideoDetailActivity.this, REQUEST_DIALOG_ID_FOR_UPDATE, result);
+            }
+
+            @Override
+            public void onError(QBResponseException responseException) {
+
+            }
+        });
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onResultReceived(UploadNewsModel.DataBean dataBean) {
+        Intent intent = new Intent(OwnVideoDetailActivity.this, NewVideoActivity.class);
+        intent.putExtra("video", dataBean);
+        startActivity(intent);
+        // finish();
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 }

@@ -193,6 +193,7 @@ public class GetUserHashTagModel {
 
                 private int NewsId;
                 private String Title;
+                private String VideoId;
                 private String Description;
                 private int ViewCount;
                 private Object AddedOn;
@@ -219,7 +220,13 @@ public class GetUserHashTagModel {
                 private boolean IsReport;
                 private boolean IsLike;
                 private boolean IsComment;
+                public String getVideoId() {
+                    return VideoId;
+                }
 
+                public void setVideoId(String VideoId) {
+                    this.VideoId = VideoId;
+                }
                 public int getNewsId() {
                     return NewsId;
                 }

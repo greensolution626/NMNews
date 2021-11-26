@@ -1,11 +1,17 @@
 package com.android.nmnewsagency.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+
+import androidx.core.content.ContextCompat;
 
 import com.android.nmnewsagency.R;
+import com.android.nmnewsagency.activity.OwnVideoDetailActivity;
 import com.android.nmnewsagency.holder.ChildViewHolder;
 import com.android.nmnewsagency.holder.SectionViewHolder;
 import com.android.nmnewsagency.model.Child;
@@ -14,6 +20,10 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.intrusoft.sectionedrecyclerview.SectionRecyclerViewAdapter;
 
 import java.util.List;
+
+import vimeoextractor.OnVimeoExtractionListener;
+import vimeoextractor.VimeoExtractor;
+import vimeoextractor.VimeoVideo;
 
 /**
  * Created by apple on 11/7/16.
@@ -47,13 +57,50 @@ public class AdapterSectionRecycler extends SectionRecyclerViewAdapter<SectionHe
 
     @Override
     public void onBindChildViewHolder(ChildViewHolder childViewHolder, int sectionPosition, int childPosition, Child child) {
-       //childViewHolder.name.setText(child.getName());
+       childViewHolder.txt_user_namenoti.setText(child.getName());
         Glide.with(context)
                 .load(child.getImg(childPosition))
                 .placeholder(R.color.adbag)
                 .centerCrop()
                 .transition(DrawableTransitionOptions.withCrossFade(500))
                 .into(childViewHolder.image_profile_noti);
+        childViewHolder.rel_notichild.setTag(childPosition);
+        childViewHolder.rel_notichild.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               int pos= (int) childViewHolder.rel_notichild.getTag();
+                Intent intent4 = new Intent(context, OwnVideoDetailActivity.class);
+                intent4.putExtra("newsid",Integer.parseInt(child.getnewsId(childPosition)));
+                intent4.putExtra("self","other");
+                context.startActivity(intent4);
+            }
+        });
 
+    }
+    public void getThumbnail(String vimeoUrl, ImageView imageView) {
+        // Log.e("vimeothumb====","https://vimeo.com/"+vimeoUrl+".xml");
+        VimeoExtractor.getInstance().fetchVideoWithURL("https://vimeo.com/api/v2/video/" + vimeoUrl, null, new OnVimeoExtractionListener() {
+            @Override
+            public void onSuccess(VimeoVideo video) {
+                String hdStream = video.getThumbs().get("640");
+                Log.e("vimeothumb====", hdStream);
+                try {
+                    ContextCompat.getMainExecutor(context).execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Utils.loadImageUsingGlidePlaceHolder(context, hdStream, holder.img_videoThumb, R.mipmap.ic_launcher_foreground);
+                            Glide.with(context)
+                                    .load(hdStream)
+                                    .into(imageView);
+                        }
+                    });
+                } catch (Exception e) {
+                }
+            }
+            @Override
+            public void onFailure(Throwable throwable) {
+                Log.e("error", throwable.getMessage());
+            }
+        });
     }
 }

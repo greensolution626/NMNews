@@ -9,7 +9,7 @@ public class GetProfileDataModel {
     /**
      * Status : true
      * Message : Success
-     * Data : {"AspNetUser":{"NewsCount":37,"UserTagVideo":0,"SavedNewsCount":4,"IsFollowed":false,"Followers":6,"Followings":1,"FollowersSuffix":"6","FollowingsSuffix":"1","Id":"e3efdf6a-e61f-4a2a-bfd3-baea75854bc6","Email":null,"EmailConfirmed":false,"PasswordHash":null,"SecurityStamp":null,"ContactNumber":null,"PhoneNumberConfirmed":false,"TwoFactorEnabled":false,"LockoutEndDateUtc":"0001-01-01T00:00:00","LockoutEnabled":false,"AccessFailedCount":0,"UserName":"ashokpawartv","FirstName":"Ashok News (TV REPORTER ATPADI)","LastName":"","FullName":"Ashok News (TV REPORTER ATPADI) ","UserType":"USER","AddDate":null,"ModifyDate":null,"IsActive":false,"BusinessName":null,"Avatar":"https://lh3.googleusercontent.com/a-/AOh14GgcOHfqdaeHeNDM9GChvOI5Ga3i8WNg15XRMSqfjw","PageUrl":null,"AboutMe":null,"Profile_Score":54},"UserAddress":[]}
+     * Data : {"AspNetUser":{"NewsCount":11,"UserTagVideo":0,"SavedNewsCount":3,"IsFollowed":false,"Followers":5,"Followings":4,"FollowersSuffix":"5","FollowingsSuffix":"4","Id":"04149de1-2284-49a6-8248-1909c30fce45","Email":null,"EmailConfirmed":false,"PasswordHash":null,"PasswordText":null,"SecurityStamp":null,"ContactNumber":null,"PhoneNumberConfirmed":false,"TwoFactorEnabled":false,"LockoutEndDateUtc":"0001-01-01T00:00:00","LockoutEnabled":false,"AccessFailedCount":0,"UserName":"ramagyasharma1954","FirstName":"Sharma Ramagya R","LastName":"shivnath","FullName":"Sharma Ramagya R shivnath","UserType":"REPORTER","AddDate":null,"ModifyDate":null,"IsActive":false,"BusinessName":null,"Avatar":"http://nmnews.uislick.com/images//profile_images/c0c47d54-e1ed-4c58-ad33-5d08982ef01b.jpg","PageUrl":null,"AboutMe":null,"Profile_Score":0,"DeviceToken":null,"ChatId":"130746294"},"UserAddress":[{"Id":310,"UserId":"04149de1-2284-49a6-8248-1909c30fce45","FirstName":null,"LastName":null,"AddressLine1":"","AddressLine2":"","ZipCode":"","Addresstype":"APP","ContactNumber":null,"IsDefault":true,"BusinessName":null,"HouseNo":null,"GCountry":"INDIA","GState":"MAHARSHATRA","GCity":"MUMBAI SUBURBAN","GThasil":"MUMBAI SUBURBAN","CountryId":1,"StateId":1,"CityId":26,"TahsilId":192,"GFullAddress":"","Lat":"","Long":""}]}
      */
 
     private boolean Status;
@@ -42,12 +42,12 @@ public class GetProfileDataModel {
 
     public static class DataBean implements Serializable {
         /**
-         * AspNetUser : {"NewsCount":37,"UserTagVideo":0,"SavedNewsCount":4,"IsFollowed":false,"Followers":6,"Followings":1,"FollowersSuffix":"6","FollowingsSuffix":"1","Id":"e3efdf6a-e61f-4a2a-bfd3-baea75854bc6","Email":null,"EmailConfirmed":false,"PasswordHash":null,"SecurityStamp":null,"ContactNumber":null,"PhoneNumberConfirmed":false,"TwoFactorEnabled":false,"LockoutEndDateUtc":"0001-01-01T00:00:00","LockoutEnabled":false,"AccessFailedCount":0,"UserName":"ashokpawartv","FirstName":"Ashok News (TV REPORTER ATPADI)","LastName":"","FullName":"Ashok News (TV REPORTER ATPADI) ","UserType":"USER","AddDate":null,"ModifyDate":null,"IsActive":false,"BusinessName":null,"Avatar":"https://lh3.googleusercontent.com/a-/AOh14GgcOHfqdaeHeNDM9GChvOI5Ga3i8WNg15XRMSqfjw","PageUrl":null,"AboutMe":null,"Profile_Score":54}
-         * UserAddress : []
+         * AspNetUser : {"NewsCount":11,"UserTagVideo":0,"SavedNewsCount":3,"IsFollowed":false,"Followers":5,"Followings":4,"FollowersSuffix":"5","FollowingsSuffix":"4","Id":"04149de1-2284-49a6-8248-1909c30fce45","Email":null,"EmailConfirmed":false,"PasswordHash":null,"PasswordText":null,"SecurityStamp":null,"ContactNumber":null,"PhoneNumberConfirmed":false,"TwoFactorEnabled":false,"LockoutEndDateUtc":"0001-01-01T00:00:00","LockoutEnabled":false,"AccessFailedCount":0,"UserName":"ramagyasharma1954","FirstName":"Sharma Ramagya R","LastName":"shivnath","FullName":"Sharma Ramagya R shivnath","UserType":"REPORTER","AddDate":null,"ModifyDate":null,"IsActive":false,"BusinessName":null,"Avatar":"http://nmnews.uislick.com/images//profile_images/c0c47d54-e1ed-4c58-ad33-5d08982ef01b.jpg","PageUrl":null,"AboutMe":null,"Profile_Score":0,"DeviceToken":null,"ChatId":"130746294"}
+         * UserAddress : [{"Id":310,"UserId":"04149de1-2284-49a6-8248-1909c30fce45","FirstName":null,"LastName":null,"AddressLine1":"","AddressLine2":"","ZipCode":"","Addresstype":"APP","ContactNumber":null,"IsDefault":true,"BusinessName":null,"HouseNo":null,"GCountry":"INDIA","GState":"MAHARSHATRA","GCity":"MUMBAI SUBURBAN","GThasil":"MUMBAI SUBURBAN","CountryId":1,"StateId":1,"CityId":26,"TahsilId":192,"GFullAddress":"","Lat":"","Long":""}]
          */
 
         private AspNetUserBean AspNetUser;
-        private List<?> UserAddress;
+        private List<UserAddressBean> UserAddress;
 
         public AspNetUserBean getAspNetUser() {
             return AspNetUser;
@@ -57,28 +57,29 @@ public class GetProfileDataModel {
             this.AspNetUser = AspNetUser;
         }
 
-        public List<?> getUserAddress() {
+        public List<UserAddressBean> getUserAddress() {
             return UserAddress;
         }
 
-        public void setUserAddress(List<?> UserAddress) {
+        public void setUserAddress(List<UserAddressBean> UserAddress) {
             this.UserAddress = UserAddress;
         }
 
         public static class AspNetUserBean implements Serializable {
             /**
-             * NewsCount : 37
+             * NewsCount : 11
              * UserTagVideo : 0
-             * SavedNewsCount : 4
+             * SavedNewsCount : 3
              * IsFollowed : false
-             * Followers : 6
-             * Followings : 1
-             * FollowersSuffix : 6
-             * FollowingsSuffix : 1
-             * Id : e3efdf6a-e61f-4a2a-bfd3-baea75854bc6
+             * Followers : 5
+             * Followings : 4
+             * FollowersSuffix : 5
+             * FollowingsSuffix : 4
+             * Id : 04149de1-2284-49a6-8248-1909c30fce45
              * Email : null
              * EmailConfirmed : false
              * PasswordHash : null
+             * PasswordText : null
              * SecurityStamp : null
              * ContactNumber : null
              * PhoneNumberConfirmed : false
@@ -86,19 +87,21 @@ public class GetProfileDataModel {
              * LockoutEndDateUtc : 0001-01-01T00:00:00
              * LockoutEnabled : false
              * AccessFailedCount : 0
-             * UserName : ashokpawartv
-             * FirstName : Ashok News (TV REPORTER ATPADI)
-             * LastName :
-             * FullName : Ashok News (TV REPORTER ATPADI)
-             * UserType : USER
+             * UserName : ramagyasharma1954
+             * FirstName : Sharma Ramagya R
+             * LastName : shivnath
+             * FullName : Sharma Ramagya R shivnath
+             * UserType : REPORTER
              * AddDate : null
              * ModifyDate : null
              * IsActive : false
              * BusinessName : null
-             * Avatar : https://lh3.googleusercontent.com/a-/AOh14GgcOHfqdaeHeNDM9GChvOI5Ga3i8WNg15XRMSqfjw
+             * Avatar : http://nmnews.uislick.com/images//profile_images/c0c47d54-e1ed-4c58-ad33-5d08982ef01b.jpg
              * PageUrl : null
              * AboutMe : null
-             * Profile_Score : 54.0
+             * Profile_Score : 0.0
+             * DeviceToken : null
+             * ChatId : 130746294
              */
 
             private int NewsCount;
@@ -113,9 +116,11 @@ public class GetProfileDataModel {
             private Object Email;
             private boolean EmailConfirmed;
             private Object PasswordHash;
+            private Object PasswordText;
             private Object SecurityStamp;
             private Object ContactNumber;
             private boolean PhoneNumberConfirmed;
+            private boolean SendNotification;
             private boolean TwoFactorEnabled;
             private String LockoutEndDateUtc;
             private boolean LockoutEnabled;
@@ -133,6 +138,8 @@ public class GetProfileDataModel {
             private Object PageUrl;
             private Object AboutMe;
             private double Profile_Score;
+            private Object DeviceToken;
+            private String ChatId;
 
             public int getNewsCount() {
                 return NewsCount;
@@ -230,6 +237,14 @@ public class GetProfileDataModel {
                 this.PasswordHash = PasswordHash;
             }
 
+            public Object getPasswordText() {
+                return PasswordText;
+            }
+
+            public void setPasswordText(Object PasswordText) {
+                this.PasswordText = PasswordText;
+            }
+
             public Object getSecurityStamp() {
                 return SecurityStamp;
             }
@@ -260,6 +275,13 @@ public class GetProfileDataModel {
 
             public void setTwoFactorEnabled(boolean TwoFactorEnabled) {
                 this.TwoFactorEnabled = TwoFactorEnabled;
+            }
+            public boolean isSendNotification() {
+                return SendNotification;
+            }
+
+            public void setSendNotification(boolean SendNotification) {
+                this.SendNotification = SendNotification;
             }
 
             public String getLockoutEndDateUtc() {
@@ -388,6 +410,258 @@ public class GetProfileDataModel {
 
             public void setProfile_Score(double Profile_Score) {
                 this.Profile_Score = Profile_Score;
+            }
+
+            public Object getDeviceToken() {
+                return DeviceToken;
+            }
+
+            public void setDeviceToken(Object DeviceToken) {
+                this.DeviceToken = DeviceToken;
+            }
+
+            public String getChatId() {
+                return ChatId;
+            }
+
+            public void setChatId(String ChatId) {
+                this.ChatId = ChatId;
+            }
+        }
+
+        public static class UserAddressBean implements Serializable {
+            /**
+             * Id : 310
+             * UserId : 04149de1-2284-49a6-8248-1909c30fce45
+             * FirstName : null
+             * LastName : null
+             * AddressLine1 :
+             * AddressLine2 :
+             * ZipCode :
+             * Addresstype : APP
+             * ContactNumber : null
+             * IsDefault : true
+             * BusinessName : null
+             * HouseNo : null
+             * GCountry : INDIA
+             * GState : MAHARSHATRA
+             * GCity : MUMBAI SUBURBAN
+             * GThasil : MUMBAI SUBURBAN
+             * CountryId : 1
+             * StateId : 1
+             * CityId : 26
+             * TahsilId : 192
+             * GFullAddress :
+             * Lat :
+             * Long :
+             */
+
+            private int Id;
+            private String UserId;
+            private Object FirstName;
+            private Object LastName;
+            private String AddressLine1;
+            private String AddressLine2;
+            private String ZipCode;
+            private String Addresstype;
+            private Object ContactNumber;
+            private boolean IsDefault;
+            private Object BusinessName;
+            private Object HouseNo;
+            private String GCountry;
+            private String GState;
+            private String GCity;
+            private String GThasil;
+            private int CountryId;
+            private int StateId;
+            private int CityId;
+            private int TahsilId;
+            private String GFullAddress;
+            private String Lat;
+            private String Long;
+
+            public int getId() {
+                return Id;
+            }
+
+            public void setId(int Id) {
+                this.Id = Id;
+            }
+
+            public String getUserId() {
+                return UserId;
+            }
+
+            public void setUserId(String UserId) {
+                this.UserId = UserId;
+            }
+
+            public Object getFirstName() {
+                return FirstName;
+            }
+
+            public void setFirstName(Object FirstName) {
+                this.FirstName = FirstName;
+            }
+
+            public Object getLastName() {
+                return LastName;
+            }
+
+            public void setLastName(Object LastName) {
+                this.LastName = LastName;
+            }
+
+            public String getAddressLine1() {
+                return AddressLine1;
+            }
+
+            public void setAddressLine1(String AddressLine1) {
+                this.AddressLine1 = AddressLine1;
+            }
+
+            public String getAddressLine2() {
+                return AddressLine2;
+            }
+
+            public void setAddressLine2(String AddressLine2) {
+                this.AddressLine2 = AddressLine2;
+            }
+
+            public String getZipCode() {
+                return ZipCode;
+            }
+
+            public void setZipCode(String ZipCode) {
+                this.ZipCode = ZipCode;
+            }
+
+            public String getAddresstype() {
+                return Addresstype;
+            }
+
+            public void setAddresstype(String Addresstype) {
+                this.Addresstype = Addresstype;
+            }
+
+            public Object getContactNumber() {
+                return ContactNumber;
+            }
+
+            public void setContactNumber(Object ContactNumber) {
+                this.ContactNumber = ContactNumber;
+            }
+
+            public boolean isIsDefault() {
+                return IsDefault;
+            }
+
+            public void setIsDefault(boolean IsDefault) {
+                this.IsDefault = IsDefault;
+            }
+
+            public Object getBusinessName() {
+                return BusinessName;
+            }
+
+            public void setBusinessName(Object BusinessName) {
+                this.BusinessName = BusinessName;
+            }
+
+            public Object getHouseNo() {
+                return HouseNo;
+            }
+
+            public void setHouseNo(Object HouseNo) {
+                this.HouseNo = HouseNo;
+            }
+
+            public String getGCountry() {
+                return GCountry;
+            }
+
+            public void setGCountry(String GCountry) {
+                this.GCountry = GCountry;
+            }
+
+            public String getGState() {
+                return GState;
+            }
+
+            public void setGState(String GState) {
+                this.GState = GState;
+            }
+
+            public String getGCity() {
+                return GCity;
+            }
+
+            public void setGCity(String GCity) {
+                this.GCity = GCity;
+            }
+
+            public String getGThasil() {
+                return GThasil;
+            }
+
+            public void setGThasil(String GThasil) {
+                this.GThasil = GThasil;
+            }
+
+            public int getCountryId() {
+                return CountryId;
+            }
+
+            public void setCountryId(int CountryId) {
+                this.CountryId = CountryId;
+            }
+
+            public int getStateId() {
+                return StateId;
+            }
+
+            public void setStateId(int StateId) {
+                this.StateId = StateId;
+            }
+
+            public int getCityId() {
+                return CityId;
+            }
+
+            public void setCityId(int CityId) {
+                this.CityId = CityId;
+            }
+
+            public int getTahsilId() {
+                return TahsilId;
+            }
+
+            public void setTahsilId(int TahsilId) {
+                this.TahsilId = TahsilId;
+            }
+
+            public String getGFullAddress() {
+                return GFullAddress;
+            }
+
+            public void setGFullAddress(String GFullAddress) {
+                this.GFullAddress = GFullAddress;
+            }
+
+            public String getLat() {
+                return Lat;
+            }
+
+            public void setLat(String Lat) {
+                this.Lat = Lat;
+            }
+
+            public String getLong() {
+                return Long;
+            }
+
+            public void setLong(String Long) {
+                this.Long = Long;
             }
         }
     }

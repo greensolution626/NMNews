@@ -93,6 +93,7 @@ public class GetNewsByIdModel {
         private String State_Name;
         private String City_Name;
         private String Tahsil_Name;
+        private String ChatId;
         private int LikesCount;
         private int CommentCount;
         private boolean IsSaved;
@@ -100,6 +101,13 @@ public class GetNewsByIdModel {
         private boolean IsLike;
         private boolean IsComment;
 
+        public String getChatId() {
+            return ChatId;
+        }
+
+        public void setChatId(String ChatId) {
+            this.ChatId = ChatId;
+        }
         public int getNewsId() {
             return NewsId;
         }

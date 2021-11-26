@@ -1,7 +1,6 @@
 package com.android.nmnewsagency.fragment;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,19 +11,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.nmnewsagency.R;
-import com.android.nmnewsagency.activity.LocationReqActivity;
 import com.android.nmnewsagency.activity.MainActivity;
-import com.android.nmnewsagency.activity.SettingActivity;
 import com.android.nmnewsagency.adapter.LocationAdapter;
 import com.android.nmnewsagency.listner.RecyclerTouchListener;
 import com.android.nmnewsagency.model.CountryModel;
-import com.android.nmnewsagency.modelclass.CountryList;
 import com.android.nmnewsagency.modelclass.SetAddressModelClass;
 import com.android.nmnewsagency.pref.Prefrence;
 import com.android.nmnewsagency.rest.Rest;
@@ -35,8 +30,6 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import static android.content.Context.MODE_PRIVATE;
 
 public class FragmentTahsil extends Fragment implements Callback<Object> {
     View view;
@@ -115,7 +108,7 @@ public class FragmentTahsil extends Fragment implements Callback<Object> {
     }
 
     private void callServicesetAddress(String address, String city, String state, String country,
-                                       String postalCode, String houseno, String addrs1, String latSend, String lngSend, String tahsil) {
+                                       String postalCode, String houseno, String addrs1, double latSend, double lngSend, String tahsil) {
         rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
         rest.setUserAddress(addrs1, "", "APP", "", Integer.parseInt(Prefrence.getCityIdd()), "",
                 Integer.parseInt(Prefrence.getCountryIdd()), Prefrence.getFirstName(),
@@ -146,8 +139,8 @@ public class FragmentTahsil extends Fragment implements Callback<Object> {
                     Prefrence.settahsilIdd(String.valueOf(arrayList.get(position).getId()));
                     Prefrence.setLogin(true);
                     callServicesetAddress("", Prefrence.getCityName(), Prefrence.getStateName(),
-                            Prefrence.getCountryName(), "", "", "", "",
-                            "",arrayList.get(position).getName());
+                            Prefrence.getCountryName(), "", "", "", 0.0,
+                            0.0,arrayList.get(position).getName());
                 }
 
                 @Override
@@ -188,6 +181,7 @@ public class FragmentTahsil extends Fragment implements Callback<Object> {
             if (obj instanceof SetAddressModelClass) {
                 SetAddressModelClass loginModel = (SetAddressModelClass) obj;
                 if (loginModel.isStatus()) {
+                    Toast.makeText(getActivity(), "Location successfully saved", Toast.LENGTH_SHORT).show();
                    goNextActiviyy();
                 }
             }

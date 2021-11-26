@@ -33,6 +33,7 @@
                 tools:ignore="VectorDrawableCompat" />
 
             <EditText
+
                 android:imeOptions="actionDone"
                 android:singleLine="true"
                 android:textSize="15sp"
@@ -44,7 +45,6 @@
                 android:layout_marginLeft="15dp"
                 android:background="@drawable/searchtopbar"
                 android:fontFamily="@font/sarabun_regular"
-                android:hint="@string/searchitem"
                 />
         </LinearLayout>
         <TextView
@@ -94,7 +94,6 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:fontFamily="@font/sarabun_bold"
-                            android:text="India"
                             android:textColor="@color/locsubtitle"
                             android:textSize="17dp" />
 
@@ -133,7 +132,6 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:fontFamily="@font/sarabun_bold"
-                            android:text="India"
                             android:textColor="@color/locsubtitle"
                             android:textSize="17dp" />
 
@@ -176,7 +174,6 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:fontFamily="@font/sarabun_bold"
-                        android:text="India"
                         android:textColor="@color/locsubtitle"
                         android:textSize="17dp" />
 

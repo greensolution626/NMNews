@@ -1,9 +1,5 @@
 package com.android.nmnewsagency.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.viewpager.widget.ViewPager;
-
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -11,24 +7,24 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
 
 import com.android.nmnewsagency.R;
 import com.android.nmnewsagency.adapter.PagerTabHashTagAdapter;
 import com.android.nmnewsagency.fragment.FragmentSearchHashTagTab;
 import com.android.nmnewsagency.fragment.FragmentSearchPeopleTab;
 import com.android.nmnewsagency.fragment.FragmentSearchTopTab;
-import com.android.nmnewsagency.model.CountryModel;
 import com.android.nmnewsagency.modelclass.SearchTopSearchModel;
 import com.android.nmnewsagency.rest.Rest;
 import com.athbk.slidingtablayout.TabLayout;
 import com.athbk.slidingtablayout.model.TabInfo;
 
-
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -119,7 +115,7 @@ public class SearchTopBarTabingActivity extends AppCompatActivity implements Cal
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                // Toast.makeText(SearchTopBarTabingActivity.this, String.valueOf(count), Toast.LENGTH_SHORT).show();
-                if (count > 2) {
+                if (count > 1) {
                     callServicegetTopSaerch(search_edit.getText().toString());
                 }
             }

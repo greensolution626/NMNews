@@ -1,21 +1,7 @@
 package com.android.nmnewsagency.fragment;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
-
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,22 +14,24 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.nmnewsagency.R;
 import com.android.nmnewsagency.activity.EditProfileActivity;
 import com.android.nmnewsagency.activity.FollowersActivituy;
 import com.android.nmnewsagency.activity.FollowingActivituy;
 import com.android.nmnewsagency.activity.MessageActivity;
-import com.android.nmnewsagency.activity.OwnVideoDetailActivity;
 import com.android.nmnewsagency.activity.PerformanceReporter;
 import com.android.nmnewsagency.activity.SettingActivity;
 import com.android.nmnewsagency.activity.UploadDocumentActivity;
-import com.android.nmnewsagency.activity.UserProfileActivity;
 import com.android.nmnewsagency.adapter.GetUserHashNewsAdapter;
 import com.android.nmnewsagency.adapter.GetUserOwnNewsAdapter;
 import com.android.nmnewsagency.adapter.GetUserSaveNewsAdapter;
-import com.android.nmnewsagency.adapter.HashTagDetailAdapter;
 import com.android.nmnewsagency.listner.RecyclerTouchListener;
-import com.android.nmnewsagency.model.CountryModel;
 import com.android.nmnewsagency.modelclass.GetProfileDataModel;
 import com.android.nmnewsagency.modelclass.GetUserHashTagModel;
 import com.android.nmnewsagency.modelclass.GetUserOwnNewsModel;
@@ -52,15 +40,11 @@ import com.android.nmnewsagency.pref.Prefrence;
 import com.android.nmnewsagency.rest.Rest;
 import com.bumptech.glide.Glide;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import static android.content.Context.MODE_PRIVATE;
 
 public class ProfileFragment extends Fragment implements View.OnClickListener, Callback<Object> {
     View view;
@@ -80,10 +64,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener, C
             img_profile_contact, img_profile_share, img_profile_video, img_profile;
     Animation myAnim;
     TextView txt_nodata_profile, text_name, txt_gat, txt_profilefolowinmg, txt_profilefolow, txt_aboutus,
-            txt_userid,txt_covragescore,txt_hashvideo,txt_savevideo,txt_ownvideo;
+            txt_userid,txt_covragescore,txt_hashvideo,txt_savevideo,txt_ownvideo,txt_covrge;
     Rest rest;
     GetProfileDataModel.DataBean.AspNetUserBean dataBean;
-    String typeWhich="own";
+    String typeWhich="own",typeUserReporter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -126,6 +110,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener, C
         txt_hashvideo = (TextView) view.findViewById(R.id.txt_hashvideo);
         txt_savevideo = (TextView) view.findViewById(R.id.txt_savevideo);
         txt_ownvideo = (TextView) view.findViewById(R.id.txt_ownvideo);
+        txt_covrge = (TextView) view.findViewById(R.id.txt_covrge);
+        txt_covrge.setSelected(true);
        /* if (!Prefrence.getName().equals("") && Prefrence.getName() != null) {
            // text_name.setText(Prefrence.getName());
         }*/
@@ -174,7 +160,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener, C
         if (type.equals("save")) {
             locationAdapter = new GetUserSaveNewsAdapter(getActivity(), arrayList);
             GridLayoutManager gridLayoutManager=new GridLayoutManager(getActivity(),3);
-            gridLayoutManager.setReverseLayout(true);
+           // gridLayoutManager.setReverseLayout(true);
             recyclerView.setLayoutManager(gridLayoutManager);
             recyclerView.setItemAnimator(new DefaultItemAnimator());
             recyclerView.setNestedScrollingEnabled(true);
@@ -184,7 +170,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener, C
        else  if (type.equals("own")) {
             locationAdapter1 = new GetUserOwnNewsAdapter(getActivity(), arrayListOwn);
             GridLayoutManager gridLayoutManager=new GridLayoutManager(getActivity(),3);
-            gridLayoutManager.setReverseLayout(true);
+           // gridLayoutManager.setReverseLayout(true);
             recyclerView.setLayoutManager(gridLayoutManager);
             recyclerView.setItemAnimator(new DefaultItemAnimator());
             recyclerView.setNestedScrollingEnabled(false);
@@ -194,21 +180,16 @@ public class ProfileFragment extends Fragment implements View.OnClickListener, C
         else if (type.equals("hash")) {
             locationAdapter2 = new GetUserHashNewsAdapter(getActivity(), arrayListHash);
             GridLayoutManager gridLayoutManager=new GridLayoutManager(getActivity(),3);
-            gridLayoutManager.setReverseLayout(true);
+           // gridLayoutManager.setReverseLayout(true);
             recyclerView.setLayoutManager(gridLayoutManager);
             recyclerView.setItemAnimator(new DefaultItemAnimator());
             recyclerView.setNestedScrollingEnabled(true);
             recyclerView.setAdapter(locationAdapter2);
             recyclerView.smoothScrollToPosition(recyclerView.getBottom());
         }
-
-
-
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-
-
             }
 
             @Override
@@ -259,6 +240,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener, C
             case R.id.image_setting:
                 image_setting.startAnimation(myAnim);
                 Intent intent6 = new Intent(getActivity(), SettingActivity.class);
+                intent6.putExtra("type",typeUserReporter);
+
                 startActivity(intent6);
                 break;
             case R.id.lin_profile_video:
@@ -432,6 +415,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener, C
                 GetUserOwnNewsModel loginModel = (GetUserOwnNewsModel) obj;
                 if (loginModel.isStatus()) {
                     arrayListOwn = loginModel.getData().getData().getPagedRecord();
+                  //  Log.e("frstindex==",""+arrayListOwn.get(0).getNewsId());
                     inItItemRecycle("own");
                 }
             }
@@ -474,6 +458,17 @@ public class ProfileFragment extends Fragment implements View.OnClickListener, C
                 });*/
             }
         }
+        typeUserReporter=aspNetUser.getUserType();
+       if(aspNetUser.isSendNotification()){
+           Prefrence.setSetNotication("true");
+       }else{
+           Prefrence.setSetNotication("false");
+       }
+        if(aspNetUser.getUserType().equalsIgnoreCase("user")){
+            rel_covrage_quality.setVisibility(View.GONE);
+            rel_upload_doc.setVisibility(View.GONE);
+        }
         callServicegetUserOwnNews();
     }
+
 }

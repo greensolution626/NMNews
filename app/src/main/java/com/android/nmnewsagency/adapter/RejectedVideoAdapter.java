@@ -2,7 +2,6 @@ package com.android.nmnewsagency.adapter;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,6 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.nmnewsagency.R;
-import com.android.nmnewsagency.activity.MessageDetailActivity;
 
 import java.util.List;
 
@@ -81,8 +79,8 @@ public class RejectedVideoAdapter extends RecyclerView.Adapter<RejectedVideoAdap
         holder.lin_chat_reject.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(context, MessageDetailActivity.class);
-                context.startActivity(intent);
+               // Intent intent=new Intent(context, MessageDetailActivity.class);
+               // context.startActivity(intent);
             }
         });
     }

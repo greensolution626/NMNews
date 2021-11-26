@@ -194,6 +194,7 @@ public class GetUserOwnNewsModel {
                 private int NewsId;
                 private String Title;
                 private String Description;
+                private String VideoId;
                 private int ViewCount;
                 private Object AddedOn;
                 private boolean IsTranding;
@@ -242,6 +243,13 @@ public class GetUserOwnNewsModel {
 
                 public void setDescription(String Description) {
                     this.Description = Description;
+                }
+                public String getVideoId() {
+                    return VideoId;
+                }
+
+                public void setVideoId(String VideoId) {
+                    this.VideoId = VideoId;
                 }
 
                 public int getViewCount() {

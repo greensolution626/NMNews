@@ -10,28 +10,22 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.nmnewsagency.R;
-import com.android.nmnewsagency.activity.MainActivity;
 import com.android.nmnewsagency.activity.SearchTopBarTabingActivity;
 import com.android.nmnewsagency.adapter.HashTagAdapter;
-import com.android.nmnewsagency.adapter.HomeAdapter;
 import com.android.nmnewsagency.adapter.UsersAdapter;
 import com.android.nmnewsagency.adapter.VideosAdapter;
 import com.android.nmnewsagency.listner.RecyclerTouchListener;
 import com.android.nmnewsagency.modelclass.SearchTopSearchModel;
 import com.android.nmnewsagency.rest.Rest;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +40,7 @@ public class FragmentSearch extends Fragment implements Callback<Object> {
     HashTagAdapter locationAdapter;
     UsersAdapter userAdapter;
     VideosAdapter videoAdapter;
-    List<SearchTopSearchModel.DataBeanX.DataBean.PagedRecordBean> arrayList, arrayList_users, arrayList_video;
+    List<SearchTopSearchModel.DataBeanX.DataBean.PagedRecordBean> arrayList, arrayList_users, arrayList_video,arrayList_hashtag;
     EditText search_edit;
     LinearLayout lin_onlysearch;
     Animation myAnim;
@@ -85,16 +79,24 @@ public class FragmentSearch extends Fragment implements Callback<Object> {
         arrayList_users=new ArrayList<>();
         arrayList=new ArrayList<>();
         arrayList_video=new ArrayList<>();
-        callServicegetTopSaerch("");
+        callServicegetHashTag("");
     }
 
-    private void callServicegetTopSaerch(String query) {
+    private void callServicegetHashTag(String query) {
         rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
-        rest.getNewsTopSearch(1, "");
+        rest.getNewsTopSearch(4, "");
+    }
+    private void callServicegetPeople(String query) {
+        rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
+        rest.getNewsTopSearch(3, "");
+    }
+    private void callServicegetVideo(String query) {
+        rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
+        rest.getNewsTopSearch(2, "");
     }
 
     private void inItItemRecycle() {
-        locationAdapter = new HashTagAdapter(getActivity(),arrayList);
+        locationAdapter = new HashTagAdapter(getActivity(),arrayList_hashtag);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1, GridLayoutManager.HORIZONTAL, false));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setNestedScrollingEnabled(false);
@@ -143,7 +145,20 @@ public class FragmentSearch extends Fragment implements Callback<Object> {
             if (obj instanceof SearchTopSearchModel) {
                 SearchTopSearchModel searchTopSearchModel = (SearchTopSearchModel) obj;
                 if (searchTopSearchModel.getData().isStatus()) {
-                    if (searchTopSearchModel.getData().getData().getPagedRecord().size()  > 0) {
+                    arrayList=searchTopSearchModel.getData().getData().getPagedRecord();
+                    if(arrayList.size()>0){
+                    if(arrayList.get(0).getSearchType().equalsIgnoreCase("hashtag")){
+                        arrayList_hashtag=searchTopSearchModel.getData().getData().getPagedRecord();
+                        callServicegetPeople("");
+                    }else if(arrayList.get(0).getSearchType().equalsIgnoreCase("PEOPLE")){
+                        arrayList_users=searchTopSearchModel.getData().getData().getPagedRecord();
+                        callServicegetVideo("");
+                    }else if(arrayList.get(0).getSearchType().equalsIgnoreCase("VIDEO")){
+                        arrayList_video=searchTopSearchModel.getData().getData().getPagedRecord();
+                    }
+                    inItItemRecycle();
+                    }
+                   /* if (searchTopSearchModel.getData().getData().getPagedRecord().size()  > 0) {
                         for (int i = 0; i < searchTopSearchModel.getData().getData().getPagedRecord().size(); i++) {
                             if (searchTopSearchModel.getData().getData().getPagedRecord().get(i).getSearchType().equals("VIDEO")) {
                                 arrayList_video.add(searchTopSearchModel.getData().getData().getPagedRecord().get(i));
@@ -153,8 +168,8 @@ public class FragmentSearch extends Fragment implements Callback<Object> {
                                 arrayList.add(searchTopSearchModel.getData().getData().getPagedRecord().get(i));
                             }
                         }
-                    }
-                    inItItemRecycle();
+                    }*/
+                   // inItItemRecycle();
                 }
             }
         }

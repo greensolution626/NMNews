@@ -3,45 +3,137 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/addvideo.xml" value="0.12368421052631579" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/attachment_file_placeholder.xml" value="0.12368421052631579" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/attachment_forward_background.xml" value="0.12368421052631579" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/attachment_image_placeholder_right.xml" value="0.12368421052631579" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/attachment_video_info_background_left.xml" value="0.12368421052631579" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/attachment_video_info_background_right.xml" value="0.12368421052631579" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/attachment_video_placeholder.xml" value="0.12368421052631579" />
         <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/bubble_in.xml" value="0.12368421052631579" />
         <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/bubble_out.xml" value="0.12368421052631579" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/buroncorner.xml" value="0.12368421052631579" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/buroncornerwithoutcolour.xml" value="0.16666666666666666" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/chat.xml" value="0.12368421052631579" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/chat_date_bubble.xml" value="0.12368421052631579" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/chat_typing_status_background.xml" value="0.12368421052631579" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/dialog_botom.xml" value="0.12368421052631579" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/dialog_uploading.xml" value="0.19583333333333333" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/dialog_uploading1.xml" value="0.19583333333333333" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/dialogs_unread_counter_background.xml" value="0.12368421052631579" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/fb.xml" value="0.12368421052631579" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/gradient_attachment.xml" value="0.12368421052631579" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/hashtagdetail.xml" value="0.12368421052631579" />
         <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/hashtagdetailfollow.xml" value="0.12368421052631579" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/hashtagitem.xml" value="0.12368421052631579" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/ic_add.xml" value="0.12368421052631579" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/ic_file_placeholder.xml" value="0.12368421052631579" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/ic_group_7901.xml" value="0.12368421052631579" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/ic_image_placeholder.xml" value="0.12368421052631579" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/ic_send.xml" value="0.12368421052631579" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/ic_status_delivered.xml" value="0.12368421052631579" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/ic_status_read.xml" value="0.12368421052631579" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/ic_status_sent.xml" value="0.12368421052631579" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/ic_video_placeholder.xml" value="0.12368421052631579" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/incoming_message_background.xml" value="0.12368421052631579" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/locationborderitem.xml" value="0.12368421052631579" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/locationborderitemwithred.xml" value="0.12368421052631579" />
         <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/msgdetailbar.xml" value="0.12368421052631579" />
-        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_audio_record.xml" value="0.13333333333333333" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/outgoing_message_background.xml" value="0.12368421052631579" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/per_selfdot.xml" value="0.19166666666666668" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/shape_circle.xml" value="0.12368421052631579" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/drawable/shape_progressbar_circle.xml" value="0.12368421052631579" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_audio_record.xml" value="0.12" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_chat.xml" value="0.11348684210526316" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_chat_info.xml" value="0.11348684210526316" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_comments.xml" value="0.1796875" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_covrage_quality.xml" value="0.1796875" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_edit_profile.xml" value="0.3333333333333333" />
         <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_followers_activituy.xml" value="0.11348684210526316" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_following_activituy.xml" value="0.1796875" />
         <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_hash_tag_detail.xml" value="0.11348684210526316" />
-        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_login.xml" value="0.1" />
-        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_message.xml" value="0.11348684210526316" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_location_req.xml" value="0.1796875" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_login.xml" value="0.14666666666666667" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_main.xml" value="0.3333333333333333" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_message.xml" value="0.1" />
         <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_message_detail.xml" value="0.11348684210526316" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_new_video.xml" value="0.22" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_own_video_detail.xml" value="0.1" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_performance_reporter.xml" value="0.3333333333333333" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_privacy_terms.xml" value="0.165625" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_recording_preview.xml" value="0.11348684210526316" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_rejected_video.xml" value="0.1" />
         <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_search_top_bar_tabing.xml" value="0.1" />
-        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_setting.xml" value="0.11348684210526316" />
-        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_user_own_detail_profile.xml" value="0.11348684210526316" />
-        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_user_profile.xml" value="0.11348684210526316" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_select_location.xml" value="0.1796875" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_select_users.xml" value="0.11348684210526316" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_self_location.xml" value="0.22" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_setting.xml" value="0.22" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_splash.xml" value="0.1" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_splash2.xml" value="0.1" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_upload_document.xml" value="0.3333333333333333" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_user_own_detail_profile.xml" value="0.22" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_user_profile.xml" value="0.16666666666666666" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_video_view.xml" value="0.1" />
         <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/activity_video_view22.xml" value="0.11348684210526316" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/custom_player_control_view.xml" value="0.1796875" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/dialog_createvideo.xml" value="0.22" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/dialog_delete.xml" value="0.1796875" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/dialog_report.xml" value="0.1796875" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/dialog_seting.xml" value="0.22" />
         <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/dialog_userprofile.xml" value="0.11348684210526316" />
-        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/fragment_profile.xml" value="0.22" />
-        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/fragment_search.xml" value="0.11348684210526316" />
-        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/item_coments_detail.xml" value="0.11348684210526316" />
-        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/item_followers.xml" value="0.11348684210526316" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/fragment_first_select_location.xml" value="0.1796875" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/fragment_home.xml" value="0.11237785016286644" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/fragment_maps.xml" value="0.1796875" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/fragment_notification.xml" value="0.11348684210526316" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/fragment_performance__self.xml" value="0.17552083333333332" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/fragment_performce__district.xml" value="0.17552083333333332" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/fragment_profile.xml" value="0.4466666666666667" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/fragment_search.xml" value="0.5172413793103449" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/fragment_search_tab.xml" value="0.1796875" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/fragment_select_city.xml" value="0.3333333333333333" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/fragment_select_state.xml" value="0.1796875" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/fragment_select_tahsil.xml" value="0.1796875" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/item_attachment_preview.xml" value="0.11348684210526316" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/item_coments_detail.xml" value="0.2071097372488408" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/item_covrage_quality.xml" value="0.1" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/item_followers.xml" value="0.22" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/item_following.xml" value="0.1796875" />
         <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/item_hashtag.xml" value="0.13999999999999999" />
         <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/item_hashtag_detail.xml" value="0.11348684210526316" />
-        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/item_home.xml" value="0.1" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/item_home.xml" value="0.16666666666666666" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/item_locastion.xml" value="0.16666666666666666" />
         <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/item_mesgae_detail.xml" value="0.16666666666666666" />
-        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/item_message.xml" value="0.11348684210526316" />
-        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/item_ownvideodetail.xml" value="0.16666666666666666" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/item_message.xml" value="0.22" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/item_notification.xml" value="0.22" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/item_ownvideodetail.xml" value="0.22" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/item_perfor_district.xml" value="0.22" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/item_permce_self.xml" value="0.16666666666666666" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/item_profilel.xml" value="0.1" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/item_rejected_video.xml" value="0.11348684210526316" />
         <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/item_search_hashtagbar.xml" value="0.22" />
         <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/item_search_peoplebare.xml" value="0.13333333333333333" />
         <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/item_search_peopletopbartabing.xml" value="0.11348684210526316" />
         <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/item_usears.xml" value="0.22" />
         <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/item_videos.xml" value="0.11348684210526316" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/list_item_message_left.xml" value="0.1" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/list_item_message_right.xml" value="0.1" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/list_item_notification_message.xml" value="0.1" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/list_item_user.xml" value="0.11348684210526316" />
         <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/search_hashtag_detail.xml" value="0.22" />
         <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/searchhashtagfragment.xml" value="0.11348684210526316" />
         <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/searchpeoplefragment.xml" value="0.11348684210526316" />
         <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/searchtopfragment.xml" value="0.1" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/section_item.xml" value="0.11348684210526316" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/section_perfodistr_item.xml" value="0.1796875" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/video_item.xml" value="0.1" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/layout/view_chat_message_header.xml" value="0.11348684210526316" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/menu/menu_activity_chat.xml" value="0.11348684210526316" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/menu/menu_activity_select_users.xml" value="0.11348684210526316" />
+        <entry key="..\:/AndroidWorkSpace/NMNews/NMNews/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.12368421052631579" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_15_PREVIEW" project-jdk-name="15" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_15" project-jdk-name="15" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

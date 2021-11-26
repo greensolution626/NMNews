@@ -1,16 +1,15 @@
 package com.android.nmnewsagency.adapter;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
@@ -22,21 +21,18 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.abedelazizshe.lightcompressorlibrary.CompressionListener;
-import com.abedelazizshe.lightcompressorlibrary.VideoCompressor;
-import com.abedelazizshe.lightcompressorlibrary.VideoQuality;
-import com.abedelazizshe.lightcompressorlibrary.config.Configuration;
 import com.android.nmnewsagency.R;
 import com.android.nmnewsagency.activity.CommentsActivity;
 import com.android.nmnewsagency.activity.UserProfileActivity;
@@ -46,11 +42,10 @@ import com.android.nmnewsagency.modelclass.GetNewsListModel;
 import com.android.nmnewsagency.modelclass.LikeModelClass;
 import com.android.nmnewsagency.modelclass.ReportModelClass;
 import com.android.nmnewsagency.modelclass.SaveModelClass;
+import com.android.nmnewsagency.pref.Prefrence;
 import com.android.nmnewsagency.rest.Rest;
 import com.android.nmnewsagency.utils.Utils;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
-import com.danikula.videocache.HttpProxyCacheServer;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -59,43 +54,37 @@ import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
-import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultAllocator;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
-import com.google.android.exoplayer2.upstream.FileDataSource;
-import com.google.android.exoplayer2.upstream.cache.CacheDataSink;
-import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
-import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
-import com.google.android.exoplayer2.upstream.cache.SimpleCache;
-import com.google.android.exoplayer2.util.Util;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import vimeoextractor.OnVimeoExtractionListener;
+import vimeoextractor.VimeoExtractor;
+import vimeoextractor.VimeoVideo;
 
 public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.ViewHolder> implements
         View.OnClickListener, Callback<Object> {
@@ -108,7 +97,7 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
     String url;
     Rest rest;
     int follow, report, coments, like, save;
-    boolean show = true, isLike = false, isSave = false;
+    boolean show = true, isLike = false, isSave = false, autoPlay = true;
     int current_pos, total_duration;
     static ViewHolder viewHolder;
     ProgressDialog pBar;
@@ -116,15 +105,20 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
             File.separator + System.nanoTime() + "compress.mp4";
     String outputPaTHkk = Environment.getExternalStorageDirectory().getAbsolutePath() +
             File.separator + System.nanoTime() + "edit.mp4";
+    AdRequest adRequest;
+    private InterstitialAd mInterstitialAd;
+    Activity activity;
 
 
     private int[] colorArray = new int[]{android.R.color.black, android.R.color.holo_blue_dark, android.R.color.holo_green_dark, android.R.color.holo_red_dark};
 
-    public ViewPagerAdapter(Context context, List<GetNewsListModel.DataBean.PagedRecordBean> data, ViewPager2 viewPager) {
+    public ViewPagerAdapter(Context context, List<GetNewsListModel.DataBean.PagedRecordBean> data,
+                            ViewPager2 viewPager, Activity activity) {
         this.context = context;
         this.mInflater = LayoutInflater.from(context);
         this.moviesList = data;
         this.viewPager2 = viewPager;
+        this.activity = activity;
     }
 
 
@@ -141,9 +135,9 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
     public void onBindViewHolder(ViewHolder holder, @SuppressLint("RecyclerView") int position) {
 
         holder.setIsRecyclable(false);
-        if(position==0){
+       /* if(position==0){
             url="https://www.rmp-streaming.com/media/bbb-360p.mp4";
-        }/*else if(position==1){
+        }else if(position==1){
             url="http://103.251.94.78/videos/6ceaa72e-944b-4b28-8e66-3ab85beea973.mp4";
         }else if(position==2){
             url="http://103.251.94.78/videos/2afa6b25-f12f-4390-b6cc-7167fbaaf19c.mp4";
@@ -158,26 +152,82 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
         }else if(position==7){
             url="http://103.251.94.78/videos/97d487cd-8764-4bdd-9a19-bc3246aacad2.mp4";
         }*/
-        else {
-            url = moviesList.get(position).getVideoUrl();
-        }
-        holder.videoView.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
-            @Override
-            public void onViewAttachedToWindow(View v) {
-                    holder.initPlayer(url);
-                    // Toast.makeText(context, "initPlayer", Toast.LENGTH_SHORT).show();
-            }
 
-            @Override
-            public void onViewDetachedFromWindow(View v) {
-                try {
-                    // Toast.makeText(context, "relese", Toast.LENGTH_SHORT).show();
-                    holder.videoView.getPlayer().stop();
-                    holder.releasePlayer();
-                } catch (NullPointerException ex) {
-                }
+
+        url = moviesList.get(position).getVideoUrl();
+        autoPlay = moviesList.get(position).isAutoPlay();
+        if (autoPlay) {
+            Prefrence.setSetAutoplay("true");
+        } else {
+            Prefrence.setSetAutoplay("false");
+        }
+
+        // }
+        if (moviesList.get(position).getRecordType().equalsIgnoreCase("ADS")) {
+            holder.lin_fullUI.setVisibility(View.GONE);
+            holder.rel_ad.setVisibility(View.VISIBLE);
+            if (moviesList.get(position).getMediaType().equalsIgnoreCase("VIDEO")) {
+                holder.ad_video.setVisibility(View.VISIBLE);
+                holder.videoView.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+                    @Override
+                    public void onViewAttachedToWindow(View v) {
+                        holder.initPlayerAD(url);
+                        // Toast.makeText(context, "initPlayer", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onViewDetachedFromWindow(View v) {
+                        try {
+                            // Toast.makeText(context, "relese", Toast.LENGTH_SHORT).show();
+                            holder.ad_video.getPlayer().stop();
+                            holder.releasePlayer();
+                        } catch (NullPointerException ex) {
+                        }
+                    }
+                });
+                holder.ad_video.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent httpIntent = new Intent(Intent.ACTION_VIEW);
+                        httpIntent.setData(Uri.parse(moviesList.get(position).getRedirectUrl()));
+
+                        context.startActivity(httpIntent);
+                    }
+                });
+            } else {
+                holder.ad_image.setVisibility(View.VISIBLE);
+                Glide.with(context)
+                        .load(moviesList.get(position).getImageUrl())
+                        .into(holder.ad_image);
+                holder.ad_image.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent httpIntent = new Intent(Intent.ACTION_VIEW);
+                        httpIntent.setData(Uri.parse(moviesList.get(position).getRedirectUrl()));
+
+                        context.startActivity(httpIntent);
+                    }
+                });
             }
-        });
+        } else {
+            holder.videoView.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+                @Override
+                public void onViewAttachedToWindow(View v) {
+                    holder.initPlayer(url, autoPlay);
+                    // Toast.makeText(context, "initPlayer", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onViewDetachedFromWindow(View v) {
+                    try {
+                        // Toast.makeText(context, "relese", Toast.LENGTH_SHORT).show();
+                        holder.videoView.getPlayer().stop();
+                        holder.releasePlayer();
+                    } catch (NullPointerException ex) {
+                    }
+                }
+            });
+        }
         rest = new Rest(context, this);
         GetNewsListModel.DataBean.PagedRecordBean movie = moviesList.get(position);
         holder.txt_follow.setOnClickListener(this);
@@ -201,10 +251,16 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
                 context.startActivity(intent1);
             }
         });
-        holder.txt_title.setText(movie.getTitle());
+        holder.txt_title.setText(movie.getTahsil_Name() + ": " + movie.getTitle().trim());
+
         holder.txt_datetime.setText(Utils.parseDateToddMMyyyy(movie.getAddedOn()));
-        holder.txt_description.setText(movie.getDescription());
-        holder.txt_location.setText(movie.getState_Name() + " " + movie.getCountry_Name());
+        holder.txt_datetime.setSelected(true);
+        holder.txt_description.setText("" + movie.getAboutMe());
+        holder.txt_location.setText(movie.getTahsil_Name() + ", " + movie.getCity_Name());
+        holder.txt_location.setSelected(true);
+        holder.txt_location.setAllCaps(false);
+        holder.txt_username.setSelected(true);
+        holder.txt_title.setSelected(true);
         holder.txt_username.setText(movie.getUserName());
         holder.txt_views.setText(String.valueOf(movie.getViewCount()));
         if (movie.isIsFollowed()) {
@@ -230,9 +286,9 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
             holder.img_save.setImageResource(R.drawable.ic_save);
             holder.txt_savetext.setTextColor(Color.parseColor("#333333"));
         }
-        holder.exoPause.setTag(position);
+        // holder.exoPause.setTag(position);
         holder.rel_userprofile.setTag(position);
-        holder.exoPlay.setTag(position);
+        //  holder.exoPlay.setTag(position);
         holder.txt_follow.setTag(position);
         holder.lin_report.setTag(position);
         holder.lin_save.setTag(position);
@@ -312,19 +368,41 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
             }
         });
 
-        new Handler().post(new Runnable() {
-            public void run() {
+        //   new Handler().post(new Runnable() {
+        // public void run() {
+                /*Glide.with(context)
+                        .load(moviesList.get(position).getImageUrl())
+                        .into(holder.video_thuimbnail);*/
+        if (moviesList.get(position).getImageUrl() == null) {
+            getThumbnail(moviesList.get(position).getVideoId(), holder.video_thuimbnail);
+        } else if (moviesList.get(position).getImageUrl().isEmpty()) {
+            getThumbnail(moviesList.get(position).getVideoId(), holder.video_thuimbnail);
+        } else {
+            final Context context = activity.getApplication().getApplicationContext();
+
+            if (isValidContextForGlide(context)) {
+                // Load image via Glide lib using context
                 Glide.with(context)
                         .load(moviesList.get(position).getImageUrl())
                         .into(holder.video_thuimbnail);
             }
-        });
+
+
+        }
+        // }
+        // });
 
         new Handler().post(new Runnable() {
             public void run() {
-                Glide.with(context)
-                        .load(moviesList.get(position).getAvatar())
-                        .into(holder.image_profile);
+                final Context context = activity.getApplication().getApplicationContext();
+
+                if (isValidContextForGlide(context)) {
+                    // Load image via Glide lib using context
+                    Glide.with(context.getApplicationContext())
+                            .load(moviesList.get(position).getAvatar())
+                            .into(holder.image_profile);
+                }
+
             }
         });
          /* try {
@@ -396,8 +474,10 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
                 if (loginModel.isStatus()) {
                     if (moviesList.get(follow).isIsFollowed()) {
                         moviesList.get(follow).setIsFollowed(false);
+                        Utils.showSnakBarDialog(context, viewHolder.lin_tophome, "Successfully UnFollow", R.color.msgresponce);
                     } else {
                         moviesList.get(follow).setIsFollowed(true);
+                        Utils.showSnakBarDialog(context, viewHolder.lin_tophome, "Successfully Follow", R.color.msgresponce);
                     }
                     // notifyDataSetChanged();
                 }
@@ -408,9 +488,11 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
                     if (moviesList.get(like).isIsLike()) {
                         moviesList.get(like).setIsLike(false);
                         isLike = false;
+                        Utils.showSnakBarDialog(context, viewHolder.lin_tophome, "Successfully UnLike", R.color.msgresponce);
                     } else {
                         moviesList.get(like).setIsLike(true);
                         isLike = true;
+                        Utils.showSnakBarDialog(context, viewHolder.lin_tophome, "Successfully Like", R.color.msgresponce);
                     }
                     // notifyDataSetChanged();
                 }
@@ -421,9 +503,11 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
                     if (moviesList.get(save).isIsSaved()) {
                         moviesList.get(save).setIsSaved(false);
                         isSave = false;
+                        Utils.showSnakBarDialog(context, viewHolder.lin_tophome, "Successfully UnSave", R.color.msgresponce);
                     } else {
                         moviesList.get(save).setIsSaved(true);
                         isSave = true;
+                        Utils.showSnakBarDialog(context, viewHolder.lin_tophome, "Successfully Save", R.color.msgresponce);
                     }
                     // notifyDataSetChanged();
                 }
@@ -431,7 +515,8 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
             if (obj instanceof ReportModelClass) {
                 ReportModelClass loginModel = (ReportModelClass) obj;
                 if (loginModel.isStatus()) {
-                    Toast.makeText(context, "Report successfully added", Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(context, "Report successfully added", Toast.LENGTH_SHORT).show();
+                    Utils.showSnakBarDialog(context, viewHolder.lin_tophome, "Report successfully added", R.color.msgresponce);
                 }
             }
         }
@@ -444,17 +529,17 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        PlayerView videoView;
+        PlayerView videoView, ad_video;
         MediaPlayer audioplayer;
-
+        //  AdView mAdView;
         DataSpec dataSpec;
+        RelativeLayout rel_ad;
         public TextView txt_username, txt_description, txt_title, txt_views, txt_location, txt_datetime;
         public LinearLayout lin_report, lin_comments, lin_save, lin_share, lin_like;
-        LinearLayout rel_userprofile;
+        LinearLayout rel_userprofile, lin_tophome, lin_fullUI;
         TextView txt_follow, current, total, txt_noofcoment, txt_nooflike, txt_savetext;
         ImageButton exoPlay, exoPause;
-        HttpProxyCacheServer proxy;
-        ImageView video_thuimbnail, img_playpause, img_like, img_save;
+        ImageView video_thuimbnail, img_playpause, img_like, img_save, ad_image;
         CircleImageView image_profile;
         SeekBar seekbar;
         BandwidthMeter bandwidthMeter;
@@ -465,6 +550,7 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
         LoadControl loadControl;
         MediaSource mediaSource;
         Uri videouri;
+        AdSize adSize;
 
         ViewHolder(View view) {
             super(view);
@@ -472,7 +558,14 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
            /* myTextView = itemView.findViewById(R.id.tvTitle);
             relativeLayout = itemView.findViewById(R.id.container);
             button = itemView.findViewById(R.id.btnToggle);*/
+            // mAdView = view.findViewById(R.id.adView);
+            adRequest = new AdRequest.Builder().build();
+            adSize = new AdSize(300, 50);
+            // mAdView.setAdSize(adSize);
             rel_userprofile = (LinearLayout) view.findViewById(R.id.rel_userprofile);
+            rel_ad = (RelativeLayout) view.findViewById(R.id.rel_ad);
+            lin_tophome = (LinearLayout) view.findViewById(R.id.lin_tophome);
+            lin_fullUI = (LinearLayout) view.findViewById(R.id.lin_fullUI);
             lin_report = (LinearLayout) view.findViewById(R.id.lin_report);
             lin_like = (LinearLayout) view.findViewById(R.id.lin_like);
             lin_share = (LinearLayout) view.findViewById(R.id.lin_share);
@@ -480,8 +573,8 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
             lin_comments = (LinearLayout) view.findViewById(R.id.lin_comments);
             //  videoView = (VideoView) view.findViewById(R.id.img_homeprofile);
             //  exoPlayerView = (SimpleExoPlayerView) view.findViewById(R.id.idExoPlayerVIew);
-            exoPlay = (ImageButton) view.findViewById(R.id.exo_play);
-            exoPause = (ImageButton) view.findViewById(R.id.exo_pause);
+            //  exoPlay = (ImageButton) view.findViewById(R.id.exo_play);
+            //  exoPause = (ImageButton) view.findViewById(R.id.exo_pause);
             txt_username = (TextView) view.findViewById(R.id.txt_username);
             txt_savetext = (TextView) view.findViewById(R.id.txt_savetext);
             txt_description = (TextView) view.findViewById(R.id.txt_description);
@@ -494,6 +587,7 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
             img_playpause = (ImageView) view.findViewById(R.id.img_playpause);
             img_save = (ImageView) view.findViewById(R.id.img_save);
             img_like = (ImageView) view.findViewById(R.id.img_like);
+            ad_image = (ImageView) view.findViewById(R.id.ad_image);
             image_profile = (CircleImageView) view.findViewById(R.id.image_profile);
             total = (TextView) view.findViewById(R.id.total);
             current = (TextView) view.findViewById(R.id.current);
@@ -501,12 +595,14 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
             txt_noofcoment = (TextView) view.findViewById(R.id.txt_noofcoment);
             seekbar = (SeekBar) view.findViewById(R.id.seekbar);
             videoView = (PlayerView) itemView.findViewById(R.id.idExoPlayerVIew);
+            ad_video = (PlayerView) itemView.findViewById(R.id.ad_video);
             audioplayer = new MediaPlayer();
             //audioplayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
             //  simpleExoPlayer = new SimpleExoPlayer.Builder(context).build();
+
             bandwidthMeter = new DefaultBandwidthMeter();
-            trackSelector = new DefaultTrackSelector(new AdaptiveTrackSelection.Factory(bandwidthMeter));
+            trackSelector = new DefaultTrackSelector();
             loadControl = new DefaultLoadControl.Builder()
                     .setAllocator(new DefaultAllocator(true, 10))
                     .setBufferDurationsMs(VideoPlayerConfig.MIN_BUFFER_DURATION,
@@ -519,9 +615,11 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
             dataSourceFactory = new DefaultHttpDataSourceFactory("exoplayer_video");
             extractorsFactory = new DefaultExtractorsFactory();
 
+            //  mAdView.loadAd(adRequest);
+
         }
 
-        public void initPlayer(String url) {
+        public void initPlayer(String url, boolean autoPlay) {
             videouri = Uri.parse(url);
             mediaSource = new ExtractorMediaSource(videouri, dataSourceFactory, extractorsFactory,
                     null, null);
@@ -557,8 +655,10 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
 
                     } else if (playbackState == ExoPlayer.STATE_ENDED) {
                         // Toast.makeText(context, "STATE_ENDED", Toast.LENGTH_SHORT).show();
-                        simpleExoPlayer.seekTo(0);
-                        videoView.setControllerShowTimeoutMs(1);
+                        if (autoPlay) {
+                            simpleExoPlayer.seekTo(0);
+                            videoView.setControllerShowTimeoutMs(1);
+                        }
                     }
                 }
 
@@ -574,7 +674,73 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
                 public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
                 }
             });
+           /* if (mInterstitialAd != null) {
+                mInterstitialAd.show(activity);
+            } else {
+                Log.e("ad==", "The interstitial ad wasn't ready yet.");
+            }*/
+        }
 
+        public void initPlayerAD(String url) {
+            videouri = Uri.parse(url);
+            mediaSource = new ExtractorMediaSource(videouri, dataSourceFactory, extractorsFactory,
+                    null, null);
+            simpleExoPlayer.prepare(mediaSource);
+            ad_video.setPlayer(simpleExoPlayer);
+            simpleExoPlayer.setPlayWhenReady(true);
+            ad_video.setKeepContentOnPlayerReset(true);
+            //  videoView.setFocusable(true);
+            simpleExoPlayer.addListener(new Player.EventListener() {
+
+                @Override
+                public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+
+                }
+
+                @Override
+                public void onLoadingChanged(boolean isLoading) {
+
+                }
+
+                @Override
+                public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                    if (playbackState == ExoPlayer.STATE_READY) {
+                        // Toast.makeText(context, "STATE_READY", Toast.LENGTH_SHORT).show();
+                        // video_thuimbnail.setVisibility(View.GONE);
+                        // videoView.setControllerShowTimeoutMs(1500);
+
+                    } else if (playbackState == ExoPlayer.STATE_BUFFERING) {
+                        // Toast.makeText(context, "STATE_BUFFERING", Toast.LENGTH_SHORT).show();
+                        //  video_thuimbnail.setVisibility(View.VISIBLE);
+                        // exo_pause.setVisibility(View.GONE);
+                        videoView.setControllerShowTimeoutMs(3000);
+
+                    } else if (playbackState == ExoPlayer.STATE_ENDED) {
+                        // Toast.makeText(context, "STATE_ENDED", Toast.LENGTH_SHORT).show();
+                        // if (autoPlay) {
+                        //    simpleExoPlayer.seekTo(0);
+                        //    videoView.setControllerShowTimeoutMs(1);
+                        // }
+                    }
+                }
+
+                @Override
+                public void onRepeatModeChanged(int repeatMode) {
+                }
+
+                @Override
+                public void onPlayerError(ExoPlaybackException error) {
+                }
+
+                @Override
+                public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
+                }
+            });
+           /* if (mInterstitialAd != null) {
+                mInterstitialAd.show(activity);
+            } else {
+                Log.e("ad==", "The interstitial ad wasn't ready yet.");
+            }*/
         }
 
         public void releasePlayer() {
@@ -770,85 +936,53 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
         public static final int MIN_PLAYBACK_RESUME_BUFFER = 1000;
     }
 
-
-    public class CompressVideo extends AsyncTask<Uri, String, String> {
-
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            pBar = new ProgressDialog(context);
-            pBar.setMessage("Please wait...It is downloading");
-            pBar.setIndeterminate(false);
-            pBar.setCancelable(false);
-            pBar.show();
-        }
-
-        @Override
-        protected String doInBackground(Uri... uris) {
-            VideoCompressor.start(
-                    context, // => This is required if srcUri is provided. If not, pass null.
-                    uris[0], // => Source can be provided as content uri, it requires context.
-                    null, // => This could be null if srcUri and context are provided.
-                    outputPaTH,
-                    new CompressionListener() {
-                        @Override
-                        public void onStart() {
-                            // Compression start
-                            Log.e("VideoCompreser", "onStart");
-                        }
-
-                        @Override
-                        public void onSuccess() {
-                            // On Compression success
-                            Log.e("VideoCompreser", "onSuccess");
-                            int lent = outputPaTH.length();
-                            Log.e("VideoCompreser", String.valueOf(lent));
-                        }
-
-                        @Override
-                        public void onFailure(String failureMessage) {
-                            // On Failure
-                            Log.e("VideoCompreser", "onFailure");
-                        }
-
-                        @Override
-                        public void onProgress(float v) {
-                            // Update UI with progress value
-                            Log.e("VideoCompreser", "onProgress");
-                        }
-
-                        @Override
-                        public void onCancelled() {
-                            // On Cancelled
-                            Log.e("VideoCompreser", "onCancelled");
-                        }
-                    }, new Configuration(
-                            VideoQuality.MEDIUM,
-                            false,
-                            true,
-                            null /*videoHeight: double, or null*/,
-                            null /*videoWidth: double, or null*/,
-                            null /*videoBitrate: int, or null*/
-                    )
-            );
-
-            return outputPaTH;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            pBar.dismiss();
-        }
-    }
-
-
-    private byte[] bitmapToByte(Bitmap bitmap){
+    private byte[] bitmapToByte(Bitmap bitmap) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
         byte[] byteArray = stream.toByteArray();
         return byteArray;
+    }
+
+    public void getThumbnail(String vimeoUrl, ImageView imageView) {
+        // Log.e("vimeothumb====","https://vimeo.com/"+vimeoUrl+".xml");
+        VimeoExtractor.getInstance().fetchVideoWithURL("https://vimeo.com/api/v2/video/" + vimeoUrl, null, new OnVimeoExtractionListener() {
+            @Override
+            public void onSuccess(VimeoVideo video) {
+                String hdStream = video.getThumbs().get("640");
+                Log.e("vimeothumb====", hdStream);
+                try {
+                    ContextCompat.getMainExecutor(context).execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Utils.loadImageUsingGlidePlaceHolder(context, hdStream, holder.img_videoThumb, R.mipmap.ic_launcher_foreground);
+                            Glide.with(context)
+                                    .load(hdStream)
+                                    .into(imageView);
+
+                        }
+                    });
+                } catch (Exception e) {
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                Log.e("error", throwable.getMessage());
+            }
+        });
+    }
+
+    public static boolean isValidContextForGlide(final Context context) {
+        if (context == null) {
+            return false;
+        }
+        if (context instanceof Activity) {
+            final Activity activity = (Activity) context;
+            if (activity.isDestroyed() || activity.isFinishing()) {
+                return false;
+            }
+        }
+        return true;
     }
 }
 

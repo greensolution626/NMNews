@@ -14,6 +14,8 @@
     <color name="folow">#E5383E</color>
     <color name="line">#DDDDDD</color>
     <color name="adbag">#F3F3F3</color>
+    <color name="alert">#FF0000</color>
+    <color name="msgresponce">#07B254</color>
     <color name="hashtagitem">#F0F0F0</color>
     <color name="uploaddoc">#FAFAFA</color>
     <color name="tabselct">#999999</color>
@@ -27,11 +29,13 @@
     <color name="newvideo">#EFEFEF</color>
     <color name="fbbuton">#0074fb</color>
     <color name="addvvvv">#FF0000</color>
-
+    <color name="color_unread">#00CC4C</color>
     <color name="video_thumbnail_placeholder_color">#cccccc</color>
     <color name="percent_50_black">#80000000</color>
 
     <color name="colorAccent">#ffffff</color>
     <color name="gray">#808080</color>
-
+    <color name="color_blue_qb">#046ad0</color>
+    <color name="color_light_blue_qb">#87cefa</color>
+    <color name="color_grey">#d3d3d3</color>
 </resources>

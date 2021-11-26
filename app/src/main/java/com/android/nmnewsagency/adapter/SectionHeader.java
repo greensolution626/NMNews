@@ -2,13 +2,7 @@ package com.android.nmnewsagency.adapter;
 
 import com.android.nmnewsagency.model.Child;
 import com.intrusoft.sectionedrecyclerview.Section;
-
-import java.util.Comparator;
 import java.util.List;
-
-/**
- * Created by apple on 11/7/16.
- */
 
 public class SectionHeader implements Section<Child>, Comparable<SectionHeader> {
 

@@ -1,5 +1,6 @@
 package com.android.nmnewsagency.adapter;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -26,7 +27,6 @@ import android.widget.VideoView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.nmnewsagency.Application;
 import com.android.nmnewsagency.R;
 import com.android.nmnewsagency.activity.CommentsActivity;
 import com.android.nmnewsagency.activity.UserProfileActivity;
@@ -35,21 +35,10 @@ import com.android.nmnewsagency.modelclass.GetNewsListModel;
 import com.android.nmnewsagency.modelclass.LikeModelClass;
 import com.android.nmnewsagency.modelclass.ReportModelClass;
 import com.android.nmnewsagency.modelclass.SaveModelClass;
-import com.android.nmnewsagency.pref.Prefrence;
 import com.android.nmnewsagency.rest.Rest;
 import com.android.nmnewsagency.utils.Utils;
 import com.bumptech.glide.Glide;
-import com.danikula.videocache.HttpProxyCacheServer;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.extractor.ExtractorsFactory;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.upstream.BandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -82,13 +71,13 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.MyViewHolder> 
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView txt_username, txt_description, txt_title, txt_views, txt_location, txt_datetime;
-        public LinearLayout lin_report, lin_comments, lin_save, lin_share, lin_like;
+        public LinearLayout lin_report, lin_comments, lin_save, lin_share, lin_like,lin_tophome;
         LinearLayout rel_userprofile;
         public VideoView videoView;
       //  SimpleExoPlayerView exoPlayerView;
         TextView txt_follow, current, total, txt_noofcoment, txt_nooflike, txt_savetext;
         ImageButton exoPlay, exoPause;
-        HttpProxyCacheServer proxy;
+
         ImageView video_thuimbnail, img_playpause, img_like, img_save;
         CircleImageView image_profile;
         SeekBar seekbar;
@@ -99,6 +88,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.MyViewHolder> 
             rel_userprofile = (LinearLayout) view.findViewById(R.id.rel_userprofile);
             lin_report = (LinearLayout) view.findViewById(R.id.lin_report);
             lin_like = (LinearLayout) view.findViewById(R.id.lin_like);
+            lin_tophome = (LinearLayout) view.findViewById(R.id.lin_tophome);
             lin_share = (LinearLayout) view.findViewById(R.id.lin_share);
             lin_save = (LinearLayout) view.findViewById(R.id.lin_save);
             lin_comments = (LinearLayout) view.findViewById(R.id.lin_comments);
@@ -137,7 +127,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.MyViewHolder> 
 
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
         rest = new Rest(context, this);
         GetNewsListModel.DataBean.PagedRecordBean movie = moviesList.get(position);
         holder.txt_follow.setOnClickListener(this);
@@ -570,16 +560,18 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.MyViewHolder> 
         rest.dismissProgressdialog();
         if (response.isSuccessful()) {
             Object obj = response.body();
-            Log.e("nmnnn", String.valueOf(obj));
+            Log.e("nmnnnhome", String.valueOf(obj));
             if (obj instanceof AddNewsModel) {
                 AddNewsModel loginModel = (AddNewsModel) obj;
                 if (loginModel.isStatus()) {
                     if (moviesList.get(follow).isIsFollowed()) {
                         moviesList.get(follow).setIsFollowed(false);
+                        Toast.makeText(context, " Successfully UnFollow", Toast.LENGTH_SHORT).show();
                     } else {
                         moviesList.get(follow).setIsFollowed(true);
+                        Toast.makeText(context, " Successfully Follow", Toast.LENGTH_SHORT).show();
                     }
-                    // notifyDataSetChanged();
+
                 }
             }
             if (obj instanceof LikeModelClass) {
@@ -588,11 +580,13 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.MyViewHolder> 
                     if (moviesList.get(like).isIsLike()) {
                         moviesList.get(like).setIsLike(false);
                         isLike = false;
+                        Toast.makeText(context, "News successfully UnLike", Toast.LENGTH_SHORT).show();
                     } else {
                         moviesList.get(like).setIsLike(true);
                         isLike = true;
+                        Toast.makeText(context, "News successfully Like", Toast.LENGTH_SHORT).show();
                     }
-                    // notifyDataSetChanged();
+
                 }
             }
             if (obj instanceof SaveModelClass) {
@@ -601,9 +595,11 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.MyViewHolder> 
                     if (moviesList.get(save).isIsSaved()) {
                         moviesList.get(save).setIsSaved(false);
                         isSave = false;
+                        Toast.makeText(context, "News successfully UnSave", Toast.LENGTH_SHORT).show();
                     } else {
                         moviesList.get(save).setIsSaved(true);
                         isSave = true;
+                        Toast.makeText(context, "News successfully Save", Toast.LENGTH_SHORT).show();
                     }
                     // notifyDataSetChanged();
                 }
@@ -611,7 +607,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.MyViewHolder> 
             if (obj instanceof ReportModelClass) {
                 ReportModelClass loginModel = (ReportModelClass) obj;
                 if (loginModel.isStatus()) {
-                    Toast.makeText(context, "Report successfully added", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, "Report successfully added", Toast.LENGTH_SHORT).show();
                 }
             }
         }

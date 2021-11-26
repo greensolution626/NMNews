@@ -1,9 +1,8 @@
 
 package com.android.nmnewsagency.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -13,12 +12,22 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.nmnewsagency.R;
-import com.android.nmnewsagency.extras.Constants;
+import com.android.nmnewsagency.chat.ChatHelper;
+import com.android.nmnewsagency.modelclass.ChatIdModerl;
 import com.android.nmnewsagency.modelclass.LoginModel;
 import com.android.nmnewsagency.pref.Prefrence;
+import com.android.nmnewsagency.pref.SharedPrefsHelper;
 import com.android.nmnewsagency.rest.Rest;
+import com.android.nmnewsagency.utils.ErrorUtils;
+import com.android.nmnewsagency.utils.Utils;
+import com.android.nmnewsagency.utils.qb.QbUsersHolder;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -27,18 +36,15 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.firebase.client.Firebase;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.quickblox.auth.session.QBSettings;
-import com.quickblox.chat.QBChatService;
-import com.quickblox.core.LogLevel;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.quickblox.core.QBEntityCallback;
-import com.quickblox.core.ServiceZone;
 import com.quickblox.core.exception.QBResponseException;
 import com.quickblox.users.QBUsers;
 import com.quickblox.users.model.QBUser;
@@ -53,15 +59,18 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity implements Callback<Object>, View.OnClickListener {
-    RelativeLayout but_user, but_reporter;
+    RelativeLayout but_user, but_reporter, lin_toplogin;
     GoogleSignInOptions gso;
     GoogleSignInClient mGoogleSignInClient;
     int RC_SIGN_IN = 100;
     CallbackManager callbackManager;
     Rest rest;
-    String provider, prouserid, name, email, image = "";
+    String provider, prouserid, name, email, image = "", tokenSend = "";
     LoginButton login_button;
     QBUser user;
+    private static final int UNAUTHORIZED = 401;
+    private boolean isLocation;
+    ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +98,7 @@ public class LoginActivity extends AppCompatActivity implements Callback<Object>
         login_button = (LoginButton) findViewById(R.id.login_button);
         but_reporter = (RelativeLayout) findViewById(R.id.but_reporter);
         but_user = (RelativeLayout) findViewById(R.id.but_user);
+        lin_toplogin = (RelativeLayout) findViewById(R.id.lin_toplogin);
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
@@ -147,6 +157,7 @@ public class LoginActivity extends AppCompatActivity implements Callback<Object>
     }
 
     private void signIn() {
+        mGoogleSignInClient.signOut();
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -200,10 +211,12 @@ public class LoginActivity extends AppCompatActivity implements Callback<Object>
 
                 LoginModel loginModel = (LoginModel) obj;
                 if (loginModel.isStatus()) {
-                    setUpQuickboxSignUp(loginModel.getData().getUserInfo().getUserId(), loginModel.getData().getUserInfo().getName(),
-                            loginModel.getData().getUserInfo().getProfileImage());
-                    Prefrence.setLogin(true);
                     Prefrence.setUserId(loginModel.getData().getUserInfo().getUserId());
+                    prepareUser(loginModel.getData().getUserInfo().getEmail(), loginModel.getData().getUserInfo().getName(),
+                            loginModel.getData().getUserInfo().getProfileImage(), loginModel.getData().isIsAddressFound(),
+                            loginModel.getData().getUserInfo().getUserId());
+                    Prefrence.setLogin(true);
+
                     Prefrence.setName(loginModel.getData().getUserInfo().getName());
                     Prefrence.setEmail(loginModel.getData().getUserInfo().getEmail());
                     Prefrence.setProfileImage(loginModel.getData().getUserInfo().getProfileImage());
@@ -213,10 +226,15 @@ public class LoginActivity extends AppCompatActivity implements Callback<Object>
                         Prefrence.settahsil(loginModel.getData().getUserAddress().getGThasil());
                         Prefrence.setStateName(loginModel.getData().getUserAddress().getGState());
                     }
+                    isLocation = loginModel.getData().isIsAddressFound();
+                }
+            }
+            if (obj instanceof ChatIdModerl) {
 
-                    setDataOnLocation(loginModel.getData().isIsAddressFound());
-
-                    //Toast.makeText(LoginActivity.this, loginModel.getMessage(), Toast.LENGTH_LONG).show();
+                ChatIdModerl chatIdModerl = (ChatIdModerl) obj;
+                if (chatIdModerl.isStatus()) {
+                    Toast.makeText(this, "Login successfully", Toast.LENGTH_SHORT).show();
+                    setDataOnLocation(isLocation);
                 }
             }
 
@@ -232,6 +250,7 @@ public class LoginActivity extends AppCompatActivity implements Callback<Object>
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.but_reporter:
+
                 signIn();
                 break;
             case R.id.but_user:
@@ -244,11 +263,52 @@ public class LoginActivity extends AppCompatActivity implements Callback<Object>
         String deviceType = "ANDROID";
         String deviceId = Prefrence.getDeviceId();
         String deviceToken = Prefrence.getDeviceToken();
-        // String deviceToken = Application.deviceToken;
-
-        rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
-        rest.loginUser(name, email, deviceType, deviceId, deviceToken, image, prouserid, provider);
+        if (deviceToken != null && !deviceToken.equals("")) {
+            rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
+            rest.loginUser(name, email, deviceType, deviceId, deviceToken, image, prouserid, provider);
+        } else {
+            String token = getDevicetoken();
+            if (!token.equals("")) {
+                rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
+                rest.loginUser(name, email, deviceType, deviceId, deviceToken, image, prouserid, provider);
+            } else {
+                Utils.showSnakBarDialog(this, lin_toplogin,
+                        "We are not getting your device token. Please Reinstalled this application", R.color.alert);
+            }
+        }
         // rest.forgotPassword();
+    }
+
+    public String getDevicetoken() {
+
+        /*FirebaseMessaging.getInstance().getToken().addOnSuccessListener(token -> {
+
+        }).addOnFailureListener(e -> {
+
+        }).addOnCanceledListener(() -> {
+
+        }).addOnCompleteListener(task -> {
+            String token = task.getResult();
+            tokenSend = token;
+
+
+        });*/
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            Log.e("token=====", "", task.getException());
+                            return;
+                        }
+
+                        // Get new FCM registration token
+                        String token = task.getResult();
+                        tokenSend = token;
+
+                    }
+                });
+        return tokenSend;
     }
 
     private void getUserProfile(AccessToken currentAccessToken) {
@@ -308,90 +368,144 @@ public class LoginActivity extends AppCompatActivity implements Callback<Object>
         return deviceId;
     }
 
-    /* public void FirebaseLoginForChat(String name){
-         String user = name;
-         String pass = "news";
+    private void prepareUser(String email, String name, String imagde, boolean location, String userid) {
 
-         if (user.equals("")) {
-             Toast.makeText(LoginActivity.this, "user blank", Toast.LENGTH_SHORT).show();
-         } else if (pass.equals("")) {
-             Toast.makeText(LoginActivity.this, "pass blank", Toast.LENGTH_SHORT).show();
-         }
-                *//* else if(!user.matches("[A-Za-z0-9]+")){
-                    username.setError("only alphabet or number allowed");
-                }
-                else if(user.length()<5){
-                    username.setError("at least 5 characters long");
-                }
-                else if(pass.length()<5){
-                    password.setError("at least 5 characters long");
-                }*//*
-        else {
-           // final ProgressDialog pd = new ProgressDialog(LoginActivity.this);
-          //  pd.setMessage("Loading...");
-          //  pd.show();
+        rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
 
-            String url = "https://nmnewsagency-24e4e-default-rtdb.firebaseio.com/users.json";
+        QBUser qbUser = new QBUser();
+        qbUser.setLogin(email);
+        qbUser.setFullName(name);
+        // qbUser.set(imagde);
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("userid", userid);
+            jsonObject.put("image", imagde);
+        } catch (JSONException e) {
 
-            StringRequest request = new StringRequest(Request.Method.GET, url, new com.android.volley.Response.Listener<String>() {
-                @Override
-                public void onResponse(String s) {
-                    Firebase reference = new Firebase("https://nmnewsagency-24e4e-default-rtdb.firebaseio.com/users");
-
-                    if (s.equals("null")) {
-                        reference.child(user).child("password").setValue(pass);
-                       // Toast.makeText(LoginActivity.this, "registration successful", Toast.LENGTH_LONG).show();
-                    } else {
-                        try {
-                            JSONObject obj = new JSONObject(s);
-
-                            if (!obj.has(user)) {
-                                reference.child(user).child("password").setValue(pass);
-                               // Toast.makeText(LoginActivity.this, "registration successful", Toast.LENGTH_LONG).show();
-                            } else {
-                               // Toast.makeText(LoginActivity.this, "username already exists", Toast.LENGTH_LONG).show();
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                   // pd.dismiss();
-                }
-
-            }, new com.android.volley.Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    System.out.println("" + error);
-                   // pd.dismiss();
-                }
-
-
-            });
-
-            RequestQueue rQueue = Volley.newRequestQueue(LoginActivity.this);
-            rQueue.add(request);
         }
-    }*/
-    public void setUpQuickboxSignUp(String userid, String name, String imagde) {
-        user.setLogin(userid);
-        user.setPassword("nmnewsnmnews");
-        user.setFullName(name);
-        user.setCustomData(imagde);
+        qbUser.setCustomData(jsonObject.toString());
+        qbUser.setPassword("quickblox");
 
-        QBUsers.signUp(user).performAsync(new QBEntityCallback<QBUser>() {
+       /* qbUser.setLogin("android");
+        qbUser.setFullName("android");
+        qbUser.setPassword("quickblox");*/
+
+        signIn(qbUser);
+    }
+
+    private void signIn(final QBUser user) {
+
+        ChatHelper.getInstance().login(user, new QBEntityCallback<QBUser>() {
             @Override
-            public void onSuccess(QBUser qbUser, Bundle bundle) {
-                Log.e("QBNSERVER=======", qbUser.toString());
-                Prefrence.setQbidId(qbUser.getId());
+            public void onSuccess(QBUser userFromRest, Bundle bundle) {
+                if (userFromRest.getFullName() != null && userFromRest.getFullName().equals(user.getFullName())) {
+                    loginToChat(user);
+                } else {
+                    //Need to set password NULL, because server will update user only with NULL password
+                    user.setPassword(null);
+                    updateUser(user);
+                }
             }
 
             @Override
             public void onError(QBResponseException e) {
-                Log.e("QBNSERVERERROR=======", e.toString());
+                if (e.getHttpStatusCode() == UNAUTHORIZED) {
+                    signUp(user);
+                } else {
+                    Log.e("erroelogin====", e.toString());
+                    //hideProgressDialog();
+                    /*showErrorSnackbar(R.string.login_chat_login_error, e, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            signIn(user);
+                        }
+                    });*/
+                }
             }
         });
     }
 
+    private void updateUser(final QBUser user) {
+        ChatHelper.getInstance().updateUser(user, new QBEntityCallback<QBUser>() {
+            @Override
+            public void onSuccess(QBUser user, Bundle bundle) {
+                loginToChat(user);
+            }
+
+            @Override
+            public void onError(QBResponseException e) {
+                Log.e("erroeupdateuser====", e.toString());
+                // hideProgressDialog();
+                // showErrorSnackbar(R.string.login_chat_login_error, e, null);
+            }
+        });
+    }
+
+    private void loginToChat(final QBUser user) {
+        //Need to set password, because the server will not register to chat without password
+        user.setPassword("quickblox");
+        ChatHelper.getInstance().loginToChat(user, new QBEntityCallback<Void>() {
+            @Override
+            public void onSuccess(Void aVoid, Bundle bundle) {
+                SharedPrefsHelper.getInstance().saveQbUser(user);
+                Log.e("loginuserdatae====", user.toString());
+                if (SharedPrefsHelper.getInstance().hasQbUser()) {
+                    // Toast.makeText(LoginActivity.this, "hasqbuser", Toast.LENGTH_SHORT).show();
+                }
+               /* if (!chbSave.isChecked()) {
+                    clearDrafts();
+                }*/
+                QbUsersHolder.getInstance().putUser(user);
+                //  DialogsActivity.start(LoginActivity.this);
+                // finish();
+                // hideProgressDialog();
+                rest.dismissProgressdialog();
+                if (!String.valueOf(user.getId()).equals("") && String.valueOf(user.getId()) != null) {
+                    callSwrviceQuickbloxId(Prefrence.getUserId(), String.valueOf(user.getId()));
+                } else {
+                    Utils.showSnakBarDialog(LoginActivity.this, lin_toplogin, "Server error! Please try again after some time", R.color.alert);
+                }
+                //setDataOnLocation(isLocation);
+            }
+
+            @Override
+            public void onError(QBResponseException e) {
+                Log.e("erroelogintochat====", e.toString());
+                Utils.showSnakBarDialog(LoginActivity.this, lin_toplogin, "Server error! Please try again after some time", R.color.alert);
+                //  hideProgressDialog();
+                // showErrorSnackbar(R.string.login_chat_login_error, e, null);
+            }
+        });
+    }
+
+    private void signUp(final QBUser newUser) {
+        SharedPrefsHelper.getInstance().removeQbUser();
+        QBUsers.signUp(newUser).performAsync(new QBEntityCallback<QBUser>() {
+            @Override
+            public void onSuccess(QBUser user, Bundle bundle) {
+                // hideProgressDialog();
+                signIn(newUser);
+            }
+
+            @Override
+            public void onError(QBResponseException e) {
+                Log.e("erroesignup====", e.toString());
+                //  hideProgressDialog();
+                //showErrorSnackbar(R.string.login_sign_up_error, e, null);
+            }
+        });
+    }
+
+    protected void showErrorSnackbar(@StringRes int resId, Exception e, View.OnClickListener clickListener) {
+        View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
+        if (rootView != null) {
+            ErrorUtils.showSnackbar(rootView, resId, e,
+                    R.string.dlg_retry, clickListener);
+        }
+    }
+
+    private void callSwrviceQuickbloxId(String userId, String chatId) {
+        rest.ShowDialogue(getResources().getString(R.string.pleaseWait));
+        rest.chatId(userId, chatId);
+    }
 }

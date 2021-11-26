@@ -54,6 +54,7 @@
         tools:context=".fragment.HomeFragment">
 
         <LinearLayout
+
             android:id="@+id/lin_onlysearch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -61,8 +62,8 @@
             android:layout_marginRight="20dp"
             android:background="@drawable/searchtopbar"
             android:orientation="horizontal"
-            android:padding="15dp"
-            android:visibility="visible"
+            android:padding="10dp"
+            android:visibility="gone"
             tools:context=".fragment.HomeFragment">
 
             <ImageView
@@ -73,12 +74,14 @@
                 app:srcCompat="@drawable/ic_search"
                 tools:ignore="VectorDrawableCompat" />
 
-            <TextView
-                android:layout_width="wrap_content"
+            <EditText
+                android:id="@+id/edit_msgdetail"
+                android:background="#ffffff"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:fontFamily="@font/sarabun_regular"
-                android:text="Search"
+                android:hint="Search"
                 android:textColor="@color/locsubtitle"
                 android:textSize="15sp" />
 
