@@ -1,7 +1,10 @@
 package com.android.nmnewsagency.rest;
 
 
+import com.android.nmnewsagency.model.CityModel;
 import com.android.nmnewsagency.model.CountryModel;
+import com.android.nmnewsagency.model.StateModel;
+import com.android.nmnewsagency.model.TahsilModel;
 import com.android.nmnewsagency.modelclass.AddNewsModel;
 import com.android.nmnewsagency.modelclass.AddUserDocumentModel;
 import com.android.nmnewsagency.modelclass.ChatIdModerl;
@@ -276,6 +279,11 @@ public interface RestService {
                                     @Path("id") int id);
 
     @Headers({"Content-Type: application/json"})
+    @GET("Region/GetStateByCountryId/true/{id}")
+    Call<StateModel> getStateList1(@Header("TokenId") String auth,
+                                   @Path("id") int id);
+
+    @Headers({"Content-Type: application/json"})
     @GET("Common/GetMainPageByPageId/{id}")
     Call<PagesModel> getPages(@Header("TokenId") String auth,
                               @Path("id") int id);
@@ -314,11 +322,19 @@ public interface RestService {
     @GET("Region/GetCityByStateId/{id}/true")
     Call<CountryModel> getCityList(@Header("TokenId") String auth,
                                     @Path("id") int id);
+    @Headers({"Content-Type: application/json"})
+    @GET("Region/GetCityByStateId/{id}/true")
+    Call<CityModel> getCityList1(@Header("TokenId") String auth,
+                                 @Path("id") int id);
 
     @Headers({"Content-Type: application/json"})
     @GET("Region/GetTahsilByCityId/{id}/true")
     Call<CountryModel> getTahsilList(@Header("TokenId") String auth,
                                     @Path("id") int id);
+    @Headers({"Content-Type: application/json"})
+    @GET("Region/GetTahsilByCityId/{id}/true")
+    Call<TahsilModel> getTahsilList1(@Header("TokenId") String auth,
+                                     @Path("id") int id);
 
    // @Headers({"Content-Type: application/json"})
     @Multipart

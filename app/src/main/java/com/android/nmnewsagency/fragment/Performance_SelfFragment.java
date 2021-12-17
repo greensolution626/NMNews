@@ -1,5 +1,6 @@
 package com.android.nmnewsagency.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.nmnewsagency.R;
+import com.android.nmnewsagency.activity.UserProfileActivity;
 import com.android.nmnewsagency.adapter.Performance_SelfAdapter;
 import com.android.nmnewsagency.listner.RecyclerTouchListener;
 import com.android.nmnewsagency.modelclass.Performence_SelfModel;
@@ -68,8 +70,9 @@ callServicegetPerforSelf();
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                //Intent intent = new Intent(getActivity(), CovrageQualityActivity.class);
-              //  startActivity(intent);
+                Intent intent = new Intent(getActivity(), UserProfileActivity.class);
+                intent.putExtra("userId",arrayList.get(position).getUserId());
+                startActivity(intent);
             }
 
             @Override

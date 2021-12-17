@@ -109,7 +109,7 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:maxLength="14"
+                    android:maxLength="13"
                     android:id="@+id/txt_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -119,6 +119,7 @@
                     android:textSize="15sp" />
 
                 <TextView
+                    android:maxLength="14"
                     android:id="@+id/txt_username"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

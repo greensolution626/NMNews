@@ -47,7 +47,6 @@ import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 
 import org.json.JSONObject;
 
@@ -55,7 +54,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -69,7 +67,7 @@ import vimeoextractor.VimeoVideo;
 public class NewVideoActivity extends AppCompatActivity implements TextWatcher, Callback<Object> {
     LinearLayout lin_brekingnews, lin_showlayout, lin_toplin;
     ImageView iamge_back_newvideo, img_newvideo_url;
-    int count = 0;
+    int count = 0,sendCountryId,sendStateId,sendCityId,sendTahsilId;
     TextView txt_newvideo_submit, txt_remainin, txt_userid, txt_chooselocation;
     MultiAutoCompleteTextView autoCompleteTextView;
     AutoCompleteSearchBarAdapter autoCompleteSearchBarAdapter;
@@ -86,9 +84,9 @@ public class NewVideoActivity extends AppCompatActivity implements TextWatcher, 
     private boolean isBreakingNews = false;
     CheckBox radio_frst, radio_second, radio_thrd, radio_fourth;
     FrameLayout frame_video_open;
-    boolean notCall, recycleClick = false, which, backspace = false, space = false,chooseLoaction=false;
+    boolean notCall, recycleClick = false, which, backspace = false, space = false, chooseLoaction = false;
     static int index;
-    String thumbanilVimeo, hashTag="", mention="";
+    String thumbanilVimeo, hashTag = "", mention = "",sendCountry,sendState,sendCity,sendTahsil;
     private static int AUTOCOMPLETE_REQUEST_CODE = 1;
     String[] adressArray;
 
@@ -226,13 +224,17 @@ public class NewVideoActivity extends AppCompatActivity implements TextWatcher, 
         txt_chooselocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<Place.Field> fields = Arrays.asList(Place.Field.ADDRESS_COMPONENTS, Place.Field.NAME, Place.Field.LAT_LNG,
+               /* List<Place.Field> fields = Arrays.asList(Place.Field.ADDRESS_COMPONENTS, Place.Field.NAME, Place.Field.LAT_LNG,
                         Place.Field.ADDRESS);
 
                 // Start the autocomplete intent.
                 Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
                         .build(NewVideoActivity.this);
-                startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
+                startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);*/
+                Intent intent = new Intent(NewVideoActivity.this, ChooseLocationActivity.class);
+                startActivityForResult(intent, 888);
+
+
             }
         });
     }
@@ -245,10 +247,7 @@ public class NewVideoActivity extends AppCompatActivity implements TextWatcher, 
 
 
     private void callServiceddNews() {
-        if(!chooseLoaction){
-            Utils.showSnakBarDialog(this,lin_toplin,"Please select your location in Choose Your Place",R.color.alert);
-        }
-        else{
+
         int newsType = 0;
         String newsTypeSend = "";
         // newsObjBean.setNewsType(1);
@@ -288,40 +287,53 @@ public class NewVideoActivity extends AppCompatActivity implements TextWatcher, 
             newsObjBean.setTitle(String.valueOf(autoCompleteTextView.getText()));
             newsObjBean.setUserId(Prefrence.getUserId());
             newsObjBean.setZipCode("");
-           /* if (!Prefrence.gettahsilIdd().equals("")) {
-                newsObjBean.setTahsilId(Integer.parseInt(Prefrence.gettahsilIdd()));
-                newsObjBean.setStateId(Integer.parseInt(Prefrence.getStateIdd()));
-                newsObjBean.setCountryId(Integer.parseInt(Prefrence.getCountryIdd()));
-                newsObjBean.setCityId(Integer.parseInt(Prefrence.getCityIdd()));
-            } else {*/
-                newsObjBean.setTahsilId(0);
-                newsObjBean.setStateId(0);
-                newsObjBean.setCountryId(0);
-                newsObjBean.setCityId(0);
-           //
             newsObjBean.setSuggestion("News Updated");
+            if(chooseLoaction){
+                newsObjBean.setTahsilId(sendTahsilId);
+                newsObjBean.setStateId(sendStateId);
+                newsObjBean.setCountryId(sendCountryId);
+                newsObjBean.setCityId(sendCityId);
 
-           /* if (Prefrence.gettahsil().isEmpty()) {
-                Utils.showSnakBarDialog(this, lin_toplin, "Please select your location in settings", R.color.alert);
-            } else {
-                newsObjBean.setTahsil_Name(Prefrence.gettahsil());
+                newsObjBean.setTahsil_Name(sendTahsil);
+                newsObjBean.setCountry_Name(sendCountry);
+                newsObjBean.setState_Name(sendState);
+                newsObjBean.setCity_Name(sendCity);
             }
-            if (Prefrence.getStateName().isEmpty()) {
-                Utils.showSnakBarDialog(this, lin_toplin, "Please select your location in settings", R.color.alert);
-            } else {
-                newsObjBean.setState_Name(Prefrence.getStateName());
+            else {
+                if (!Prefrence.gettahsilIdd().equals("")) {
+                    newsObjBean.setTahsilId(Integer.parseInt(Prefrence.gettahsilIdd()));
+                    newsObjBean.setStateId(Integer.parseInt(Prefrence.getStateIdd()));
+                    newsObjBean.setCountryId(Integer.parseInt(Prefrence.getCountryIdd()));
+                    newsObjBean.setCityId(Integer.parseInt(Prefrence.getCityIdd()));
+                } else {
+                    newsObjBean.setTahsilId(0);
+                    newsObjBean.setStateId(0);
+                    newsObjBean.setCountryId(0);
+                    newsObjBean.setCityId(0);
+                }
+
+                if (Prefrence.gettahsil().isEmpty()) {
+                    Utils.showSnakBarDialog(this, lin_toplin, "Please select your location in choose location", R.color.alert);
+                } else {
+                    newsObjBean.setTahsil_Name(Prefrence.gettahsil());
+                }
+                if (Prefrence.getStateName().isEmpty()) {
+                    Utils.showSnakBarDialog(this, lin_toplin, "Please select your location in choose location", R.color.alert);
+                } else {
+                    newsObjBean.setState_Name(Prefrence.getStateName());
+                }
+                if (Prefrence.getCountryName().isEmpty()) {
+                    Utils.showSnakBarDialog(this, lin_toplin, "Please select your location in choose location", R.color.alert);
+                } else {
+                    newsObjBean.setCountry_Name(Prefrence.getCountryName());
+                }
+                if (Prefrence.getCityName().isEmpty()) {
+                    Utils.showSnakBarDialog(this, lin_toplin, "Please select your location in choose location", R.color.alert);
+                } else {
+                    newsObjBean.setCity_Name(Prefrence.getCityName());
+                }
             }
-            if (Prefrence.getCountryName().isEmpty()) {
-                Utils.showSnakBarDialog(this, lin_toplin, "Please select your location in settings", R.color.alert);
-            } else {
-                newsObjBean.setCountry_Name(Prefrence.getCountryName());
-            }
-            if (Prefrence.getCityName().isEmpty()) {
-                Utils.showSnakBarDialog(this, lin_toplin, "Please select your location in settings", R.color.alert);
-            } else {
-                newsObjBean.setCity_Name(Prefrence.getCityName());
-            }*/
-            if(adressArray.length==3){
+           /* if(adressArray.length==3){
                 Toast.makeText(this, adressArray[0]+""+adressArray[1]+""+adressArray[2], Toast.LENGTH_SHORT).show();
                 newsObjBean.setTahsil_Name("");
                 newsObjBean.setCity_Name(adressArray[0]);
@@ -339,7 +351,7 @@ public class NewVideoActivity extends AppCompatActivity implements TextWatcher, 
                 newsObjBean.setCity_Name(adressArray[1]);
                 newsObjBean.setState_Name(adressArray[2]);
                 newsObjBean.setCountry_Name(adressArray[3]);
-            }
+            }*/
 
 
             newsObjBean.setHashTags(hashTag);
@@ -361,7 +373,7 @@ public class NewVideoActivity extends AppCompatActivity implements TextWatcher, 
             // Toast.makeText(this, "Please enter a post type", Toast.LENGTH_SHORT).show();
             Utils.showSnakBarDialog(this, lin_toplin, "Please enter a post type", R.color.alert);
         }
-    }
+
 
     }
 
@@ -499,7 +511,7 @@ public class NewVideoActivity extends AppCompatActivity implements TextWatcher, 
                         Log.e("positionhashtag==", String.valueOf(position));
                         //Log.e("hashtag==",arrayHashTag.get(position).getTitle());
                         String newStr = autoCompleteTextView.getText().toString().substring(0, index) + ""
-                                + arrayHashTag.get(position).getTitle()+" ";
+                                + arrayHashTag.get(position).getTitle() + " ";
                         autoCompleteTextView.setText(newStr);
                         if (hashTag.isEmpty()) {
                             hashTag = arrayHashTag.get(position).getTitle();
@@ -514,7 +526,7 @@ public class NewVideoActivity extends AppCompatActivity implements TextWatcher, 
                         Log.e("positionmension==", String.valueOf(position));
                         // Log.e("mension==",arrayMention.get(position).getTitle());
                         String newStr = autoCompleteTextView.getText().toString().substring(0, index) + ""
-                                + arrayMention.get(position).getTitle()+" ";
+                                + arrayMention.get(position).getTitle() + " ";
                         autoCompleteTextView.setText(newStr);
                         if (mention.isEmpty()) {
                             mention = arrayMention.get(position).getTitle();
@@ -645,33 +657,52 @@ public class NewVideoActivity extends AppCompatActivity implements TextWatcher, 
             if (resultCode == Activity.RESULT_CANCELED) {
                 // Write your code if there's no result
                 // NewVideoActivity.this.finish();
+
+            }
+        }
+        if (requestCode == 888) {
+            if (resultCode == Activity.RESULT_OK) {
+                chooseLoaction = true;
+                 sendCountry = data.getStringExtra("country");
+                 sendState = data.getStringExtra("state");
+                 sendCity = data.getStringExtra("city");
+                 sendTahsil = data.getStringExtra("tahsil");
+
+                 sendCountryId = data.getIntExtra("countryid",0);
+                 sendStateId = data.getIntExtra("stateid",0);
+                 sendCityId = data.getIntExtra("cityid",0);
+                 sendTahsilId = data.getIntExtra("tahsilid",0);
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                // Write your code if there's no result
+                // NewVideoActivity.this.finish();
             }
         }
         if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 //Toast.makeText(this, "resultok", Toast.LENGTH_SHORT).show();lat/lng: (26.9124336,75.7872709)
                 // Dausa, Rajasthan 303303, India
-                chooseLoaction=true;
+                chooseLoaction = true;
                 Place place = Autocomplete.getPlaceFromIntent(data);
-                Log.e("locationfrstchose====",  place.getAddress());
-                String adr=place.getAddress();
-                 adressArray = adr.split(",");
-                if(adressArray.length==3){
-                    Toast.makeText(this, adressArray[0]+""+adressArray[1]+""+adressArray[2], Toast.LENGTH_SHORT).show();
+                Log.e("locationfrstchose====", place.getAddress());
+                String adr = place.getAddress();
+                adressArray = adr.split(",");
+                if (adressArray.length == 3) {
+                    Toast.makeText(this, adressArray[0] + "" + adressArray[1] + "" + adressArray[2], Toast.LENGTH_SHORT).show();
 
-                }else if(adressArray.length==2){
-                    Toast.makeText(this, adressArray[0]+""+adressArray[1], Toast.LENGTH_SHORT).show();
-                }else if(adressArray.length==4){
-                    Toast.makeText(this, adressArray[0]+""+adressArray[1]+""+adressArray[2]+""+adressArray[3], Toast.LENGTH_SHORT).show();
+                } else if (adressArray.length == 2) {
+                    Toast.makeText(this, adressArray[0] + "" + adressArray[1], Toast.LENGTH_SHORT).show();
+                } else if (adressArray.length == 4) {
+                    Toast.makeText(this, adressArray[0] + "" + adressArray[1] + "" + adressArray[2] + "" + adressArray[3], Toast.LENGTH_SHORT).show();
                 }
             } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
                 // TODO: Handle the error.
-               // Toast.makeText(this, "resulterror", Toast.LENGTH_SHORT).show();
+                // Toast.makeText(this, "resulterror", Toast.LENGTH_SHORT).show();
                 Status status = Autocomplete.getStatusFromIntent(data);
                 Log.e("locationchooseee====", status.getStatusMessage());
             } else if (resultCode == RESULT_CANCELED) {
                 // The user canceled the operation.
-              //  Toast.makeText(this, "resultcancel", Toast.LENGTH_SHORT).show();
+                //  Toast.makeText(this, "resultcancel", Toast.LENGTH_SHORT).show();
                 Log.e("locationchooseee====", "resultcancel");
             }
             return;

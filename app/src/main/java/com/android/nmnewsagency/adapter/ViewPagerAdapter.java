@@ -70,6 +70,7 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 
 import org.jetbrains.annotations.NotNull;
@@ -531,7 +532,7 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
     public class ViewHolder extends RecyclerView.ViewHolder {
         PlayerView videoView, ad_video;
         MediaPlayer audioplayer;
-        //  AdView mAdView;
+          AdView mAdView;
         DataSpec dataSpec;
         RelativeLayout rel_ad;
         public TextView txt_username, txt_description, txt_title, txt_views, txt_location, txt_datetime;
@@ -558,7 +559,7 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
            /* myTextView = itemView.findViewById(R.id.tvTitle);
             relativeLayout = itemView.findViewById(R.id.container);
             button = itemView.findViewById(R.id.btnToggle);*/
-            // mAdView = view.findViewById(R.id.adView);
+             mAdView = view.findViewById(R.id.adView);
             adRequest = new AdRequest.Builder().build();
             adSize = new AdSize(300, 50);
             // mAdView.setAdSize(adSize);
@@ -615,7 +616,7 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
             dataSourceFactory = new DefaultHttpDataSourceFactory("exoplayer_video");
             extractorsFactory = new DefaultExtractorsFactory();
 
-            //  mAdView.loadAd(adRequest);
+              mAdView.loadAd(adRequest);
 
         }
 

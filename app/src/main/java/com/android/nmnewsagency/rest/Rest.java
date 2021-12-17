@@ -720,6 +720,14 @@ public class Rest {
         } else {
             AlertForInternet();
         }
+    } public void getStateList1(int id) {
+        if (isInterentAvaliable()) {
+
+            RestAdapter.getAdapter().getStateList1(Constants.FLD_TOKENID, id).enqueue(callback);
+
+        } else {
+            AlertForInternet();
+        }
     } public void getpages(int id) {
         if (isInterentAvaliable()) {
 
@@ -809,6 +817,24 @@ public class Rest {
         if (isInterentAvaliable()) {
 
             RestAdapter.getAdapter().getTahsilList(Constants.FLD_TOKENID, id).enqueue(callback);
+
+        } else {
+            AlertForInternet();
+        }
+    } public void getCityList1(int id) {
+        if (isInterentAvaliable()) {
+
+            RestAdapter.getAdapter().getCityList1(Constants.FLD_TOKENID, id).enqueue(callback);
+
+        } else {
+            AlertForInternet();
+        }
+    }
+
+    public void getTahsilList1(int id) {
+        if (isInterentAvaliable()) {
+
+            RestAdapter.getAdapter().getTahsilList1(Constants.FLD_TOKENID, id).enqueue(callback);
 
         } else {
             AlertForInternet();

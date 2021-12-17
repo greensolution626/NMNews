@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.nmnewsagency.R;
 import com.android.nmnewsagency.modelclass.Performence_SelfModel;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 
 import java.util.List;
 
@@ -66,7 +65,7 @@ public class Performance_SelfAdapter extends RecyclerView.Adapter<Performance_Se
                 .load(moviesList.get(position).getAvatar())
                 .placeholder(R.color.adbag)
                 .centerCrop()
-                .transition(DrawableTransitionOptions.withCrossFade(500))
+               // .transition(DrawableTransitionOptions.withCrossFade(500))
                 .into(holder.img_perf_self);
     }
 
