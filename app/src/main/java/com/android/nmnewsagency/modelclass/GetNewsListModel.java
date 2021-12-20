@@ -64,8 +64,17 @@ public class GetNewsListModel {
         private int iTotalDisplayRecords;
         private int CurrentIndex;
         private int TableIndex;
+        private int LastIndex;
         private String loopDate;
         private List<PagedRecordBean> PagedRecord;
+
+        public int getLastIndex() {
+            return LastIndex;
+        }
+
+        public void setLastIndex(int lastIndex) {
+            LastIndex = lastIndex;
+        }
 
         public int getTotalCount() {
             return TotalCount;
@@ -237,6 +246,15 @@ public class GetNewsListModel {
             private boolean SendNotification;
             private String RecordType;
             private String RedirectUrl;
+            private String DownloadLink;
+
+            public String getDownloadLink() {
+                return DownloadLink;
+            }
+
+            public void setDownloadLink(String downloadLink) {
+                DownloadLink = downloadLink;
+            }
 
             public int getNewsId() {
                 return NewsId;

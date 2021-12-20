@@ -49,6 +49,7 @@ public class HomeFragment extends Fragment implements Callback<Object>, SwipeRef
     LinearLayout lin_tophome;
     boolean autoPlaySet = true;
     boolean callApi = false;
+    private int LastIndex;
 
     OnActivityStateChanged onActivityStateChanged = null;
 
@@ -207,7 +208,7 @@ public class HomeFragment extends Fragment implements Callback<Object>, SwipeRef
                             Log.e("original", String.valueOf(position));
                             getActivity().startService(new Intent(getActivity(), NewsViewsCount.class));
                             // int pageOffset=pager2.getAdapter().getItemCount()+10;
-                            callServicegetNewsListNext("" + pager2.getAdapter().getItemCount(), "50",
+                            callServicegetNewsListNext("" + LastIndex, "50",
                                     "" + databeanMain.getCurrentIndex(), "" + databeanMain.getTableIndex(),
                                     // ""+databeanMain.getLoopDate());
                                     Utils.parseDateToddMMyyyy1(databeanMain.getLoopDate()));
@@ -229,6 +230,7 @@ public class HomeFragment extends Fragment implements Callback<Object>, SwipeRef
             if (obj instanceof GetNewsListModel) {
                 GetNewsListModel loginModel = (GetNewsListModel) obj;
                 if (loginModel.isStatus()) {
+                    LastIndex=loginModel.getData().getLastIndex();
                    // dialog.setProgress(100);
                   //  dialog.dismiss();
                     pullrefresh.setRefreshing(false);

@@ -3,6 +3,7 @@ package com.android.nmnewsagency.adapter;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -111,6 +112,7 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
     Activity activity;
 
 
+
     private int[] colorArray = new int[]{android.R.color.black, android.R.color.holo_blue_dark, android.R.color.holo_green_dark, android.R.color.holo_red_dark};
 
     public ViewPagerAdapter(Context context, List<GetNewsListModel.DataBean.PagedRecordBean> data,
@@ -173,6 +175,7 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
                     @Override
                     public void onViewAttachedToWindow(View v) {
                         holder.initPlayerAD(url);
+                        callAddViewCount(moviesList.get(position).getNewsId());
                         // Toast.makeText(context, "initPlayer", Toast.LENGTH_SHORT).show();
                     }
 
@@ -254,6 +257,18 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
         });
         holder.txt_title.setText(movie.getTahsil_Name() + ": " + movie.getTitle().trim());
 
+        holder.lin_download.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (Utils.checkStatus(context, DownloadManager.STATUS_RUNNING)) {
+                    Toast.makeText(context,"downloading is still running . Please wait..",Toast.LENGTH_LONG).show();
+                } else {
+
+                    Utils.startDownload(movie.getDownloadLink(),context,movie.getAddedOn());
+
+                }
+            }
+        });
         holder.txt_datetime.setText(Utils.parseDateToddMMyyyy(movie.getAddedOn()));
         holder.txt_datetime.setSelected(true);
         holder.txt_description.setText("" + movie.getAboutMe());
@@ -264,6 +279,7 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
         holder.txt_title.setSelected(true);
         holder.txt_username.setText(movie.getUserName());
         holder.txt_views.setText(String.valueOf(movie.getViewCount()));
+        holder.txt_viewsAdds.setText(String.valueOf(movie.getViewCount()));
         if (movie.isIsFollowed()) {
             holder.txt_follow.setText("Following");
             holder.txt_follow.setTextColor(Color.parseColor("#DBDBDB"));
@@ -287,10 +303,18 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
             holder.img_save.setImageResource(R.drawable.ic_save);
             holder.txt_savetext.setTextColor(Color.parseColor("#333333"));
         }
+
+        if (movie.getDownloadLink()!=null &&!movie.getDownloadLink().equals("") )
+        {
+            holder.lin_download.setVisibility(View.VISIBLE);
+        }else {
+            holder.lin_download.setVisibility(View.GONE);
+        }
         // holder.exoPause.setTag(position);
         holder.rel_userprofile.setTag(position);
         //  holder.exoPlay.setTag(position);
         holder.txt_follow.setTag(position);
+        holder.lin_download.setTag(position);
         holder.lin_report.setTag(position);
         holder.lin_save.setTag(position);
         holder.lin_comments.setTag(position);
@@ -552,6 +576,8 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
         MediaSource mediaSource;
         Uri videouri;
         AdSize adSize;
+        TextView txt_viewsAdds;
+        LinearLayout lin_download;
 
         ViewHolder(View view) {
             super(view);
@@ -572,6 +598,7 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
             lin_share = (LinearLayout) view.findViewById(R.id.lin_share);
             lin_save = (LinearLayout) view.findViewById(R.id.lin_save);
             lin_comments = (LinearLayout) view.findViewById(R.id.lin_comments);
+            lin_download = (LinearLayout) view.findViewById(R.id.lin_download);
             //  videoView = (VideoView) view.findViewById(R.id.img_homeprofile);
             //  exoPlayerView = (SimpleExoPlayerView) view.findViewById(R.id.idExoPlayerVIew);
             //  exoPlay = (ImageButton) view.findViewById(R.id.exo_play);
@@ -579,6 +606,7 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
             txt_username = (TextView) view.findViewById(R.id.txt_username);
             txt_savetext = (TextView) view.findViewById(R.id.txt_savetext);
             txt_description = (TextView) view.findViewById(R.id.txt_description);
+            txt_viewsAdds = (TextView) view.findViewById(R.id.txt_viewsAdds);
             txt_title = (TextView) view.findViewById(R.id.txt_title);
             txt_views = (TextView) view.findViewById(R.id.txt_views);
             txt_location = (TextView) view.findViewById(R.id.txt_location);
@@ -845,6 +873,11 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
     private void callServicegetReport(String folow, String isfollow, int newid) {
         rest.ShowDialogue(context.getResources().getString(R.string.pleaseWait));
         rest.reportUser(folow, isfollow, newid);
+    }
+
+    private void callAddViewCount( int adId) {
+       // rest.ShowDialogue(context.getResources().getString(R.string.pleaseWait));
+        rest.callAddViewCount(adId);
     }
 
     private void callServicegetLike(int newid) {

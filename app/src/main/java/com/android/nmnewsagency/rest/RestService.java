@@ -369,7 +369,10 @@ public interface RestService {
                                  @Body RequestAddNews requestLoginModel
     );
 
-
+    @Headers({"Content-Type: application/json"})
+    @GET("Common/IncreaseAdsViewCount/{id}")
+    Call<CountryModel> callAddViewCount(@Header("TokenId") String auth,
+                                    @Path("id") int id);
 
   /*  @Multipart
     @POST(ApiUrls.URL_REGISTER)
