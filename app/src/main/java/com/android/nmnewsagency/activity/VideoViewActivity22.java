@@ -124,12 +124,16 @@ public class VideoViewActivity22 extends AppCompatActivity implements Callback<O
                         if (prepareVideoRecorder()) {
                             // Camera is available and unlocked, MediaRecorder is prepared,
                             // now you can start recording
+                            if (mediaRecorder == null) {
+                                startRecordingScreen();
+                            }
                             mediaRecorder.start();
-
+                           // Toast.makeText(VideoViewActivity22.this, "start===" + mediaRecorder, Toast.LENGTH_SHORT).show();
                             // inform the user that recording has started
                             // captureButton.setText("Stop");
                             isRecording = true;
                         } else {
+                          //  Toast.makeText(VideoViewActivity22.this, "else", Toast.LENGTH_SHORT).show();
                             // prepare didn't work, release the camera
                             releaseMediaRecorder();
                             // inform user
@@ -141,7 +145,7 @@ public class VideoViewActivity22 extends AppCompatActivity implements Callback<O
             @Override
             public void onClick(View v) {
                 //delete
-               //  deletefunction();
+                //  deletefunction();
                 whenStopClick();
             }
         });
@@ -155,7 +159,7 @@ public class VideoViewActivity22 extends AppCompatActivity implements Callback<O
         iamge_back_video.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(countDownTimer!=null) {
+                if (countDownTimer != null) {
                     countDownTimer.cancel();
                 }
                 finish();
@@ -207,7 +211,9 @@ public class VideoViewActivity22 extends AppCompatActivity implements Callback<O
         captureButton.setVisibility(View.VISIBLE);
 
         // stop recording and release camera
-        mediaRecorder.stop();  // stop the recording
+        //   if(mediaRecorder!=null){
+        mediaRecorder.stop();
+        //} // stop the recording
         releaseMediaRecorder(); // release the MediaRecorder object
         mCamera.lock();
 
@@ -241,7 +247,7 @@ public class VideoViewActivity22 extends AppCompatActivity implements Callback<O
 
     private void iniiT() {
         lin_tapheare = (LinearLayout) findViewById(R.id.lin_tapheare);
-        rel_topvideo =  findViewById(R.id.rel_topvideo);
+        rel_topvideo = findViewById(R.id.rel_topvideo);
         captureButton = (ImageView) findViewById(R.id.button_capture);
         iamge_back_video = (ImageView) findViewById(R.id.iamge_back_video);
         img_stop = (ImageView) findViewById(R.id.img_stop);
@@ -308,11 +314,11 @@ public class VideoViewActivity22 extends AppCompatActivity implements Callback<O
         try {
             mediaRecorder.prepare();
         } catch (IllegalStateException e) {
-            Log.d("", "IllegalStateException preparing MediaRecorder: " + e.getMessage());
+            Log.e("mediarecorder", "IllegalStateException preparing MediaRecorder: " + e.getMessage());
             releaseMediaRecorder();
             return false;
         } catch (IOException e) {
-            Log.d("", "IOException preparing MediaRecorder: " + e.getMessage());
+            Log.e("mediarecorder", "IOException preparing MediaRecorder: " + e.getMessage());
             releaseMediaRecorder();
             return false;
         }
@@ -344,8 +350,17 @@ public class VideoViewActivity22 extends AppCompatActivity implements Callback<O
         // To be safe, you should check that the SDCard is mounted
         // using Environment.getExternalStorageState() before doing this.
 
-        File mediaStorageDir = new File(String.valueOf(Environment.getExternalStorageDirectory()));
+        File mediaStorageDir ;
+        //= new File(String.valueOf(Environment.getExternalStorageDirectory()));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+        {
+            mediaStorageDir = new File(String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)));
 
+        }
+        else
+        {
+            mediaStorageDir = new File(String.valueOf(Environment.getExternalStorageDirectory()));
+        }
         // File mediaStorageDir = new File(
         //      Environment.getExternalStorageDirectory().getAbsolutePath() + "/myvideo.mp4");
         // This location works best if you want the created images to be shared
@@ -354,25 +369,29 @@ public class VideoViewActivity22 extends AppCompatActivity implements Callback<O
         // Create the storage directory if it does not exist
         if (!mediaStorageDir.exists()) {
             if (!mediaStorageDir.mkdirs()) {
-                Log.d("MyCameraApp", "failed to create directory");
+                Log.e("MyCameraApp", "failed to create directory");
                 return null;
             }
         }
+        if (mediaStorageDir.canWrite()) {
+            Log.e("ifmedia==  ", "if");
+            // Create a media file name
+            String timeStamp = new SimpleDateFormat("yyyyMMdd").format(new Date());
 
-        // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd").format(new Date());
-
-        if (type == MEDIA_TYPE_IMAGE) {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "IMG_" + timeStamp + ".jpg");
-        } else if (type == MEDIA_TYPE_VIDEO) {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "VID_" + "NMNews" + timeStamp + ".mp4");
-            Log.e("mediafile==  ", String.valueOf(mediaFile));
+            if (type == MEDIA_TYPE_IMAGE) {
+                mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                        "IMG_" + timeStamp + ".jpg");
+            } else if (type == MEDIA_TYPE_VIDEO) {
+                mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                        "VID_" + "NMNews" + timeStamp + ".mp4");
+                Log.e("mediafile==  ", String.valueOf(mediaFile));
+            } else {
+                return null;
+            }
         } else {
-            return null;
+            Log.e("elsermedia==  ", "else");
+            // return  null;
         }
-
         return mediaFile;
     }
 
@@ -426,7 +445,9 @@ public class VideoViewActivity22 extends AppCompatActivity implements Callback<O
         if (mCamera != null) {
             mCamera.setDisplayOrientation(90);
         }
+
         mediaRecorder = new MediaRecorder();
+       // Toast.makeText(VideoViewActivity22.this, "" + mediaRecorder, Toast.LENGTH_SHORT).show();
         // Create our Preview view and set it as the content of our activity.
         mPreview = new CameraPreview(this, mCamera);
         preview = (FrameLayout) findViewById(R.id.camera_preview);
@@ -534,17 +555,17 @@ public class VideoViewActivity22 extends AppCompatActivity implements Callback<O
 
     @Override
     public void onFailure(Call<Object> call, Throwable t) {
-        Log.e("error",t.toString());
+        Log.e("error", t.toString());
         dialog.dismiss();
-        Utils.showSnakBarDialog(this,rel_topvideo,t.toString(),R.color.alert);
+        Utils.showSnakBarDialog(this, rel_topvideo, t.toString(), R.color.alert);
     }
 
     private void callServiceUploadNews(String path) {
         if (rest.isInterentAvaliable()) {
             Prefrence.setVideoFIle(mediaFile.getAbsolutePath());
-           // setProgressSet();
-           // rest.uploadNews(mediaFile.getAbsolutePath());
-           // Toast.makeText(this, "callserviceclass", Toast.LENGTH_SHORT).show();
+            // setProgressSet();
+            // rest.uploadNews(mediaFile.getAbsolutePath());
+            // Toast.makeText(this, "callserviceclass", Toast.LENGTH_SHORT).show();
             startService(new Intent(this, NewsUplaodInBagroundService.class));
             finish();
         } else {
