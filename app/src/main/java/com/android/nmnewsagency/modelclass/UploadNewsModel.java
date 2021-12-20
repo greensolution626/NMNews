@@ -68,6 +68,15 @@ public class UploadNewsModel {
         private String VideoUrl;
         private String VideoFullPath;
         private String ImageFullPath;
+        private String DownloadLink;
+
+        public String getDownloadLink() {
+            return DownloadLink;
+        }
+
+        public void setDownloadLink(String downloadLink) {
+            DownloadLink = downloadLink;
+        }
 
         public int getId() {
             return Id;

@@ -1,8 +1,15 @@
 package com.android.nmnewsagency.utils;
 
+import static android.content.Context.DOWNLOAD_SERVICE;
+
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -10,9 +17,11 @@ import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
+import com.android.nmnewsagency.R;
 import com.android.nmnewsagency.pref.Prefrence;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -137,4 +146,58 @@ public class Utils {
             Log.e("exception", e.toString());
         }
     }*/
+
+    public static boolean checkStatus(Context context, int status) {
+        DownloadManager downloadManager = (DownloadManager)
+                context.getSystemService(DOWNLOAD_SERVICE);
+        DownloadManager.Query query = new DownloadManager.Query();
+
+        query.setFilterByStatus(status);
+        Cursor c = downloadManager.query(query);
+        if (c.moveToFirst()) {
+            c.close();
+            Log.i("DOWNLOAD_STATUS", String.valueOf(status));
+            return true;
+        }
+        Log.i("AUTOMATION_DOWNLOAD", "DEFAULT");
+        return false;
+    }
+
+    public static boolean checkFileIsExist(Context context, String pdfURL) {
+        boolean isExist = false;
+
+        String fileName = pdfURL.substring(pdfURL.lastIndexOf('/') + 1, pdfURL.length());
+        //String folder = Environment.getExternalStorageDirectory() + File.separator + context.getResources().getString(R.string.app_name) + File.separator;
+        String folder = Environment.getExternalStorageDirectory() + File.separator + Environment.DIRECTORY_DOWNLOADS + File.separator;
+        File directory = new File(folder);
+
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+        if (new File(folder + fileName).exists()) {
+            isExist = true;
+        } else {
+            isExist = false;
+        }
+
+        return isExist;
+    }
+
+    public static void startDownload(String productId, Context context, String addedOn) {
+
+        String fileName = addedOn;
+        File f = new File(Environment.getExternalStorageDirectory() + File.separator + context.getResources().getString(R.string.app_name));
+        Uri music_uri = Uri.parse(productId);
+        DownloadManager downloadManager = (DownloadManager) context.getSystemService(DOWNLOAD_SERVICE);
+        DownloadManager.Request request = new DownloadManager.Request(music_uri);
+        request.setAllowedNetworkTypes(
+                DownloadManager.Request.NETWORK_WIFI
+                        | DownloadManager.Request.NETWORK_MOBILE)
+                .setAllowedOverRoaming(false)
+                .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
+
+        // .setDestinationInExternalFilesDir(DetailsPdf.this,File.separator + getResources().getString(R.string.app_name), fileName);
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        Long ref = downloadManager.enqueue(request);
+    }
 }

@@ -640,6 +640,7 @@ public class Rest {
         mediaobjbean.setSizeUnit(data.getSizeUnit());
         mediaobjbean.setVideoUrl(data.getVideoUrl());
         mediaobjbean.setVideoId(data.getVideoId());
+        mediaobjbean.setDownloadLink(data.getDownloadLink());
 
         objbean.setAddressLin_2(newsObjBean.getAddressLin_2());
         objbean.setAddressLine_1(newsObjBean.getAddressLine_1());
@@ -1009,6 +1010,20 @@ public class Rest {
 
 
     }
+
+
+    public void callAddViewCount(int id) {
+        if (isInterentAvaliable()) {
+
+            RestAdapter.getAdapter().callAddViewCount(Constants.FLD_TOKENID, id).enqueue(callback);
+
+        } else {
+            AlertForInternet();
+        }
+    }
+
+
+
     /*public void sendEvent(String hello, String s, String jaipur, String y, String s1,
                           String path1, String path2, String path3, String path4) {
 

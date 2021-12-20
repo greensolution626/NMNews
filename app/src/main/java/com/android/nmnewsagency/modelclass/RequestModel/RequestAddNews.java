@@ -77,6 +77,15 @@ public class RequestAddNews {
         private String ZipCode;
         private String UserTags;
         private String HashTags;
+        private String DownloadLink;
+
+        public String getDownloadLink() {
+            return DownloadLink;
+        }
+
+        public void setDownloadLink(String downloadLink) {
+            DownloadLink = downloadLink;
+        }
 
         public int getId() {
             return Id;
@@ -281,6 +290,15 @@ public class RequestAddNews {
         private String SizeUnit;
         private String VideoUrl;
         private String VideoId;
+        private String DownloadLink;
+
+        public String getDownloadLink() {
+            return DownloadLink;
+        }
+
+        public void setDownloadLink(String downloadLink) {
+            DownloadLink = downloadLink;
+        }
 
         public int getId() {
             return Id;

@@ -193,6 +193,7 @@ public class LoginActivity extends AppCompatActivity implements Callback<Object>
             }
             createLogin();
         } catch (ApiException e) {
+            Log.e("Google Sign in Error ", e.getMessage());
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
             //   Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
@@ -243,7 +244,7 @@ public class LoginActivity extends AppCompatActivity implements Callback<Object>
 
     @Override
     public void onFailure(Call<Object> call, Throwable t) {
-
+        Log.e("Sign in Error", t.getMessage());
     }
 
     @Override
