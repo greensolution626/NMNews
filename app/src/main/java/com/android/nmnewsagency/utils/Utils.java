@@ -185,7 +185,7 @@ public class Utils {
 
     public static void startDownload(String productId, Context context, String addedOn) {
 
-        String fileName = addedOn;
+        String fileName = context.getResources().getString(R.string.app_name)+".mp4";
         File f = new File(Environment.getExternalStorageDirectory() + File.separator + context.getResources().getString(R.string.app_name));
         Uri music_uri = Uri.parse(productId);
         DownloadManager downloadManager = (DownloadManager) context.getSystemService(DOWNLOAD_SERVICE);

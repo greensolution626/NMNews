@@ -36,7 +36,9 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.android.nmnewsagency.R;
 import com.android.nmnewsagency.activity.CommentsActivity;
+import com.android.nmnewsagency.activity.DownloadVideoActivity;
 import com.android.nmnewsagency.activity.UserProfileActivity;
+import com.android.nmnewsagency.dialogs.DownloadStartDialog;
 import com.android.nmnewsagency.fragment.HomeFragment;
 import com.android.nmnewsagency.modelclass.AddNewsModel;
 import com.android.nmnewsagency.modelclass.GetNewsListModel;
@@ -78,6 +80,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -87,6 +90,7 @@ import retrofit2.Response;
 import vimeoextractor.OnVimeoExtractionListener;
 import vimeoextractor.VimeoExtractor;
 import vimeoextractor.VimeoVideo;
+
 
 public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.ViewHolder> implements
         View.OnClickListener, Callback<Object> {
@@ -263,8 +267,25 @@ public class ViewPagerAdapter extends RecyclerView.Adapter<ViewPagerAdapter.View
                 if (Utils.checkStatus(context, DownloadManager.STATUS_RUNNING)) {
                     Toast.makeText(context,"downloading is still running . Please wait..",Toast.LENGTH_LONG).show();
                 } else {
+                  //  new DownloadStartDialog(context,movie.getDownloadLink(),movie.getAddedOn()).show();
+                   /* VimeoExtractor.getInstance().fetchVideoWithIdentifier("658204503", null, new OnVimeoExtractionListener() {
+                        @Override
+                        public void onSuccess(VimeoVideo video) {
+                            String hdStream = video.getStreams().get("1080p");
+                            //...
+                        }
 
-                    Utils.startDownload(movie.getDownloadLink(),context,movie.getAddedOn());
+                        @Override
+                        public void onFailure(Throwable throwable) {
+                            //Error handling here
+                        }
+                    });*/
+                    Intent i=new Intent(context, DownloadVideoActivity.class);
+                    i.putExtra("url",movie.getDownloadLink());
+                    i.putExtra("name",movie.getAddedOn());
+                    context.startActivity(i);
+
+                    //Utils.startDownload("https://vod-progressive.akamaized.net/exp=1640087501~acl=%2Fvimeo-prod-skyfire-std-us%2F01%2F1640%2F26%2F658204503%2F3024272711.mp4~hmac=71328700bbdb6b6962e7187bcf18405c19038409352021d02cc7dd7e9133ace0/vimeo-prod-skyfire-std-us/01/1640/26/658204503/3024272711.mp4",context,movie.getAddedOn());
 
                 }
             }

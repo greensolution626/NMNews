@@ -38,4 +38,5 @@
     <color name="color_blue_qb">#046ad0</color>
     <color name="color_light_blue_qb">#87cefa</color>
     <color name="color_grey">#d3d3d3</color>
+    <color name="transprent">#00FFFFFF</color>
 </resources>

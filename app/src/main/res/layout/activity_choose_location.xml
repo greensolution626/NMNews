@@ -45,10 +45,10 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|center_horizontal"
                     android:layout_marginLeft="15dp"
                     android:fontFamily="@font/sarabun_extrabold"
                     android:text="@string/select_location"
-                    android:layout_gravity="center_vertical|center_horizontal"
                     android:textColor="@color/loctitle"
                     android:textSize="20dp" />
 
@@ -63,17 +63,22 @@
                 android:text="@string/selctcoun"
                 android:textColor="@color/loctitle"
                 android:textSize="20dp" />
-
-            <Spinner
-                android:id="@+id/spi_country"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="5dp"
-                android:spinnerMode="dropdown"
-                android:dropDownVerticalOffset="50dp"
                 android:layout_marginRight="15dp"
-                android:background="@drawable/locationfillgreycolour" />
+                android:background="@drawable/locationfillgreycolour">
+                <Spinner
+                    android:id="@+id/spi_country"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:dropDownVerticalOffset="50dp"
+                    android:spinnerMode="dropdown" />
+
+            </RelativeLayout>
+
 
             <TextView
                 android:layout_width="wrap_content"
@@ -84,17 +89,22 @@
                 android:text="Select your state!"
                 android:textColor="@color/loctitle"
                 android:textSize="20dp" />
-
-            <Spinner
-                android:id="@+id/spi_state"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="15dp"
-                android:spinnerMode="dropdown"
-                android:dropDownVerticalOffset="50dp"
-                android:background="@drawable/locationfillgreycolour" />
+                android:background="@drawable/locationfillgreycolour">
+                <Spinner
+                    android:id="@+id/spi_state"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:dropDownVerticalOffset="50dp"
+                    android:spinnerMode="dropdown" />
+
+            </RelativeLayout>
+
 
             <TextView
                 android:layout_width="wrap_content"
@@ -105,17 +115,22 @@
                 android:text="Select your city!"
                 android:textColor="@color/loctitle"
                 android:textSize="20dp" />
-
-            <Spinner
-                android:id="@+id/spi_city"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="15dp"
-                android:spinnerMode="dropdown"
-                android:dropDownVerticalOffset="50dp"
-                android:background="@drawable/locationfillgreycolour" />
+                android:background="@drawable/locationfillgreycolour">
+                <Spinner
+                    android:id="@+id/spi_city"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:dropDownVerticalOffset="50dp"
+                    android:spinnerMode="dropdown" />
+
+            </RelativeLayout>
+
 
             <TextView
                 android:layout_width="wrap_content"
@@ -127,19 +142,26 @@
                 android:textColor="@color/loctitle"
                 android:textSize="20dp" />
 
-            <Spinner
-                android:id="@+id/spi_tahsil"
+
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="15dp"
-                android:spinnerMode="dropdown"
-                android:dropDownVerticalOffset="50dp"
-                android:background="@drawable/locationfillgreycolour" />
+                android:background="@drawable/locationfillgreycolour">
+
+                <Spinner
+                    android:id="@+id/spi_tahsil"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:dropDownVerticalOffset="50dp"
+                    android:spinnerMode="dropdown" />
+
+            </RelativeLayout>
+
 
             <Button
-                android:visibility="gone"
                 android:id="@+id/but_chose_loc"
                 android:layout_width="210dp"
                 android:layout_height="50dp"
@@ -149,7 +171,8 @@
                 android:background="@drawable/buroncorner"
                 android:text="Done"
                 android:textAllCaps="false"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:visibility="gone" />
 
         </LinearLayout>
     </LinearLayout>

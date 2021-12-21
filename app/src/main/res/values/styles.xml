@@ -14,7 +14,10 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
-
+    <style name="dialogue_error">
+        <item name="android:windowEnterAnimation">@anim/enterybottomanimation</item>
+        <item name="android:windowExitAnimation">@anim/slide_down</item>
+    </style>
     <style name="HorizontalDividerStyle" parent="MatchWidth">
         <item name="android:layout_height">1dp</item>
         <item name="android:background">@color/adbag</item>

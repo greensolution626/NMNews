@@ -52,6 +52,9 @@
         android:usesCleartextTraffic="true"
         tools:ignore="ExtraText">
         <activity
+            android:name=".activity.DownloadVideoActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.ChooseLocationActivity"
             android:exported="false" />
         <activity
